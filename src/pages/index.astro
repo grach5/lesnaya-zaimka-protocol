@@ -26,18 +26,33 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   title="Лесная Заимка — дом, где принимали два государства. Владивосток"
   description="Ресторанный комплекс «Лесная Заимка» во Владивостоке — терем 1974 года, в котором принимали Форда, Брежнева и Ким Чен Ира. Русская, охотничья, дальневосточная и кавказская кухня, 6 залов до 500 гостей."
 >
-  <!-- 1. Протокольная шапка: фото + информационная строка-реквизит, без hero-кнопки по центру -->
+  <!-- 1. Протокольная шапка: видео на весь экран (заезд на объект — реальные кадры), без hero-кнопки по центру -->
   <section class="relative">
-    <div class="relative h-[72svh] min-h-[520px] w-full overflow-hidden">
-      <img
-        src={withBase("/img/hero-index.webp")}
-        width="1000"
-        height="666"
-        alt="Интерьер ресторана «Лесная Заимка»"
-        class="h-full w-full object-cover"
+    <div class="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink">
+      <video
+        id="hero-video"
+        class="absolute inset-0 h-full w-full object-cover"
+        poster={withBase("/img/hero-video-poster.webp")}
+        muted
+        loop
+        playsinline
+        preload="auto"
         fetchpriority="high"
-      />
-      <div class="absolute inset-0 bg-linear-to-t from-ink/75 via-ink/15 to-ink/40"></div>
+        aria-hidden="true"
+      >
+        <source src={withBase("/video/hero-loop.mp4")} type="video/mp4" />
+      </video>
+
+      <!-- Дизайнерский задний фон: плёночное зерно поверх видео (архивная/документальная фактура,
+           в тему «Протокола») + тонированный вертикальный и боковой скрим для читаемости текста
+           и фирменного тона (ink/brass), а не голая картинка «как есть». -->
+      <div
+        class="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-overlay"
+        style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"
+      ></div>
+      <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/90 via-ink/20 to-ink/55"></div>
+      <div class="pointer-events-none absolute inset-0 bg-linear-to-r from-ink/35 via-transparent to-ink/20"></div>
+
       <div class="absolute inset-x-0 bottom-0 px-5 pb-12 md:px-8 md:pb-16">
         <div class="mx-auto max-w-6xl">
           <p class="font-mono text-xs uppercase tracking-[0.14em] text-paper-raised/75" data-reveal>
@@ -55,6 +70,13 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
             приёма — те же, что и тогда.
           </p>
         </div>
+      </div>
+
+      <div class="absolute right-5 top-5 md:right-8 md:top-8">
+        <span class="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-paper-raised/70">
+          <span class="h-1.5 w-1.5 rounded-full bg-brass"></span>
+          Съёмка объекта
+        </span>
       </div>
     </div>
 
@@ -241,8 +263,18 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   </section>
 
   <script>
-    import { initReveal } from "@/lib/motion";
+    import { initReveal, motionEnabled } from "@/lib/motion";
     initReveal();
+
+    // Фоновое видео в шапке запускаем только если анимации разрешены (системная
+    // prefers-reduced-motion и ручной тумблер в футере) — иначе остаётся статичный
+    // постер видео, а не сломанный/дёрганый плеер.
+    const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
+    if (heroVideo && motionEnabled()) {
+      heroVideo.play().catch(() => {
+        // Автовоспроизведение иногда блокируется даже для muted-видео (редко) — постер остаётся.
+      });
+    }
 
     const film = document.getElementById("brand-film") as HTMLVideoElement | null;
     const filmPlayBtn = document.getElementById("brand-film-play");
