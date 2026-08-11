@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
+import { withBase } from "@/lib/url";
 
 const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.length, 0);
 ---
@@ -39,10 +40,10 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
             type="button"
             class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
             data-section={s.name}
-            data-full={img.full}
+            data-full={withBase(img.full)}
             aria-label={`Открыть фото: ${s.name}`}
           >
-            <img src={img.thumb} alt={`${s.name} — Лесная Заимка`} loading="lazy" width="400" height="400" class="h-full w-full object-cover" />
+            <img src={withBase(img.thumb)} alt={`${s.name} — Лесная Заимка`} loading="lazy" width="400" height="400" class="h-full w-full object-cover" />
           </button>
         ))
       )}

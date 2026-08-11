@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { HISTORY, OWNER_QUOTE } from "@/data/history";
 import { ZAIMKA_MENU } from "@/data/menu";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
+import { withBase } from "@/lib/url";
 
 // Правило: не выдумывать факты — берём реальные записи хроники по индексу,
 // а не переписываем текст.
@@ -17,7 +18,7 @@ const teaserDishes = (gameCategory ?? ZAIMKA_MENU.categories[0]).items.slice(0, 
 // Шесть реальных фото для тизера галереи из разных разделов архива.
 const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   name: s.name,
-  thumb: s.images[0].thumb,
+  thumb: withBase(s.images[0].thumb),
 }));
 ---
 
@@ -29,7 +30,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   <section class="relative">
     <div class="relative h-[72svh] min-h-[520px] w-full overflow-hidden">
       <img
-        src="/img/hero-index.webp"
+        src={withBase("/img/hero-index.webp")}
         width="1000"
         height="666"
         alt="Интерьер ресторана «Лесная Заимка»"
@@ -82,7 +83,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   <!-- 2. Развилка: два равнозначных CTA (решение Фазы 1) — вертикальный стек на мобильном, не карусель -->
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
     <div class="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
-      <a href="/events/" class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+      <a href={withBase("/events/")} class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
         <div>
           <span class="font-mono text-xs uppercase tracking-wide text-brass">Организуете мероприятие</span>
           <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
@@ -98,7 +99,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         </span>
       </a>
 
-      <a href="/menu/" class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+      <a href={withBase("/menu/")} class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
         <div>
           <span class="font-mono text-xs uppercase tracking-wide text-brass">Хотите поужинать</span>
           <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
@@ -140,7 +141,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
           </p>
         </article>
       </div>
-      <a href="/history/" class="mt-10 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass">
+      <a href={withBase("/history/")} class="mt-10 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass">
         Вся хронология дома, 1974–2015 →
       </a>
     </div>
@@ -155,7 +156,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
           13 разделов, больше сотни блюд
         </h2>
       </div>
-      <a href="/menu/" class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
+      <a href={withBase("/menu/")} class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
         Открыть полное меню →
       </a>
     </div>
@@ -168,7 +169,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         </div>
       ))}
     </div>
-    <a href="/menu/" class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
+    <a href={withBase("/menu/")} class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
       Открыть полное меню →
     </a>
   </section>
@@ -181,18 +182,18 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
           <p class="font-mono text-xs uppercase tracking-wide text-brass">Галерея</p>
           <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">93 кадра из жизни дома</h2>
         </div>
-        <a href="/gallery/" class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
+        <a href={withBase("/gallery/")} class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
           Вся галерея →
         </a>
       </div>
       <div class="mt-8 grid grid-cols-3 gap-2 md:grid-cols-6">
         {galleryTeaser.map((item) => (
-          <a href="/gallery/" class="block aspect-square overflow-hidden bg-paper-sunk" data-reveal>
+          <a href={withBase("/gallery/")} class="block aspect-square overflow-hidden bg-paper-sunk" data-reveal>
             <img src={item.thumb} alt={item.name} loading="lazy" class="h-full w-full object-cover" />
           </a>
         ))}
       </div>
-      <a href="/gallery/" class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
+      <a href={withBase("/gallery/")} class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
         Вся галерея →
       </a>
     </div>

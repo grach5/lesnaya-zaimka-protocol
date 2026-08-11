@@ -1,5 +1,6 @@
 ---
 import { CONTACTS } from "@/data/contacts";
+import { withBase } from "@/lib/url";
 ---
 
 <footer class="border-t border-line bg-ink text-paper-sunk">
@@ -23,10 +24,10 @@ import { CONTACTS } from "@/data/contacts";
       <div>
         <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Разделы</p>
         <ul class="mt-3 flex flex-col gap-2 text-sm">
-          <li><a href="/history/">История</a></li>
-          <li><a href="/menu/">Меню</a></li>
-          <li><a href="/events/">Мероприятия и залы</a></li>
-          <li><a href="/gallery/">Галерея</a></li>
+          <li><a href={withBase("/history/")}>История</a></li>
+          <li><a href={withBase("/menu/")}>Меню</a></li>
+          <li><a href={withBase("/events/")}>Мероприятия и залы</a></li>
+          <li><a href={withBase("/gallery/")}>Галерея</a></li>
         </ul>
       </div>
 

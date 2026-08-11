@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://grach5.github.io',
+  base: '/lesnaya-zaimka-protocol',
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()]

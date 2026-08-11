@@ -1,17 +1,21 @@
 ---
+import { withBase } from "@/lib/url";
+
 // Хедер-«бланк»: оба целевых действия равнозначны на десктопе (решение Фазы 1),
 // логотипа-графики не существует (Фаза 1) — только текстовое написание названия.
 const nav = [
-  { href: "/history/", label: "История" },
-  { href: "/menu/", label: "Меню" },
-  { href: "/events/", label: "Мероприятия" },
-  { href: "/gallery/", label: "Галерея" },
+  { href: withBase("/history/"), label: "История" },
+  { href: withBase("/menu/"), label: "Меню" },
+  { href: withBase("/events/"), label: "Мероприятия" },
+  { href: withBase("/gallery/"), label: "Галерея" },
 ];
+const eventsFormHref = withBase("/events/") + "#form";
+const contactsHref = withBase("/contacts/");
 ---
 
 <header class="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-sm">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4 md:px-8">
-    <a href="/" class="font-display text-xl font-semibold tracking-tight text-ink">
+    <a href={withBase("/")} class="font-display text-xl font-semibold tracking-tight text-ink">
       Лесная Заимка
       <span class="ml-2 font-mono text-[11px] font-normal tracking-wide text-ink-faint">Владивосток · с 1974</span>
     </a>
@@ -29,13 +33,13 @@ const nav = [
 
     <div class="hidden items-center gap-3 md:flex">
       <a
-        href="/events/#form"
+        href={eventsFormHref}
         class="border border-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
       >
         Заявка на мероприятие
       </a>
       <a
-        href="/contacts/"
+        href={contactsHref}
         class="bg-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-brass"
       >
         Бронь стола
@@ -67,8 +71,8 @@ const nav = [
       <a href={item.href} class="py-2.5 font-mono text-sm text-ink-soft">{item.label}</a>
     ))}
     <div class="mt-3 flex flex-col gap-2">
-      <a href="/events/#form" class="border border-ink px-4 py-3 text-center font-mono text-[13px] text-ink">Заявка на мероприятие</a>
-      <a href="/contacts/" class="bg-ink px-4 py-3 text-center font-mono text-[13px] text-paper-raised">Бронь стола</a>
+      <a href={eventsFormHref} class="border border-ink px-4 py-3 text-center font-mono text-[13px] text-ink">Заявка на мероприятие</a>
+      <a href={contactsHref} class="bg-ink px-4 py-3 text-center font-mono text-[13px] text-paper-raised">Бронь стола</a>
     </div>
   </nav>
 </header>
