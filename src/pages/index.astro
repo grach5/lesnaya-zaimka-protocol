@@ -1,17 +1,216 @@
 ---
+import Layout from "@/layouts/Layout.astro";
+import { HISTORY, OWNER_QUOTE } from "@/data/history";
+import { ZAIMKA_MENU } from "@/data/menu";
+import { ZAIMKA_GALLERY } from "@/data/gallery";
 
+// Правило: не выдумывать факты — берём реальные записи хроники по индексу,
+// а не переписываем текст.
+const y1974 = HISTORY[0];
+const y2002 = HISTORY[3];
+
+// Три реальных блюда для тизера меню: раздел «Фирменные блюда из дичи», если найден,
+// иначе — первые позиции первой категории (без придумывания названий/цен).
+const gameCategory = ZAIMKA_MENU.categories.find((c) => c.name.toLowerCase().includes("дич"));
+const teaserDishes = (gameCategory ?? ZAIMKA_MENU.categories[0]).items.slice(0, 3);
+
+// Шесть реальных фото для тизера галереи из разных разделов архива.
+const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
+  name: s.name,
+  thumb: s.images[0].thumb,
+}));
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="Лесная Заимка — дом, где принимали два государства. Владивосток"
+  description="Ресторанный комплекс «Лесная Заимка» во Владивостоке — терем 1974 года, в котором принимали Форда, Брежнева и Ким Чен Ира. Русская, охотничья, дальневосточная и кавказская кухня, 6 залов до 500 гостей."
+>
+  <!-- 1. Протокольная шапка: фото + информационная строка-реквизит, без hero-кнопки по центру -->
+  <section class="relative">
+    <div class="relative h-[72svh] min-h-[520px] w-full overflow-hidden">
+      <img
+        src="/img/hero-index.webp"
+        width="1000"
+        height="666"
+        alt="Интерьер ресторана «Лесная Заимка»"
+        class="h-full w-full object-cover"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-linear-to-t from-ink/75 via-ink/15 to-ink/40"></div>
+      <div class="absolute inset-x-0 bottom-0 px-5 pb-12 md:px-8 md:pb-16">
+        <div class="mx-auto max-w-6xl">
+          <p class="font-mono text-xs uppercase tracking-[0.14em] text-paper-raised/75" data-reveal>
+            Протокол приёма · Владивосток · ул. Маковского, 290
+          </p>
+          <h1
+            class="mt-4 max-w-[16ch] font-display text-4xl font-semibold leading-[0.98] text-paper-raised md:text-5xl"
+            data-reveal
+          >
+            Дом, где принимали два государства
+          </h1>
+          <p class="mt-5 max-w-[56ch] text-base text-paper-raised/90 md:text-lg" data-reveal>
+            Терем 1974 года на въезде во Владивосток. Здесь принимали президента США Джеральда Форда
+            и Леонида Брежнева — а в 2002-м здесь же завтракал глава КНДР Ким Чен Ир. Кухня и традиции
+            приёма — те же, что и тогда.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-b border-line bg-ink">
+      <div class="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-paper-sunk/15 md:grid-cols-4">
+        <div class="px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-paper-raised">1974</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">год основания</p>
+        </div>
+        <div class="px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-paper-raised">2</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">главы государств приняты</p>
+        </div>
+        <div class="px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-paper-raised">6</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">залов, до 500 гостей</p>
+        </div>
+        <div class="px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-paper-raised">4</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">кухни на одной карте</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Развилка: два равнозначных CTA (решение Фазы 1) — вертикальный стек на мобильном, не карусель -->
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <div class="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
+      <a href="/events/" class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+        <div>
+          <span class="font-mono text-xs uppercase tracking-wide text-brass">Организуете мероприятие</span>
+          <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
+            6 залов — от камерного ужина до приёма на 500 гостей
+          </h2>
+          <p class="mt-4 max-w-[46ch] text-ink-soft">
+            Свадьбы, банкеты, корпоративные приёмы, кейтеринг и выезд шеф-повара. Оставьте заявку
+            с датой и числом гостей — рассчитаем зал под вас.
+          </p>
+        </div>
+        <span class="mt-8 inline-flex items-center gap-2 font-mono text-[13px] text-ink group-hover:text-brass">
+          Смотреть залы и оставить заявку →
+        </span>
+      </a>
+
+      <a href="/menu/" class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+        <div>
+          <span class="font-mono text-xs uppercase tracking-wide text-brass">Хотите поужинать</span>
+          <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
+            Русская, охотничья, дальневосточная и кавказская кухня
+          </h2>
+          <p class="mt-4 max-w-[46ch] text-ink-soft">
+            Дичь и тандыр, молочные продукты и овощи со своей фермы. Редкое для города сочетание кухонь
+            на одной карте.
+          </p>
+        </div>
+        <span class="mt-8 inline-flex items-center gap-2 font-mono text-[13px] text-ink group-hover:text-brass">
+          Смотреть меню и забронировать стол →
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 3. Три факта-доказательства — не иконки-галочки, а «экспонаты» протокола -->
+  <section class="border-y border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+      <p class="font-mono text-xs uppercase tracking-wide text-ink-faint" data-reveal>Из хроники дома</p>
+      <div class="mt-6 grid gap-10 md:grid-cols-3 md:gap-8">
+        <article data-reveal>
+          <p class="font-mono text-sm text-brass">{y1974.year}</p>
+          <h3 class="mt-2 font-display text-xl font-semibold text-ink">{y1974.title}</h3>
+          <p class="mt-3 text-sm text-ink-soft">{y1974.body}</p>
+        </article>
+        <article data-reveal>
+          <p class="font-mono text-sm text-brass">{y2002.year}</p>
+          <h3 class="mt-2 font-display text-xl font-semibold text-ink">{y2002.title}</h3>
+          <p class="mt-3 text-sm text-ink-soft">{y2002.body}</p>
+        </article>
+        <article data-reveal>
+          <p class="font-mono text-sm text-brass">Сегодня</p>
+          <h3 class="mt-2 font-display text-xl font-semibold text-ink">Своя ферма и тандыр</h3>
+          <p class="mt-3 text-sm text-ink-soft">
+            Собственная ферма поставляет молочные продукты, мясо и сезонные овощи. В тандырах
+            запекают ягнёнка и поросёнка на вертеле — коронные блюда банкетного стола.
+          </p>
+        </article>
+      </div>
+      <a href="/history/" class="mt-10 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass">
+        Вся хронология дома, 1974–2015 →
+      </a>
+    </div>
+  </section>
+
+  <!-- 4. Тизер меню — реальные блюда и цены -->
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <div class="flex items-end justify-between gap-6" data-reveal>
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-brass">Меню</p>
+        <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">
+          13 разделов, больше сотни блюд
+        </h2>
+      </div>
+      <a href="/menu/" class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
+        Открыть полное меню →
+      </a>
+    </div>
+
+    <div class="mt-8 divide-y divide-line border-y border-line">
+      {teaserDishes.map((dish) => (
+        <div class="flex items-center justify-between gap-6 py-5" data-reveal>
+          <span class="text-ink">{dish.name}</span>
+          <span class="font-mono text-sm text-brass">{dish.price.toLocaleString("ru-RU")} ₽</span>
+        </div>
+      ))}
+    </div>
+    <a href="/menu/" class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
+      Открыть полное меню →
+    </a>
+  </section>
+
+  <!-- 5. Тизер галереи — реальные фото, без карусели -->
+  <section class="border-t border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+      <div class="flex items-end justify-between gap-6" data-reveal>
+        <div>
+          <p class="font-mono text-xs uppercase tracking-wide text-brass">Галерея</p>
+          <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">93 кадра из жизни дома</h2>
+        </div>
+        <a href="/gallery/" class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
+          Вся галерея →
+        </a>
+      </div>
+      <div class="mt-8 grid grid-cols-3 gap-2 md:grid-cols-6">
+        {galleryTeaser.map((item) => (
+          <a href="/gallery/" class="block aspect-square overflow-hidden bg-paper-sunk" data-reveal>
+            <img src={item.thumb} alt={item.name} loading="lazy" class="h-full w-full object-cover" />
+          </a>
+        ))}
+      </div>
+      <a href="/gallery/" class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
+        Вся галерея →
+      </a>
+    </div>
+  </section>
+
+  <!-- Цитата владельца -->
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <blockquote class="max-w-3xl border-l-2 border-brass pl-6 md:pl-10" data-reveal>
+      <p class="font-display text-xl italic leading-relaxed text-ink md:text-2xl">«{OWNER_QUOTE.text}»</p>
+      <footer class="mt-4 font-mono text-xs text-ink-faint">
+        <span class="block font-body text-sm not-italic text-ink">{OWNER_QUOTE.author}</span>
+        {OWNER_QUOTE.role}
+      </footer>
+    </blockquote>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

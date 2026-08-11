@@ -1,0 +1,71 @@
+---
+import { CONTACTS } from "@/data/contacts";
+---
+
+<footer class="border-t border-line bg-ink text-paper-sunk">
+  <div class="mx-auto max-w-6xl px-5 py-16 md:px-8">
+    <div class="grid gap-10 md:grid-cols-3">
+      <div>
+        <p class="font-display text-lg text-paper-raised">{CONTACTS.name}</p>
+        <p class="mt-3 max-w-[36ch] text-sm text-paper-sunk/80">
+          Ресторанный комплекс с 1974 года. Бревенчатый терем на въезде во Владивосток.
+        </p>
+        <a
+          href={CONTACTS.hotel.url}
+          target="_blank"
+          rel="noopener"
+          class="mt-4 inline-block font-mono text-xs tracking-wide text-[var(--color-brass-on-dark)]"
+        >
+          Отель и сауна {CONTACTS.hotel.name} →
+        </a>
+      </div>
+
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Разделы</p>
+        <ul class="mt-3 flex flex-col gap-2 text-sm">
+          <li><a href="/history/">История</a></li>
+          <li><a href="/menu/">Меню</a></li>
+          <li><a href="/events/">Мероприятия и залы</a></li>
+          <li><a href="/gallery/">Галерея</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Контакты</p>
+        <ul class="mt-3 flex flex-col gap-2 text-sm">
+          <li><a href={CONTACTS.phoneTableHref}>{CONTACTS.phoneTable}</a></li>
+          <li><a href={CONTACTS.phoneEventsHref}>{CONTACTS.phoneEvents}</a></li>
+          <li><a href={CONTACTS.whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>{CONTACTS.address}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper-sunk/15 pt-6 font-mono text-xs text-paper-sunk/55">
+      <span>© 1974 — 2026 Ресторан «{CONTACTS.name}»</span>
+      <button
+        id="motion-toggle"
+        type="button"
+        class="border border-paper-sunk/30 px-3 py-1.5 text-paper-sunk/80 transition-colors hover:border-[var(--color-brass-on-dark)] hover:text-[var(--color-brass-on-dark)]"
+        aria-pressed="true"
+      >
+        Анимации: <span id="motion-toggle-label">вкл</span>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { setMotionPreference } from "@/lib/motion";
+
+  const btn = document.getElementById("motion-toggle");
+  const label = document.getElementById("motion-toggle-label");
+  const current = document.documentElement.dataset.motion !== "off";
+  if (label) label.textContent = current ? "вкл" : "выкл";
+  btn?.setAttribute("aria-pressed", String(current));
+
+  btn?.addEventListener("click", () => {
+    const next = document.documentElement.dataset.motion === "off";
+    setMotionPreference(next);
+  });
+</script>

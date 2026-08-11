@@ -1,0 +1,73 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { CONTACTS } from "@/data/contacts";
+import ReserveForm from "@/components/ReserveForm";
+
+const mapBbox = "132.0629,43.2597,132.0829,43.2717";
+const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&layer=mapnik&marker=${CONTACTS.lat}%2C${CONTACTS.lon}`;
+---
+
+<Layout
+  title="Контакты и бронь стола — Лесная Заимка, Владивосток"
+  description="Адрес, телефоны и часы работы ресторана «Лесная Заимка» во Владивостоке. Бронирование стола онлайн."
+>
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Контакты</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>Забронировать стол</h1>
+      <p class="mt-4 max-w-[62ch] text-ink-soft" data-reveal>Один набор контактов на весь сайт — без путаницы.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
+    <div class="grid gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <div class="border-t border-line">
+          <div class="flex items-start justify-between gap-6 border-b border-line py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">Адрес</span>
+            <span class="text-right text-ink">{CONTACTS.address}</span>
+          </div>
+          <div class="flex items-start justify-between gap-6 border-b border-line py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">Бронирование столов</span>
+            <a href={CONTACTS.phoneTableHref} class="text-right text-brass">{CONTACTS.phoneTable}</a>
+          </div>
+          <div class="flex items-start justify-between gap-6 border-b border-line py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">Банкеты и мероприятия</span>
+            <a href={CONTACTS.phoneEventsHref} class="text-right text-brass">{CONTACTS.phoneEvents}</a>
+          </div>
+          <div class="flex items-start justify-between gap-6 border-b border-line py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">WhatsApp</span>
+            <a href={CONTACTS.whatsapp} target="_blank" rel="noopener" class="text-right text-brass">Написать в WhatsApp</a>
+          </div>
+          <div class="flex items-start justify-between gap-6 border-b border-line py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">Часы работы</span>
+            <span class="text-right text-ink">{CONTACTS.hours}</span>
+          </div>
+          <div class="flex items-start justify-between gap-6 py-4">
+            <span class="font-mono text-xs uppercase tracking-wide text-ink-faint">Рядом</span>
+            <span class="text-right text-ink">
+              Отель и сауна <a href={CONTACTS.hotel.url} target="_blank" rel="noopener" class="text-brass underline underline-offset-2">{CONTACTS.hotel.name}</a>
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-10 aspect-[4/3] overflow-hidden border border-line">
+          <iframe title="Лесная Заимка на карте" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
+        </div>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">Бронь стола</h2>
+        <p class="mt-2 text-sm text-ink-soft">Оставьте имя и телефон — перезвоним и подтвердим бронь.</p>
+        <div class="mt-6">
+          <ReserveForm client:load />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

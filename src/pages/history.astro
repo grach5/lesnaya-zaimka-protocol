@@ -1,0 +1,70 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { HISTORY, OWNER_QUOTE, GUEST_QUOTES } from "@/data/history";
+---
+
+<Layout
+  title="История — Лесная Заимка, дом с 1974 года"
+  description="Полная хронология ресторанного комплекса «Лесная Заимка» во Владивостоке: приём Форда и Брежнева в 1974-м, завтрак Ким Чен Ира в 2002-м, реконструкция 2012–2015 и второе открытие."
+>
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Хронология дома</p>
+      <h1 class="mt-4 max-w-[24ch] font-display text-3xl font-semibold leading-[1.02] text-ink md:text-5xl" data-reveal>
+        Полвека истории в одном доме
+      </h1>
+      <p class="mt-5 max-w-[62ch] text-ink-soft md:text-lg" data-reveal>
+        Дом строили в 1974 году к приезду глав двух держав — и с тех пор он не переставал принимать
+        гостей, о которых потом рассказывают десятилетиями. Каждая запись ниже — подтверждённый факт,
+        а не легенда.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-5 py-16 md:px-8 md:py-24">
+    <div class="flex flex-col">
+      {HISTORY.map((entry) => (
+        <article class="grid grid-cols-[80px_1fr] gap-6 border-t border-line py-8 last:border-b md:grid-cols-[120px_1fr] md:gap-10" data-reveal>
+          <p class="font-mono text-lg font-semibold text-brass md:text-2xl">{entry.year}</p>
+          <div>
+            <h2 class="font-display text-xl font-semibold text-ink md:text-2xl">{entry.title}</h2>
+            <p class="mt-3 max-w-[62ch] text-ink-soft">{entry.body}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <blockquote class="mt-16 max-w-2xl border-l-2 border-brass bg-paper-raised p-8" data-reveal>
+      <p class="font-display text-xl italic leading-relaxed text-ink">«{OWNER_QUOTE.text}»</p>
+      <footer class="mt-4 font-mono text-xs text-ink-faint">
+        <span class="block font-body text-sm not-italic text-ink">{OWNER_QUOTE.author}</span>
+        {OWNER_QUOTE.role}
+      </footer>
+    </blockquote>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Почётные гости</p>
+      <h2 class="mt-3 max-w-[28ch] font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>
+        О доме говорят те, кому есть с чем сравнивать
+      </h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {GUEST_QUOTES.map((q) => (
+          <blockquote class="border border-line bg-paper-raised p-7" data-reveal>
+            <p class="text-ink">«{q.text}»</p>
+            <footer class="mt-4 font-mono text-xs text-ink-faint">
+              <span class="block font-body text-sm text-ink">{q.author}</span>
+              {q.role}
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

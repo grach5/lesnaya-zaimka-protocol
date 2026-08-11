@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# черновые отчёты Lighthouse из QA этой сессии — не часть проекта
+lighthouse-*.json
+lh-final-*.json

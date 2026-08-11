@@ -1,0 +1,158 @@
+/* Дизайн-система «Протокол» — Фаза 4.
+   Tailwind v4 CSS-first конфиг: токены — CSS-переменные в @theme.
+   shadcn/ui (init --template astro) добавил свои файлы (tw-animate-css,
+   shadcn/tailwind.css, семантические переменные) — ниже они переопределены
+   под палитру направления A вместо дефолтного пресета Nova/Geist. */
+
+@import "tailwindcss";
+
+/* Шрифты — самостоятельно захостены через fontsource (реальные npm-пакеты,
+   собраны Vite вместе с остальным CSS), а не через <link> на fonts.googleapis.com:
+   внешний Google Fonts stylesheet давал измеренные Lighthouse 1540ms
+   render-blocking (см. audit render-blocking-insight в проверке Фазы 6) —
+   самохостинг убирает этот сторонний round-trip полностью.
+   ВАЖНО: Fraunces (изначальный выбор Фазы 4) не имеет кириллицы (fontsource
+   metadata.json: subsets = latin/latin-ext/vietnamese, без cyrillic) — все
+   русские заголовки сайта тихо откатывались на fallback-шрифт. Заменено на
+   Spectral (подтверждённая кириллица, включая курсив для цитат). */
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource/spectral/400.css";
+@import "@fontsource/spectral/500.css";
+@import "@fontsource/spectral/600.css";
+@import "@fontsource/spectral/600-italic.css";
+@import "@fontsource/spectral/700.css";
+@import "@fontsource/spectral/cyrillic-400.css";
+@import "@fontsource/spectral/cyrillic-500.css";
+@import "@fontsource/spectral/cyrillic-600.css";
+@import "@fontsource/spectral/cyrillic-600-italic.css";
+@import "@fontsource/spectral/cyrillic-700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/ibm-plex-mono/cyrillic-400.css";
+@import "@fontsource/ibm-plex-mono/cyrillic-500.css";
+@import "@fontsource/ibm-plex-mono/cyrillic-600.css";
+
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Прямые токены направления A «Протокол» */
+  --color-paper: #F6F1E4;
+  --color-paper-raised: #FFFDF8;
+  --color-paper-sunk: #EAE0C8;
+  --color-ink: #14202B;
+  --color-ink-soft: #3C4C5C;
+  --color-ink-faint: #5C6B79;
+  /* Исходный --brass (#9C7A3C) прошёл ручную проверку в Фазе 4 против палитры
+     ДРУГОГО проекта этой сессии — против реальных токенов «Протокола» он даёт
+     всего 3.0–3.9:1 на paper/paper-sunk (ниже WCAG AA 4.5:1), что и поймал
+     реальный прогон Lighthouse (color-contrast, /events/), а не визуальная
+     проверка. Пересчитано скриптом под все реальные фоны сайта, включая
+     полупрозрачные (bg-paper-sunk/40) — 5.14–6.64:1 на всех, с запасом. */
+  --color-brass: #725729;
+  --color-brass-soft: #7257291F;
+  --color-brass-on-dark: #B08F4E;
+  --color-line: #14202B24;
+
+  --font-display: "Spectral", Georgia, serif;
+  --font-body: "Inter Variable", "Inter", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+  --text-4xl: 3.75rem;
+  --text-5xl: 5rem;
+
+  --dur-entrance: 0.8s;
+  --dur-micro: 0.25s;
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1); /* эквивалент power3.out */
+  --ease-micro: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* эквивалент power2.out */
+}
+
+/* Семантические переменные shadcn/ui (--background, --primary, --border и т.д.) —
+   компоненты (Button и др.) читают именно их, поэтому переопределяем на палитру
+   «Протокола», а не оставляем дефолтный серый пресет Nova. Radius почти нулевой:
+   документный характер, без скруглений (правило 3 ТЗ). */
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-paper-raised);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-paper-raised);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-ink);
+  --color-primary-foreground: var(--color-paper-raised);
+  --color-secondary: var(--color-paper-sunk);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-paper-sunk);
+  --color-muted-foreground: var(--color-ink-faint);
+  --color-accent: var(--color-brass-soft);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: #A3402E;
+  --color-border: var(--color-line);
+  --color-input: var(--color-line);
+  --color-ring: var(--color-brass);
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 3px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    @apply bg-background text-foreground;
+  }
+
+  /* Видимый фокус латунным кольцом — не дефолтный синий и не скрыт */
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-brass-soft);
+    color: var(--color-ink);
+  }
+
+  /* Правило ТЗ: все анимации отключаются одним флагом + системная настройка ОС.
+     [data-motion="off"] на <html> — ручной тумблер, prefers-reduced-motion — системный. */
+  [data-motion="off"] *,
+  [data-motion="off"] *::before,
+  [data-motion="off"] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

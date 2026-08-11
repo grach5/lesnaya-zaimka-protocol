@@ -1,0 +1,148 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { ZAIMKA_GALLERY } from "@/data/gallery";
+
+const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.length, 0);
+---
+
+<Layout
+  title="Галерея — Лесная Заимка, Владивосток"
+  description={`Фотогалерея ресторана «Лесная Заимка»: интерьеры, ферма, кухня, праздники, детский уголок, корпоративы, свадьбы. ${totalImages} реальных фотографий.`}
+>
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фотографии дома</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{totalImages} кадров из жизни Заимки</h1>
+      <p class="mt-4 max-w-[62ch] text-ink-soft" data-reveal>
+        Интерьеры, ферма, кухня, праздники, детский уголок, корпоративы и свадьбы — без стоковых
+        вставок, только реальные фотографии ресторана.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-10 md:px-8">
+    <nav id="gallery-tabs" class="flex flex-wrap gap-2" aria-label="Фильтр галереи">
+      <button type="button" class="gallery-tab border border-line px-3 py-1.5 font-mono text-xs text-ink-soft" data-section="all" aria-pressed="true">
+        Все фото
+      </button>
+      {ZAIMKA_GALLERY.sections.map((s) => (
+        <button type="button" class="gallery-tab border border-line px-3 py-1.5 font-mono text-xs text-ink-soft" data-section={s.name} aria-pressed="false">
+          {s.name} ({s.images.length})
+        </button>
+      ))}
+    </nav>
+
+    <div id="gallery-grid" class="mt-8 grid grid-cols-2 gap-2 pb-20 sm:grid-cols-3 md:grid-cols-4">
+      {ZAIMKA_GALLERY.sections.flatMap((s) =>
+        s.images.map((img) => (
+          <button
+            type="button"
+            class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
+            data-section={s.name}
+            data-full={img.full}
+            aria-label={`Открыть фото: ${s.name}`}
+          >
+            <img src={img.thumb} alt={`${s.name} — Лесная Заимка`} loading="lazy" width="400" height="400" class="h-full w-full object-cover" />
+          </button>
+        ))
+      )}
+    </div>
+  </section>
+
+  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
+    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+    <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
+    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
+  </div>
+
+  <script>
+    // Фильтр по разделам + лайтбокс с клавиатурной навигацией и фокус-трапом —
+    // тот же проверенный паттерн, что использовался в предыдущих итерациях сайта
+    // в этой сессии, перенесён без изменений логики (только вёрстка новая).
+    const tabsEl = document.getElementById("gallery-tabs") as HTMLElement;
+    const gridEl = document.getElementById("gallery-grid") as HTMLElement;
+    const lightbox = document.getElementById("lightbox") as HTMLElement;
+    const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const closeBtn = document.getElementById("lightbox-close") as HTMLButtonElement;
+    const prevBtn = document.getElementById("lightbox-prev") as HTMLButtonElement;
+    const nextBtn = document.getElementById("lightbox-next") as HTMLButtonElement;
+
+    const allThumbs = Array.from(gridEl.querySelectorAll<HTMLButtonElement>(".gallery-thumb"));
+    let visibleThumbs = allThumbs;
+    let currentIndex = 0;
+    let lastFocused: HTMLElement | null = null;
+
+    function applyFilter(section: string) {
+      allThumbs.forEach((t) => {
+        const match = section === "all" || t.dataset.section === section;
+        t.classList.toggle("hidden", !match);
+      });
+      visibleThumbs = allThumbs.filter((t) => !t.classList.contains("hidden"));
+    }
+
+    tabsEl.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>(".gallery-tab");
+      if (!btn) return;
+      tabsEl.querySelectorAll(".gallery-tab").forEach((t) => {
+        t.setAttribute("aria-pressed", "false");
+        t.classList.remove("bg-ink", "text-paper-raised");
+      });
+      btn.setAttribute("aria-pressed", "true");
+      btn.classList.add("bg-ink", "text-paper-raised");
+      applyFilter(btn.dataset.section ?? "all");
+    });
+
+    function openLightbox(idx: number, triggerEl: HTMLElement | null) {
+      currentIndex = idx;
+      lastFocused = triggerEl ?? (document.activeElement as HTMLElement | null);
+      lightboxImg.src = visibleThumbs[idx].dataset.full ?? "";
+      lightboxImg.alt = visibleThumbs[idx].dataset.section + " — Лесная Заимка";
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      closeBtn.focus();
+    }
+    function closeLightbox() {
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      lastFocused?.focus();
+    }
+    function step(delta: number) {
+      currentIndex = (currentIndex + delta + visibleThumbs.length) % visibleThumbs.length;
+      lightboxImg.src = visibleThumbs[currentIndex].dataset.full ?? "";
+      lightboxImg.alt = visibleThumbs[currentIndex].dataset.section + " — Лесная Заимка";
+    }
+
+    allThumbs.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        const idx = visibleThumbs.indexOf(thumb);
+        if (idx > -1) openLightbox(idx, thumb);
+      });
+    });
+
+    closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", () => step(-1));
+    nextBtn.addEventListener("click", () => step(1));
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (lightbox.classList.contains("hidden")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "Tab") {
+        const focusables = [prevBtn, nextBtn, closeBtn];
+        const idx = focusables.indexOf(document.activeElement as HTMLButtonElement);
+        e.preventDefault();
+        const next = e.shiftKey ? (idx <= 0 ? focusables.length - 1 : idx - 1) : idx === -1 || idx === focusables.length - 1 ? 0 : idx + 1;
+        focusables[next].focus();
+      }
+    });
+  </script>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

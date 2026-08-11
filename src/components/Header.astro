@@ -1,0 +1,84 @@
+---
+// Хедер-«бланк»: оба целевых действия равнозначны на десктопе (решение Фазы 1),
+// логотипа-графики не существует (Фаза 1) — только текстовое написание названия.
+const nav = [
+  { href: "/history/", label: "История" },
+  { href: "/menu/", label: "Меню" },
+  { href: "/events/", label: "Мероприятия" },
+  { href: "/gallery/", label: "Галерея" },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-sm">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4 md:px-8">
+    <a href="/" class="font-display text-xl font-semibold tracking-tight text-ink">
+      Лесная Заимка
+      <span class="ml-2 font-mono text-[11px] font-normal tracking-wide text-ink-faint">Владивосток · с 1974</span>
+    </a>
+
+    <nav class="hidden items-center gap-7 md:flex" aria-label="Основная навигация">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class="font-mono text-[13px] tracking-wide text-ink-soft transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:text-ink"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="hidden items-center gap-3 md:flex">
+      <a
+        href="/events/#form"
+        class="border border-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
+      >
+        Заявка на мероприятие
+      </a>
+      <a
+        href="/contacts/"
+        class="bg-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-brass"
+      >
+        Бронь стола
+      </a>
+    </div>
+
+    <button
+      id="nav-burger"
+      type="button"
+      class="flex h-10 w-10 items-center justify-center border border-line md:hidden"
+      aria-label="Открыть меню"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span class="sr-only">Меню</span>
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+        <path d="M0 1H18" stroke="currentColor" stroke-width="1.5" />
+        <path d="M0 11H18" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+    </button>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="hidden flex-col gap-1 border-t border-line bg-paper-raised px-5 py-4 md:hidden"
+    aria-label="Мобильная навигация"
+  >
+    {nav.map((item) => (
+      <a href={item.href} class="py-2.5 font-mono text-sm text-ink-soft">{item.label}</a>
+    ))}
+    <div class="mt-3 flex flex-col gap-2">
+      <a href="/events/#form" class="border border-ink px-4 py-3 text-center font-mono text-[13px] text-ink">Заявка на мероприятие</a>
+      <a href="/contacts/" class="bg-ink px-4 py-3 text-center font-mono text-[13px] text-paper-raised">Бронь стола</a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const burger = document.getElementById("nav-burger");
+  const mobileNav = document.getElementById("mobile-nav");
+  burger?.addEventListener("click", () => {
+    const isOpen = mobileNav?.classList.toggle("flex");
+    mobileNav?.classList.toggle("hidden");
+    burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+</script>

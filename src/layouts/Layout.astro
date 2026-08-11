@@ -1,0 +1,76 @@
+---
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { CONTACTS } from "@/data/contacts";
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+// Astro.site не задан (нужно проверить: домен продакшена ещё не определён — см. Фазу 7,
+// «что проверить перед публикацией»), поэтому canonical рендерим только когда он есть.
+const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : null;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+    <!-- Шрифты самохостятся через fontsource в global.css — сторонний Google Fonts
+         запрос больше не нужен (см. комментарий в global.css). -->
+    <meta property="og:type" content="restaurant.restaurant" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="generator" content={Astro.generator} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      name: CONTACTS.name,
+      servesCuisine: ["Русская", "Охотничья", "Дальневосточная", "Кавказская"],
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "ул. Маковского, 290",
+        addressLocality: "Владивосток",
+        addressCountry: "RU",
+      },
+      geo: { "@type": "GeoCoordinates", latitude: CONTACTS.lat, longitude: CONTACTS.lon },
+      telephone: "+7-423-293-11-33",
+      openingHours: "Mo-Su 11:00-24:00",
+    })} />
+
+    <!-- Тумблер анимаций применяется ДО первой отрисовки, чтобы не было мигания:
+         читаем сохранённый выбор из localStorage синхронно, без ожидания гидратации. -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem("zaimka-motion");
+          if (saved === "off") document.documentElement.dataset.motion = "off";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-paper text-ink">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-paper-raised">
+      Перейти к содержанию
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import { initSmoothScroll } from "@/lib/motion";
+      initSmoothScroll();
+    </script>
+  </body>
+</html>
