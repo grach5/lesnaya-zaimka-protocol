@@ -37,8 +37,8 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         loop
         playsinline
         preload="auto"
-        fetchpriority="high"
         aria-hidden="true"
+        {...{ fetchpriority: "high" }}
       >
         <source src={withBase("/video/hero-loop.mp4")} type="video/mp4" />
       </video>
