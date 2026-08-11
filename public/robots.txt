@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://grach5.github.io/lesnaya-zaimka-protocol/sitemap-index.xml

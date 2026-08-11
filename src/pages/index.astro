@@ -147,6 +147,36 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
+  <!-- Фильм о доме: click-to-play, без автозапуска и без веса при загрузке страницы (preload="none") -->
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фильм о доме</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>Лесная Заимка — то же самое место, что и на этих кадрах</h2>
+    <div class="relative mt-8 aspect-video overflow-hidden border border-line bg-ink" data-reveal>
+      <video
+        id="brand-film"
+        class="h-full w-full object-cover"
+        poster={withBase("/img/video-poster.webp")}
+        preload="none"
+        controls
+        playsinline
+      >
+        <source src={withBase("/video/rolik.mp4")} type="video/mp4" />
+      </video>
+      <button
+        id="brand-film-play"
+        type="button"
+        aria-label="Смотреть фильм"
+        class="absolute inset-0 flex items-center justify-center bg-ink/25 transition-opacity duration-300 hover:bg-ink/35"
+      >
+        <span class="flex h-16 w-16 items-center justify-center rounded-full border border-paper-raised/70 bg-ink/40 backdrop-blur-sm md:h-20 md:w-20">
+          <svg width="22" height="26" viewBox="0 0 22 26" fill="none" aria-hidden="true">
+            <path d="M0 0L22 13L0 26V0Z" fill="#FFFDF8" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </section>
+
   <!-- 4. Тизер меню — реальные блюда и цены -->
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
     <div class="flex items-end justify-between gap-6" data-reveal>
@@ -213,5 +243,14 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   <script>
     import { initReveal } from "@/lib/motion";
     initReveal();
+
+    const film = document.getElementById("brand-film") as HTMLVideoElement | null;
+    const filmPlayBtn = document.getElementById("brand-film-play");
+    filmPlayBtn?.addEventListener("click", () => {
+      film?.play();
+    });
+    film?.addEventListener("play", () => {
+      filmPlayBtn?.remove();
+    });
   </script>
 </Layout>
