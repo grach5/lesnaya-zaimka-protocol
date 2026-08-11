@@ -8,12 +8,16 @@ import "@/styles/global.css";
 interface Props {
   title: string;
   description: string;
+  /** Путь до превью-картинки (без домена, с withBase уже проведён снаружи не нужно — Layout сам достроит абсолютный URL). */
+  image?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image = "/img/hero-index.webp" } = Astro.props;
 // Astro.site не задан (нужно проверить: домен продакшена ещё не определён — см. Фазу 7,
-// «что проверить перед публикацией»), поэтому canonical рендерим только когда он есть.
+// «что проверить перед публикацией»), поэтому canonical/og:image рендерим только когда он есть —
+// у соцсетей и мессенджеров превью всё равно требует абсолютный URL, относительный не сработает.
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : null;
+const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
 ---
 
 <!doctype html>
@@ -31,6 +35,10 @@ const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : null
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ru_RU" />
+    {canonicalURL && <meta property="og:url" content={canonicalURL} />}
+    {ogImageURL && <meta property="og:image" content={ogImageURL} />}
+    {ogImageURL && <meta name="twitter:card" content="summary_large_image" />}
+    {ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
     <meta name="generator" content={Astro.generator} />
 
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
