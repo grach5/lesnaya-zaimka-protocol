@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { HALLS } from "@/data/halls";
+import { CONTACTS } from "@/data/contacts";
 
 // Форма заявки на мероприятие — единственный React-остров на странице /events/
 // (client:load), остальная страница остаётся статичным HTML/CSS без гидратации.
-// ВАЖНО (Фаза 7, чек-лист перед публикацией): реального адресата заявки пока нет —
-// нужен email/CRM-вебхук от клиента. Сейчас форма только валидирует на клиенте
-// и показывает демонстрационное подтверждение, ничего никуда не отправляет.
+// Раньше форма только валидировала на клиенте и показывала демонстрационное
+// подтверждение, ничего никуда не отправляя (сайт статический, без бэкенда) —
+// исправлено на реальный WhatsApp click-to-chat на номер банкетного отдела
+// (CONTACTS.whatsapp), тот же честный механизм, что и в ReserveForm/корзине.
 const EVENT_TYPES = ["Свадьба", "Корпоратив", "Банкет", "Фуршет", "Другое"];
 
 export default function BookingForm() {
@@ -21,22 +23,44 @@ export default function BookingForm() {
     const data = new FormData(e.currentTarget);
     const nextErrors: Record<string, string> = {};
 
-    if (!String(data.get("name") ?? "").trim()) nextErrors.name = "Укажите имя";
-    if (!String(data.get("phone") ?? "").trim()) nextErrors.phone = "Укажите телефон";
-    if (!String(data.get("date") ?? "").trim()) nextErrors.date = "Укажите дату мероприятия";
-    const guests = Number(data.get("guests"));
+    const name = String(data.get("name") ?? "").trim();
+    const phone = String(data.get("phone") ?? "").trim();
+    const date = String(data.get("date") ?? "").trim();
+    const guestsRaw = String(data.get("guests") ?? "").trim();
+    const guests = Number(guestsRaw);
+    const type = String(data.get("type") ?? "").trim();
+    const hall = String(data.get("hall") ?? "").trim();
+    const comment = String(data.get("comment") ?? "").trim();
+
+    if (!name) nextErrors.name = "Укажите имя";
+    if (!phone) nextErrors.phone = "Укажите телефон";
+    if (!date) nextErrors.date = "Укажите дату мероприятия";
     if (!guests || guests < 1) nextErrors.guests = "Укажите число гостей";
 
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length === 0) setSubmitted(true);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    const lines = [
+      `Здравствуйте! Хочу оставить заявку на мероприятие в «${CONTACTS.name}»:`,
+      "",
+      `Имя: ${name}`,
+      `Телефон: ${phone}`,
+      `Дата: ${date}`,
+      `Гостей: ${guestsRaw}`,
+      type && `Тип мероприятия: ${type}`,
+      hall && `Зал: ${hall}`,
+      comment && `Комментарий: ${comment}`,
+    ].filter(Boolean);
+    window.open(`${CONTACTS.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+    setSubmitted(true);
   }
 
   if (submitted) {
     return (
       <div role="status" className="border border-line bg-paper-raised p-8">
-        <p className="font-display text-xl font-semibold text-ink">Заявка принята</p>
+        <p className="font-display text-xl font-semibold text-ink">Открыли WhatsApp с вашей заявкой</p>
         <p className="mt-2 text-sm text-ink-soft">
-          Банкетный отдел свяжется с вами в течение рабочего дня, чтобы уточнить детали и зал.
+          Осталось отправить сообщение — банкетный отдел свяжется с вами в течение рабочего дня.
         </p>
       </div>
     );
@@ -61,7 +85,7 @@ export default function BookingForm() {
         <select
           id="ev-type"
           name="type"
-          className="h-9 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
+          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
         >
           {EVENT_TYPES.map((t) => (
             <option key={t} value={t}>{t}</option>
@@ -74,7 +98,7 @@ export default function BookingForm() {
         <select
           id="ev-hall"
           name="hall"
-          className="h-9 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
+          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
         >
           <option value="">Подскажите вы</option>
           {HALLS.map((h) => (
@@ -101,7 +125,7 @@ export default function BookingForm() {
       </div>
 
       <div className="md:col-span-2">
-        <Button type="submit" className="w-full md:w-auto">Отправить заявку</Button>
+        <Button type="submit" className="h-11 w-full md:w-auto">Отправить заявку в WhatsApp</Button>
       </div>
     </form>
   );
