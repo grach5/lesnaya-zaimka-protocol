@@ -1,0 +1,183 @@
+---
+import { CONTACTS } from "@/data/contacts";
+---
+
+<!-- Панель предзаказа — фикс поверх всего сайта (как модалка), открывается
+     кнопкой корзины в шапке. Реальная отправка — через WhatsApp deep-link на
+     номер ресторана (CONTACTS.whatsapp), без бэкенда/оплаты — см. src/lib/cart.ts. -->
+<div id="cart-overlay" class="fixed inset-0 z-[90] hidden bg-ink/60 backdrop-blur-sm" aria-hidden="true"></div>
+<aside
+  id="cart-drawer"
+  class="fixed inset-y-0 right-0 z-[95] flex hidden w-full max-w-md translate-x-full flex-col bg-paper-raised text-ink shadow-2xl transition-transform duration-300 ease-out"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Предзаказ"
+>
+  <div class="flex items-center justify-between border-b border-line px-5 py-4">
+    <p class="font-display text-lg font-semibold text-ink">Предзаказ</p>
+    <button id="cart-close" type="button" aria-label="Закрыть корзину" class="flex h-9 w-9 items-center justify-center text-ink-soft hover:text-ink">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1L15 15M15 1L1 15" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+  </div>
+
+  <div id="cart-empty" class="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
+    <p class="text-ink-soft">Пока пусто. Добавляйте блюда из меню — соберём предзаказ.</p>
+    <a href="#" data-cart-menu-link class="font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass">Открыть меню →</a>
+  </div>
+
+  <div id="cart-body" class="hidden flex-1 flex-col overflow-hidden">
+    <div id="cart-items" class="flex-1 divide-y divide-line overflow-y-auto px-5"></div>
+
+    <div class="border-t border-line px-5 py-4">
+      <p class="font-mono text-xs uppercase tracking-wide text-ink-faint">Формат</p>
+      <div class="mt-2 flex gap-2">
+        <button type="button" data-format="hall" class="cart-format-btn flex-1 border border-ink px-3 py-2 font-mono text-[13px]" aria-pressed="true">В зале</button>
+        <button type="button" data-format="takeaway" class="cart-format-btn flex-1 border border-line px-3 py-2 font-mono text-[13px] text-ink-soft" aria-pressed="false">С собой</button>
+      </div>
+    </div>
+
+    <div class="border-t border-line px-5 py-4">
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-sm text-ink-soft">Итого</span>
+        <span id="cart-total" class="font-mono text-xl font-semibold text-ink">0 ₽</span>
+      </div>
+      <a
+        id="cart-submit"
+        href="#"
+        target="_blank"
+        rel="noopener"
+        class="mt-4 flex items-center justify-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"
+      >
+        Отправить предзаказ в WhatsApp →
+      </a>
+      <p class="mt-3 text-center text-xs text-ink-faint">
+        Это не оплата — заявка уйдёт в WhatsApp {CONTACTS.name}, стол и блюда подтвердит менеджер.
+      </p>
+    </div>
+  </div>
+</aside>
+
+<script>
+  import { getCart, setQty, cartCount, cartTotal, onCartChange, type CartItem } from "@/lib/cart";
+  import { CONTACTS } from "@/data/contacts";
+  import { withBase } from "@/lib/url";
+
+  const overlay = document.getElementById("cart-overlay");
+  const drawer = document.getElementById("cart-drawer");
+  const closeBtn = document.getElementById("cart-close");
+  const emptyEl = document.getElementById("cart-empty");
+  const bodyEl = document.getElementById("cart-body");
+  const itemsEl = document.getElementById("cart-items");
+  const totalEl = document.getElementById("cart-total");
+  const submitEl = document.getElementById("cart-submit") as HTMLAnchorElement | null;
+  const menuLink = document.querySelector<HTMLAnchorElement>("[data-cart-menu-link]");
+  if (menuLink) menuLink.href = withBase("/menu/");
+
+  let format: "hall" | "takeaway" = "hall";
+
+  function open() {
+    overlay?.classList.remove("hidden");
+    drawer?.classList.remove("hidden");
+    requestAnimationFrame(() => drawer?.classList.remove("translate-x-full"));
+    document.body.style.overflow = "hidden";
+  }
+
+  function close() {
+    drawer?.classList.add("translate-x-full");
+    document.body.style.overflow = "";
+    window.setTimeout(() => {
+      overlay?.classList.add("hidden");
+      drawer?.classList.add("hidden");
+    }, 300);
+  }
+
+  overlay?.addEventListener("click", close);
+  closeBtn?.addEventListener("click", close);
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !drawer?.classList.contains("hidden")) close();
+  });
+
+  document.querySelectorAll<HTMLButtonElement>(".cart-format-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      format = btn.dataset.format === "takeaway" ? "takeaway" : "hall";
+      document.querySelectorAll<HTMLButtonElement>(".cart-format-btn").forEach((b) => {
+        const active = b === btn;
+        b.setAttribute("aria-pressed", String(active));
+        b.classList.toggle("border-ink", active);
+        b.classList.toggle("border-line", !active);
+        b.classList.toggle("text-ink-soft", !active);
+      });
+      buildMessage();
+    });
+  });
+
+  function buildMessage(): void {
+    const items = getCart();
+    const total = cartTotal(items);
+    if (!submitEl) return;
+    const lines = items.map((i) => `${i.qty} × ${i.name} — ${(i.price * i.qty).toLocaleString("ru-RU")} ₽`);
+    const formatLabel = format === "hall" ? "В зале" : "С собой";
+    const text = [
+      `Здравствуйте! Хочу сделать предзаказ в «${CONTACTS.name}»:`,
+      "",
+      ...lines,
+      "",
+      `Формат: ${formatLabel}`,
+      `Итого: ${total.toLocaleString("ru-RU")} ₽`,
+    ].join("\n");
+    submitEl.href = `${CONTACTS.whatsapp}?text=${encodeURIComponent(text)}`;
+  }
+
+  function render(): void {
+    const items = getCart();
+    if (!items.length) {
+      emptyEl?.classList.remove("hidden");
+      bodyEl?.classList.add("hidden");
+      bodyEl?.classList.remove("flex");
+      return;
+    }
+    emptyEl?.classList.add("hidden");
+    bodyEl?.classList.remove("hidden");
+    bodyEl?.classList.add("flex");
+
+    if (itemsEl) {
+      itemsEl.innerHTML = "";
+      items.forEach((item: CartItem) => {
+        const row = document.createElement("div");
+        row.className = "flex items-center justify-between gap-3 py-4";
+        row.innerHTML = `
+          <div class="min-w-0">
+            <p class="truncate text-sm text-ink">${item.name}</p>
+            <p class="font-mono text-xs text-ink-faint">${item.price.toLocaleString("ru-RU")} ₽</p>
+          </div>
+          <div class="flex shrink-0 items-center gap-2">
+            <button type="button" data-action="dec" class="flex h-7 w-7 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">−</button>
+            <span class="w-5 text-center font-mono text-sm">${item.qty}</span>
+            <button type="button" data-action="inc" class="flex h-7 w-7 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">+</button>
+          </div>
+        `;
+        row.querySelector('[data-action="dec"]')?.addEventListener("click", () => setQty(item.name, item.qty - 1));
+        row.querySelector('[data-action="inc"]')?.addEventListener("click", () => setQty(item.name, item.qty + 1));
+        itemsEl.appendChild(row);
+      });
+    }
+
+    if (totalEl) totalEl.textContent = `${cartTotal(items).toLocaleString("ru-RU")} ₽`;
+    buildMessage();
+  }
+
+  onCartChange(render);
+  render();
+
+  document.querySelectorAll<HTMLElement>("[data-cart-open]").forEach((btn) => btn.addEventListener("click", open));
+
+  function updateBadges() {
+    const n = cartCount();
+    document.querySelectorAll<HTMLElement>("[data-cart-badge]").forEach((el) => {
+      el.textContent = String(n);
+      el.classList.toggle("hidden", n === 0);
+    });
+  }
+  onCartChange(updateBadges);
+  updateBadges();
+</script>

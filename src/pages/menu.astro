@@ -61,9 +61,21 @@ const menuSchema = {
             <h2 class="font-display text-2xl font-semibold text-ink">{cat.name}</h2>
             <div class="mt-5 divide-y divide-dashed divide-line">
               {cat.items.map((item) => (
-                <div class="flex items-center justify-between gap-6 py-3.5">
+                <div class="flex items-center justify-between gap-4 py-3.5">
                   <span class="text-ink">{item.name}</span>
-                  <span class="shrink-0 font-mono text-sm text-brass">{item.price.toLocaleString("ru-RU")} ₽</span>
+                  <span class="flex shrink-0 items-center gap-3">
+                    <span class="font-mono text-sm text-brass">{item.price.toLocaleString("ru-RU")} ₽</span>
+                    <button
+                      type="button"
+                      data-add-item
+                      data-name={item.name}
+                      data-price={item.price}
+                      aria-label={`Добавить «${item.name}» в предзаказ`}
+                      class="flex h-7 w-7 shrink-0 items-center justify-center border border-line text-ink-soft transition-colors hover:border-ink hover:bg-ink hover:text-paper-raised"
+                    >
+                      +
+                    </button>
+                  </span>
                 </div>
               ))}
             </div>
@@ -76,7 +88,24 @@ const menuSchema = {
 
   <script>
     import { initReveal } from "@/lib/motion";
+    import { addToCart } from "@/lib/cart";
     initReveal();
+
+    document.querySelectorAll<HTMLButtonElement>("[data-add-item]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const name = btn.dataset.name;
+        const price = Number(btn.dataset.price);
+        if (!name || !Number.isFinite(price)) return;
+        addToCart(name, price);
+        const original = btn.textContent;
+        btn.textContent = "✓";
+        btn.classList.add("border-ink", "bg-ink", "text-paper-raised");
+        window.setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove("border-ink", "bg-ink", "text-paper-raised");
+        }, 700);
+      });
+    });
 
     // Подсветка активной категории при скролле — тот же паттерн, что применялся
     // в предыдущих версиях сайта этого ресторана и уже проверен в этой сессии.
