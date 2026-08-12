@@ -3,11 +3,11 @@ import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 ---
 
-<footer class="border-t border-line bg-ink text-paper-sunk">
+<footer class="border-t-2 border-[var(--color-gold)]/50 bg-[var(--color-velvet-deep)] text-paper-sunk">
   <div class="mx-auto max-w-6xl px-5 py-16 md:px-8">
     <div class="grid gap-10 md:grid-cols-3">
       <div>
-        <p class="font-display text-lg text-paper-raised">{CONTACTS.name}</p>
+        <p class="font-display text-lg text-paper-raised"><span class="text-[var(--color-gold)]">✦</span> {CONTACTS.name}</p>
         <p class="mt-3 max-w-[36ch] text-sm text-paper-sunk/80">
           Ресторанный комплекс с 1974 года. Бревенчатый терем на въезде во Владивосток.
         </p>
@@ -15,7 +15,7 @@ import { withBase } from "@/lib/url";
           href={CONTACTS.hotel.url}
           target="_blank"
           rel="noopener"
-          class="mt-4 inline-block font-mono text-xs tracking-wide text-[var(--color-brass-on-dark)]"
+          class="mt-4 inline-block font-mono text-xs tracking-wide text-[var(--color-gold)]"
         >
           Отель и сауна {CONTACTS.hotel.name} →
         </a>
@@ -42,12 +42,12 @@ import { withBase } from "@/lib/url";
       </div>
     </div>
 
-    <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper-sunk/15 pt-6 font-mono text-xs text-paper-sunk/55">
+    <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper-sunk/15 pt-6 font-mono text-xs text-paper-sunk/70">
       <span>© 1974 — 2026 Ресторан «{CONTACTS.name}»</span>
       <button
         id="motion-toggle"
         type="button"
-        class="border border-paper-sunk/30 px-3 py-1.5 text-paper-sunk/80 transition-colors hover:border-[var(--color-brass-on-dark)] hover:text-[var(--color-brass-on-dark)]"
+        class="border border-paper-sunk/30 px-3 py-1.5 text-paper-sunk/80 transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold)]"
         aria-pressed="true"
       >
         Анимации: <span id="motion-toggle-label">вкл</span>

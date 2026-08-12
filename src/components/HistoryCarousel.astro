@@ -17,14 +17,14 @@ function tagFor(entry: HistoryEntry): string {
 ---
 
 <div class="relative -mx-5 md:-mx-8">
-  <div class="border-y border-brass-on-dark/25 bg-ink/70 py-10 backdrop-blur-md md:py-14">
+  <div class="border-y-2 border-[var(--color-gold)]/40 bg-[var(--color-velvet-deep)]/80 py-10 backdrop-blur-md md:py-14">
     <div class="mb-6 flex items-center justify-between px-5 md:px-8">
-      <h2 class="font-mono text-xs tracking-wide text-paper-raised/70 uppercase">Моменты истории</h2>
+      <h2 class="font-mono text-xs tracking-[0.16em] text-[var(--color-gold)] uppercase">✦ Моменты истории</h2>
       <div class="flex gap-2">
         <button
           type="button"
           id="hc-prev"
-          class="flex h-9 w-9 items-center justify-center rounded-full border border-brass-on-dark/50 text-paper-raised transition-colors hover:bg-brass-on-dark hover:text-ink"
+          class="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-gold)]/60 text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
           aria-label="Предыдущий момент"
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true"><path d="M7 1L1 7L7 13" stroke="currentColor" stroke-width="1.5" /></svg>
@@ -32,7 +32,7 @@ function tagFor(entry: HistoryEntry): string {
         <button
           type="button"
           id="hc-next"
-          class="flex h-9 w-9 items-center justify-center rounded-full border border-brass-on-dark/50 text-paper-raised transition-colors hover:bg-brass-on-dark hover:text-ink"
+          class="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-gold)]/60 text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
           aria-label="Следующий момент"
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true"><path d="M1 1L7 7L1 13" stroke="currentColor" stroke-width="1.5" /></svg>
@@ -42,8 +42,8 @@ function tagFor(entry: HistoryEntry): string {
 
     <div id="hc-track" class="flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:px-8 [&::-webkit-scrollbar]:hidden">
       {entries.map((entry) => (
-        <article class="plaque w-[82vw] shrink-0 snap-start border-brass-on-dark/30 bg-ink/60 p-6 sm:w-[380px] md:p-8" data-reveal>
-          <p class="font-mono text-[11px] tracking-wide text-brass-on-dark uppercase">{tagFor(entry)}</p>
+        <article class="plaque w-[82vw] shrink-0 snap-start bg-[var(--color-velvet)]/85 p-6 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.65)] sm:w-[380px] md:p-8" data-reveal>
+          <p class="font-mono text-[11px] tracking-wide text-[var(--color-gold)] uppercase">{tagFor(entry)}</p>
           <p class="mt-3 font-mono text-2xl font-semibold text-paper-raised">{entry.year}</p>
           <h3 class="mt-2 font-display text-lg font-semibold text-paper-raised md:text-xl">{entry.title}</h3>
           <p class="mt-3 text-sm leading-relaxed text-paper-raised/80">{entry.body}</p>

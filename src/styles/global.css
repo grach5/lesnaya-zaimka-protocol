@@ -39,23 +39,35 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Прямые токены направления A «Протокол» */
+  /* Дизайн-система «Протокол» — палитра пересобрана по прямому отзыву («слабо,
+     не соответствует стилю ресторана»): прежняя версия была документ-минимализмом
+     (тонкие линии, приглушённая латунь только в тексте), а реальный дом — это
+     хрусталь, позолота, бархат бордо, резное дерево (см. фото интерьеров).
+     Ниже — тот же каркас токенов, но тёплый почти-чёрный вместо холодного
+     сине-чёрного, + два новых слоя: насыщенное золото (декоративное, не для
+     текста на светлом) и бархатный бордовый (для «парадных» тёмных секций). */
   --color-paper: #F6F1E4;
   --color-paper-raised: #FFFDF8;
   --color-paper-sunk: #EAE0C8;
-  --color-ink: #14202B;
-  --color-ink-soft: #3C4C5C;
-  --color-ink-faint: #5C6B79;
-  /* Исходный --brass (#9C7A3C) прошёл ручную проверку в Фазе 4 против палитры
-     ДРУГОГО проекта этой сессии — против реальных токенов «Протокола» он даёт
-     всего 3.0–3.9:1 на paper/paper-sunk (ниже WCAG AA 4.5:1), что и поймал
-     реальный прогон Lighthouse (color-contrast, /events/), а не визуальная
-     проверка. Пересчитано скриптом под все реальные фоны сайта, включая
-     полупрозрачные (bg-paper-sunk/40) — 5.14–6.64:1 на всех, с запасом. */
+  --color-ink: #1E140F;
+  --color-ink-soft: #4A3B30;
+  --color-ink-faint: #6B5C4E;
+  /* --color-brass — текстовый акцент на светлом фоне, специально приглушённый
+     и WCAG AA-проверенный (см. предыдущую заметку и повторную проверку скриптом
+     после пересчёта --color-ink): 5.99:1 на --color-paper. Не путать с
+     --color-gold ниже — тот для рамок/заливок, а не для текста на бумаге. */
   --color-brass: #725729;
   --color-brass-soft: #7257291F;
   --color-brass-on-dark: #B08F4E;
-  --color-line: #14202B24;
+  /* Насыщенное сусальное золото — реальный тон чеканки на люстрах и потолочной
+     лепнине (см. interiors/1, interiors/2). Только для рамок/заливок/текста на
+     тёмном — проверено: 7.86:1 (ink поверх), 7.14:1 (поверх --color-velvet). */
+  --color-gold: #D4AF37;
+  /* Бархат — реальный тон штор/обивки (см. interiors/2, interiors/3, interiors/9).
+     Тёмная «парадная» альтернатива --color-ink для секций-акцентов. */
+  --color-velvet: #4A1220;
+  --color-velvet-deep: #330C16;
+  --color-line: #1E140F24;
 
   --font-display: "Spectral", Georgia, serif;
   --font-body: "Inter Variable", "Inter", -apple-system, sans-serif;
@@ -101,7 +113,7 @@
   --color-destructive: #A3402E;
   --color-border: var(--color-line);
   --color-input: var(--color-line);
-  --color-ring: var(--color-brass);
+  --color-ring: var(--color-gold);
   --radius-sm: 1px;
   --radius-md: 2px;
   --radius-lg: 2px;
@@ -129,37 +141,51 @@
     background-color: var(--color-paper);
   }
 
-  /* «Латунная плашка» — акцент музейного экспоната/премиальной карточки:
-     срезанные уголки + тонкая двойная рамка, по мотивам кованых уголков
-     на дверях дома (см. интерьерные фото). Используется на карточках истории
-     и на ключевых CTA, чтобы дом-сруб читался не только в фоне, но и в деталях. */
+  /* «Золочёная плашка» — акцент музейного экспоната/премиальной карточки:
+     срезанные уголки + угловые скобки сусальным золотом, по мотивам кованых
+     уголков на дверях дома и золотой чеканки люстр (см. интерьерные фото).
+     Используется на карточках истории и на ключевых CTA — та самая деталь,
+     которой прежней версии не хватало («слабо, не по стилю дома»). */
   .plaque {
     position: relative;
-    border: 1px solid var(--color-line);
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    border: 1px solid var(--color-gold);
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   }
   .plaque::before,
   .plaque::after {
     content: "";
     position: absolute;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-brass);
-    opacity: 0.55;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--color-gold);
+    opacity: 0.85;
+    pointer-events: none;
   }
   .plaque::before {
-    top: 7px;
-    left: 7px;
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
   }
   .plaque::after {
-    bottom: 7px;
-    right: 7px;
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
   }
 
-  /* Видимый фокус латунным кольцом — не дефолтный синий и не скрыт */
+  /* Двойная золотая рамка — обрамление «под раму зеркала/картины» для
+     ключевых блоков (цитата владельца, статы шапки). Внешняя тонкая линия +
+     внутренний отступ + едва заметное тёплое свечение, а не плоский hairline. */
+  .frame-gold {
+    position: relative;
+    border: 1px solid var(--color-gold);
+    box-shadow: inset 0 0 0 4px color-mix(in oklch, var(--color-gold), transparent 88%);
+  }
+
+  /* Видимый фокус золотым кольцом — не дефолтный синий и не скрыт */
   :focus-visible {
-    outline: 2px solid var(--color-brass);
+    outline: 2px solid var(--color-gold);
     outline-offset: 2px;
   }
 

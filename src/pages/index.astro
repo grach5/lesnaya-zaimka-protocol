@@ -95,22 +95,22 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
       </div>
     </div>
 
-    <div class="border-b border-line bg-ink">
-      <div class="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-paper-sunk/15 md:grid-cols-4">
-        <div class="px-5 py-4 md:px-8">
-          <p class="font-mono text-2xl text-paper-raised">1974</p>
+    <div class="border-b-2 border-[var(--color-gold)]/40 bg-ink">
+      <div class="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-[var(--color-gold)]/20 md:grid-cols-4">
+        <div class="border-t-2 border-[var(--color-gold)] px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-[var(--color-gold)]">1974</p>
           <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">год основания</p>
         </div>
-        <div class="px-5 py-4 md:px-8">
-          <p class="font-mono text-2xl text-paper-raised">2</p>
+        <div class="border-t-2 border-[var(--color-gold)] px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-[var(--color-gold)]">2</p>
           <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">главы государств приняты</p>
         </div>
-        <div class="px-5 py-4 md:px-8">
-          <p class="font-mono text-2xl text-paper-raised">6</p>
+        <div class="border-t-2 border-[var(--color-gold)] px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-[var(--color-gold)]">6</p>
           <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">залов, до 500 гостей</p>
         </div>
-        <div class="px-5 py-4 md:px-8">
-          <p class="font-mono text-2xl text-paper-raised">4</p>
+        <div class="border-t-2 border-[var(--color-gold)] px-5 py-4 md:px-8">
+          <p class="font-mono text-2xl text-[var(--color-gold)]">4</p>
           <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">кухни на одной карте</p>
         </div>
       </div>
@@ -120,7 +120,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   <!-- 2. Развилка: два равнозначных CTA (решение Фазы 1) — вертикальный стек на мобильном, не карусель -->
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
     <div class="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
-      <a href={withBase("/events/")} class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+      <a href={withBase("/events/")} class="group flex flex-col justify-between border-2 border-transparent bg-paper-raised p-8 transition-colors hover:border-[var(--color-gold)] md:p-12" data-reveal>
         <div>
           <span class="font-mono text-xs uppercase tracking-wide text-brass">Организуете мероприятие</span>
           <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
@@ -136,7 +136,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         </span>
       </a>
 
-      <a href={withBase("/menu/")} class="group flex flex-col justify-between bg-paper-raised p-8 md:p-12" data-reveal>
+      <a href={withBase("/menu/")} class="group flex flex-col justify-between border-2 border-transparent bg-paper-raised p-8 transition-colors hover:border-[var(--color-gold)] md:p-12" data-reveal>
         <div>
           <span class="font-mono text-xs uppercase tracking-wide text-brass">Хотите поужинать</span>
           <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
@@ -236,15 +236,18 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
-  <!-- Цитата владельца -->
-  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-    <blockquote class="max-w-3xl border-l-2 border-brass pl-6 md:pl-10" data-reveal>
-      <p class="font-display text-xl italic leading-relaxed text-ink md:text-2xl">«{OWNER_QUOTE.text}»</p>
-      <footer class="mt-4 font-mono text-xs text-ink-faint">
-        <span class="block font-body text-sm not-italic text-ink">{OWNER_QUOTE.author}</span>
-        {OWNER_QUOTE.role}
-      </footer>
-    </blockquote>
+  <!-- Цитата владельца — «парадный» тёмный момент на бархате, в паре с каруселью
+       истории (тот же приём: свет/тьма чередуются вниз по странице). -->
+  <section class="bg-[var(--color-velvet-deep)] py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-5 md:px-8">
+      <blockquote class="frame-gold mx-auto max-w-3xl p-8 md:p-12" data-reveal>
+        <p class="font-display text-xl italic leading-relaxed text-paper-raised md:text-2xl">«{OWNER_QUOTE.text}»</p>
+        <footer class="mt-4 font-mono text-xs text-paper-sunk/70">
+          <span class="block font-body text-sm not-italic text-[var(--color-gold)]">{OWNER_QUOTE.author}</span>
+          {OWNER_QUOTE.role}
+        </footer>
+      </blockquote>
+    </div>
   </section>
 
   <script>
