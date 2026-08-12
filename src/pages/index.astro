@@ -37,11 +37,26 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         loop
         playsinline
         preload="auto"
-        aria-hidden="true"
+        aria-label="Фильм о «Лесной Заимке»"
         {...{ fetchpriority: "high" }}
       >
-        <source src={withBase("/video/hero-loop.mp4")} type="video/mp4" />
+        <source src={withBase("/video/rolik.mp4")} type="video/mp4" />
       </video>
+
+      <button
+        id="hero-mute-toggle"
+        type="button"
+        aria-label="Включить звук фильма"
+        aria-pressed="false"
+        class="absolute bottom-24 right-5 z-10 flex h-11 w-11 items-center justify-center border border-paper-raised/40 bg-ink/40 text-paper-raised backdrop-blur-sm transition-colors hover:border-paper-raised/70 md:bottom-28 md:right-8"
+      >
+        <svg id="hero-mute-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 9v6h4l5 5V4L8 9H4Z" fill="currentColor" />
+          <path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" class="hero-mute-wave" />
+          <path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" class="hero-mute-wave" />
+          <path id="hero-mute-slash" d="M19 5 5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </button>
 
       <!-- Дизайнерский задний фон: плёночное зерно поверх видео (архивная/документальная фактура,
            в тему «Протокола») + тонированный вертикальный и боковой скрим для читаемости текста
@@ -169,36 +184,6 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
-  <!-- Фильм о доме: click-to-play, без автозапуска и без веса при загрузке страницы (preload="none") -->
-  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фильм о доме</p>
-    <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>Лесная Заимка — то же самое место, что и на этих кадрах</h2>
-    <div class="relative mt-8 aspect-video overflow-hidden border border-line bg-ink" data-reveal>
-      <video
-        id="brand-film"
-        class="h-full w-full object-cover"
-        poster={withBase("/img/video-poster.webp")}
-        preload="none"
-        controls
-        playsinline
-      >
-        <source src={withBase("/video/rolik.mp4")} type="video/mp4" />
-      </video>
-      <button
-        id="brand-film-play"
-        type="button"
-        aria-label="Смотреть фильм"
-        class="absolute inset-0 flex items-center justify-center bg-ink/25 transition-opacity duration-300 hover:bg-ink/35"
-      >
-        <span class="flex h-16 w-16 items-center justify-center rounded-full border border-paper-raised/70 bg-ink/40 backdrop-blur-sm md:h-20 md:w-20">
-          <svg width="22" height="26" viewBox="0 0 22 26" fill="none" aria-hidden="true">
-            <path d="M0 0L22 13L0 26V0Z" fill="#FFFDF8" />
-          </svg>
-        </span>
-      </button>
-    </div>
-  </section>
-
   <!-- 4. Тизер меню — реальные блюда и цены -->
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
     <div class="flex items-end justify-between gap-6" data-reveal>
@@ -268,7 +253,8 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
 
     // Фоновое видео в шапке запускаем только если анимации разрешены (системная
     // prefers-reduced-motion и ручной тумблер в футере) — иначе остаётся статичный
-    // постер видео, а не сломанный/дёрганый плеер.
+    // постер видео, а не сломанный/дёрганый плеер. Это единственное видео на сайте
+    // теперь (полный ролик, зациклен), поэтому даём кнопку включить звук.
     const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
     if (heroVideo && motionEnabled()) {
       heroVideo.play().catch(() => {
@@ -276,13 +262,15 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
       });
     }
 
-    const film = document.getElementById("brand-film") as HTMLVideoElement | null;
-    const filmPlayBtn = document.getElementById("brand-film-play");
-    filmPlayBtn?.addEventListener("click", () => {
-      film?.play();
-    });
-    film?.addEventListener("play", () => {
-      filmPlayBtn?.remove();
+    const muteToggle = document.getElementById("hero-mute-toggle");
+    const muteSlash = document.getElementById("hero-mute-slash");
+    muteToggle?.addEventListener("click", () => {
+      if (!heroVideo) return;
+      heroVideo.muted = !heroVideo.muted;
+      const withSound = !heroVideo.muted;
+      muteToggle.setAttribute("aria-pressed", String(withSound));
+      muteToggle.setAttribute("aria-label", withSound ? "Выключить звук фильма" : "Включить звук фильма");
+      muteSlash?.setAttribute("opacity", withSound ? "0" : "1");
     });
   </script>
 </Layout>

@@ -123,11 +123,15 @@
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     @apply bg-background text-foreground;
-    /* Фактура архивной бумаги на весь сайт (кроме видео в шапке — там своё зерно) —
-       та же техника (SVG feTurbulence), непрозрачность зашита в сам SVG (4%), чтобы
-       не задевать opacity контента. Тема «Протокола»: не дерево/лес, а именно бумага/документ. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.045'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+    /* Задний фон: тёплая тонировка с золотым отливом — ближе к реальной грандиозности
+       интерьеров (мрамор, золото, люстры на видео), а не к строгой архивной бумаге,
+       которая была раньше. Два слоя: мягкое золотое свечение сверху (как свет люстры)
+       + тонкое зерно бумаги под ним для фактуры (непрозрачность зашита в сам SVG). */
+    background-image:
+      radial-gradient(ellipse 1400px 900px at 50% -8%, color-mix(in srgb, var(--color-brass-on-dark) 22%, transparent), transparent 65%),
+      radial-gradient(ellipse 900px 700px at 100% 0%, color-mix(in srgb, var(--color-brass-on-dark) 14%, transparent), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, repeat;
   }
 
   /* Видимый фокус латунным кольцом — не дефолтный синий и не скрыт */
