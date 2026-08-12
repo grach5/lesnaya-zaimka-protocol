@@ -82,6 +82,14 @@
   --text-3xl: 2.75rem;
   --text-4xl: 3.75rem;
   --text-5xl: 5rem;
+  /* Масштаб глав — по итогам многоагентного разбора («Creative Bible»): реальная
+     причина отзыва «слабо, непрофессионально» была не в цвете, а в том, что ни
+     один заголовок секции после hero не поднимался выше text-2xl/3xl — вся страница
+     плоская после первого экрана. Эти два токена — единственные заголовки «глав»
+     редакционной структуры ниже, используются редко (не на каждом h-элементе),
+     поэтому редкость и держит вес события. */
+  --text-masthead: clamp(2.75rem, 7vw, 6rem);
+  --text-chapter: clamp(4rem, 10vw, 8.5rem);
 
   --dur-entrance: 0.8s;
   --dur-micro: 0.25s;
@@ -181,6 +189,36 @@
     position: relative;
     border: 1px solid var(--color-gold);
     box-shadow: inset 0 0 0 4px color-mix(in oklch, var(--color-gold), transparent 88%);
+  }
+
+  /* Буквица — редакционный приём «Хроники»/«Передовицы»: первая буква первого
+     абзаца задаёт масштабный жест главы, вместо очередного одинакового заголовка. */
+  .dropcap::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 4.5rem;
+    line-height: 0.85;
+    padding-right: 0.1em;
+    color: var(--color-gold);
+  }
+  @media (max-width: 767px) {
+    .dropcap::first-letter {
+      font-size: 2.75rem;
+    }
+  }
+
+  /* Газетный набор в две колонки на десктопе — чистый CSS, без JS, только для
+     длинных редакционных абзацев (не для UI-текста). */
+  .editorial-columns {
+    max-width: 68ch;
+  }
+  @media (min-width: 1024px) {
+    .editorial-columns {
+      columns: 2;
+      column-gap: 4rem;
+      max-width: none;
+    }
   }
 
   /* Видимый фокус золотым кольцом — не дефолтный синий и не скрыт */

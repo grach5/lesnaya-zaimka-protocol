@@ -6,27 +6,32 @@ import { ZAIMKA_GALLERY } from "@/data/gallery";
 import { withBase } from "@/lib/url";
 
 // Правило: не выдумывать факты — берём реальные записи хроники по индексу,
-// а не переписываем текст.
+// а не переписываем текст. Индексы соответствуют src/data/history.ts.
 const y1974 = HISTORY[0];
-const y2002 = HISTORY[3];
 
-// Три реальных блюда для тизера меню: раздел «Фирменные блюда из дичи», если найден,
-// иначе — первые позиции первой категории (без придумывания названий/цен).
+// Реальные блюда тандыра/дичи для секции «Тандыр и кухня» — без выдумывания названий/цен.
 const gameCategory = ZAIMKA_MENU.categories.find((c) => c.name.toLowerCase().includes("дич"));
-const teaserDishes = (gameCategory ?? ZAIMKA_MENU.categories[0]).items.slice(0, 3);
+const banquetCategory = ZAIMKA_MENU.categories.find((c) => c.name.toLowerCase().includes("банкет"));
+const lambSpit = banquetCategory?.items.find((i) => i.name.includes("Ягнёнок"));
+const piglet = banquetCategory?.items.find((i) => i.name.includes("Поросёнок"));
+const gameDishes = (gameCategory?.items ?? []).slice(0, 2);
+const tandyrDishes = [lambSpit, piglet].filter(Boolean) as { name: string; price: number }[];
 
-// Шесть реальных фото для тизера галереи из разных разделов архива.
+// Шесть реальных фото для тизера «Поводы» из разных разделов архива (тот же безопасный
+// паттерн, что и раньше — мелкие превью, ссылка на полную галерею, без укрупнения
+// отдельных лиц гостей до масштаба героя страницы).
 const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   name: s.name,
   thumb: withBase(s.images[0].thumb),
 }));
+
 ---
 
 <Layout
   title="Лесная Заимка — дом, где принимали два государства. Владивосток"
   description="Ресторанный комплекс «Лесная Заимка» во Владивостоке — терем 1974 года, в котором принимали Форда, Брежнева и Ким Чен Ира. Русская, охотничья, дальневосточная и кавказская кухня, 6 залов до 500 гостей."
 >
-  <!-- 1. Протокольная шапка: видео на весь экран (заезд на объект — реальные кадры), без hero-кнопки по центру -->
+  <!-- 1. Протокольная шапка: видео на весь экран (заезд на объект — реальные кадры) -->
   <section class="relative">
     <div class="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink">
       <video
@@ -58,9 +63,6 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
         </svg>
       </button>
 
-      <!-- Дизайнерский задний фон: плёночное зерно поверх видео (архивная/документальная фактура,
-           в тему «Протокола») + тонированный вертикальный и боковой скрим для читаемости текста
-           и фирменного тона (ink/brass), а не голая картинка «как есть». -->
       <div
         class="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-overlay"
         style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"
@@ -71,10 +73,11 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
       <div class="absolute inset-x-0 bottom-0 px-5 pb-12 md:px-8 md:pb-16">
         <div class="mx-auto max-w-6xl">
           <p class="font-mono text-xs uppercase tracking-[0.14em] text-paper-raised/75" data-reveal>
-            Протокол приёма · Владивосток · ул. Маковского, 290
+            Владивосток · ул. Маковского, 290 · с 1974 года
           </p>
           <h1
-            class="mt-4 max-w-[16ch] font-display text-4xl font-semibold leading-[0.98] text-paper-raised md:text-5xl"
+            class="mt-4 max-w-[16ch] font-display font-semibold leading-[0.95] text-paper-raised"
+            style="font-size: var(--text-masthead)"
             data-reveal
           >
             Дом, где принимали два государства
@@ -117,107 +120,166 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
-  <!-- 2. Развилка: два равнозначных CTA (решение Фазы 1) — вертикальный стек на мобильном, не карусель -->
-  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-    <div class="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
-      <a href={withBase("/events/")} class="group flex flex-col justify-between border-2 border-transparent bg-paper-raised p-8 transition-colors hover:border-[var(--color-gold)] md:p-12" data-reveal>
-        <div>
-          <span class="font-mono text-xs uppercase tracking-wide text-brass">Организуете мероприятие</span>
-          <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
-            6 залов — от камерного ужина до приёма на 500 гостей
-          </h2>
-          <p class="mt-4 max-w-[46ch] text-ink-soft">
-            Свадьбы, банкеты, корпоративные приёмы, кейтеринг и выезд шеф-повара. Оставьте заявку
-            с датой и числом гостей — рассчитаем зал под вас.
-          </p>
-        </div>
-        <span class="mt-8 inline-flex items-center gap-2 font-mono text-[13px] text-ink group-hover:text-brass">
-          Смотреть залы и оставить заявку →
-        </span>
-      </a>
-
-      <a href={withBase("/menu/")} class="group flex flex-col justify-between border-2 border-transparent bg-paper-raised p-8 transition-colors hover:border-[var(--color-gold)] md:p-12" data-reveal>
-        <div>
-          <span class="font-mono text-xs uppercase tracking-wide text-brass">Хотите поужинать</span>
-          <h2 class="mt-4 font-display text-2xl font-semibold text-ink md:text-3xl">
-            Русская, охотничья, дальневосточная и кавказская кухня
-          </h2>
-          <p class="mt-4 max-w-[46ch] text-ink-soft">
-            Дичь и тандыр, молочные продукты и овощи со своей фермы. Редкое для города сочетание кухонь
-            на одной карте.
-          </p>
-        </div>
-        <span class="mt-8 inline-flex items-center gap-2 font-mono text-[13px] text-ink group-hover:text-brass">
-          Смотреть меню и забронировать стол →
-        </span>
-      </a>
+  <!-- 2. Передовица / 1974 — крупная фотографическая глава + буквица, а не карточка -->
+  <section class="relative overflow-hidden bg-ink">
+    <img
+      src={withBase("/img/gallery/interiors/full/9.webp")}
+      alt=""
+      loading="lazy"
+      class="absolute inset-0 h-full w-full object-cover opacity-45"
+    />
+    <div class="pointer-events-none absolute inset-0 bg-linear-to-r from-ink via-ink/85 to-ink/40"></div>
+    <div class="relative mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-32">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Глава I · {y1974.year}</p>
+      <h2
+        class="mt-3 max-w-[10ch] font-display font-semibold leading-[0.9] text-paper-raised"
+        style="font-size: var(--text-chapter)"
+        data-reveal
+      >
+        {y1974.year}
+      </h2>
+      <p class="dropcap editorial-columns mt-8 max-w-2xl text-[17px] leading-[1.65] text-paper-sunk/90 md:text-lg" data-reveal>
+        {y1974.body}
+      </p>
     </div>
   </section>
 
-  <!-- 3. Три факта-доказательства — не иконки-галочки, а «экспонаты» протокола -->
-  <section class="border-y border-line bg-paper-sunk/40">
-    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-      <p class="font-mono text-xs uppercase tracking-wide text-ink-faint" data-reveal>Из хроники дома</p>
-      <div class="mt-6 grid gap-10 md:grid-cols-3 md:gap-8">
-        <article data-reveal>
-          <p class="font-mono text-sm text-brass">{y1974.year}</p>
-          <h3 class="mt-2 font-display text-xl font-semibold text-ink">{y1974.title}</h3>
-          <p class="mt-3 text-sm text-ink-soft">{y1974.body}</p>
-        </article>
-        <article data-reveal>
-          <p class="font-mono text-sm text-brass">{y2002.year}</p>
-          <h3 class="mt-2 font-display text-xl font-semibold text-ink">{y2002.title}</h3>
-          <p class="mt-3 text-sm text-ink-soft">{y2002.body}</p>
-        </article>
-        <article data-reveal>
-          <p class="font-mono text-sm text-brass">Сегодня</p>
-          <h3 class="mt-2 font-display text-xl font-semibold text-ink">Своя ферма и тандыр</h3>
-          <p class="mt-3 text-sm text-ink-soft">
-            Собственная ферма поставляет молочные продукты, мясо и сезонные овощи. В тандырах
-            запекают ягнёнка и поросёнка на вертеле — коронные блюда банкетного стола.
+  <!-- 3. Бланк дня / 1979 — типографский «экспонат», не сканированный документ (реального
+       скана бланка в архиве фото нет — честно оформлено как дизайн, а не как фотография
+       подлинника, чтобы не выдавать реконструкцию за архивный кадр). -->
+  <section class="bg-[var(--color-velvet-deep)] py-20 md:py-28">
+    <div class="mx-auto max-w-6xl px-5 md:px-8">
+      <div class="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center md:gap-16">
+        <div data-reveal>
+          <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]">Глава II · 1979</p>
+          <h2 class="mt-3 font-display font-semibold leading-[0.95] text-paper-raised" style="font-size: clamp(2.5rem, 6vw, 4.5rem)">
+            Меню одного дня
+          </h2>
+          <p class="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-paper-sunk/85">
+            {HISTORY[1].body}
           </p>
-        </article>
+          <a
+            href={withBase("/menu/")}
+            class="plaque mt-8 inline-flex items-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
+          >
+            Открыть полное меню — 13 разделов, {ZAIMKA_MENU.categories.reduce((n, c) => n + c.items.length, 0)} блюд →
+          </a>
+        </div>
+
+        <div class="frame-gold bg-paper-raised p-8 md:p-10" data-reveal>
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-brass">Экземпляр хранится как экспонат</p>
+          <p class="mt-4 font-display text-2xl italic leading-snug text-ink">Меню дня</p>
+          <div class="mt-5 space-y-2 border-t border-line pt-5 font-mono text-xs text-ink-soft">
+            <p>печатается ежеутренне · один лист</p>
+            <p>подписывается у руководства</p>
+            <p>«Лесная Заимка» · Владивосток</p>
+          </div>
+        </div>
       </div>
-      <a href={withBase("/history/")} class="mt-10 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass">
-        Вся хронология дома, 1974–2015 →
-      </a>
     </div>
   </section>
 
-  <!-- 4. Тизер меню — реальные блюда и цены -->
-  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-    <div class="flex items-end justify-between gap-6" data-reveal>
-      <div>
-        <p class="font-mono text-xs uppercase tracking-wide text-brass">Меню</p>
-        <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">
-          13 разделов, больше сотни блюд
-        </h2>
+  <!-- 4. Хроника — пиннинг-скрол по 6 реальным вехам, единственная вторая закреплённая
+       секция сайта (бюджет производительности — не больше двух пиннинг-секций). -->
+  <!-- Единый набор из 6 реальных статей — ровно один экземпляр заголовков на весь
+       сайт (без параллельной SSR-копии для «мобильного фолбэка», которая раньше
+       давала дублирующиеся h-элементы и ловилась heading-order аудитом). По
+       умолчанию (без JS, мобильный, reduced-motion) — обычный читаемый список.
+       На десктопе с разрешёнными анимациями скрипт ниже прогрессивно превращает
+       контейнер в закреплённую секцию с перекрёстным fade между статьями —
+       та же разметка, только другая раскладка, без дублирования DOM. -->
+  <section id="chronicle" class="bg-ink py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-5 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Хроника дома</p>
+      <div id="chronicle-track" class="relative mt-6 flex flex-col divide-y divide-paper-sunk/15">
+        {HISTORY.map((h) => (
+          <article class="chronicle-entry grid grid-cols-[80px_1fr] gap-6 py-8 md:grid-cols-[120px_1fr]" data-reveal>
+            <p class="font-mono text-2xl font-semibold text-[var(--color-gold)] md:text-3xl">{h.year}</p>
+            <div>
+              <h3 class="font-display text-xl font-semibold text-paper-raised md:text-2xl">{h.title}</h3>
+              <p class="mt-3 max-w-2xl text-[17px] leading-relaxed text-paper-sunk/85">{h.body}</p>
+            </div>
+          </article>
+        ))}
       </div>
-      <a href={withBase("/menu/")} class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
+      <div id="chronicle-progress-rail" class="mt-2 hidden h-px w-full max-w-2xl bg-paper-sunk/20">
+        <div id="chronicle-progress" class="h-px bg-[var(--color-gold)]" style="width: 0%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Тандыр и кухня — реальные блюда крупными карточками вместо строк прайс-листа -->
+  <section class="relative overflow-hidden bg-ink">
+    <img src={withBase("/img/gallery/kitchen/full/1.webp")} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover opacity-35" />
+    <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-ink via-ink/80 to-ink/50"></div>
+    <div class="relative mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Глава III · Кухня дома</p>
+      <h2 class="mt-3 max-w-[16ch] font-display font-semibold leading-[0.95] text-paper-raised" style="font-size: clamp(2.5rem, 6vw, 4.5rem)" data-reveal>
+        Дичь и тандыр на открытом огне
+      </h2>
+      <p class="mt-5 max-w-[58ch] text-[17px] text-paper-sunk/85" data-reveal>
+        Русская, охотничья, дальневосточная и кавказская кухня на одной карте. Ягнёнка и поросёнка
+        запекают в тандыре целиком, дичь — оленину, косулю, кабана — готовят на чугуне и в горшочках.
+      </p>
+
+      <div class="mt-10 grid gap-px overflow-hidden border border-[var(--color-gold)]/20 bg-[var(--color-gold)]/20 md:grid-cols-2">
+        {[...tandyrDishes, ...gameDishes].slice(0, 4).map((dish) => (
+          <div class="flex items-center justify-between gap-6 bg-ink px-6 py-5" data-reveal>
+            <span class="font-display text-lg text-paper-raised">{dish!.name}</span>
+            <span class="shrink-0 font-mono text-sm text-[var(--color-gold)]">{dish!.price.toLocaleString("ru-RU")} ₽</span>
+          </div>
+        ))}
+      </div>
+
+      <a href={withBase("/menu/")} class="mt-8 inline-block font-mono text-[13px] text-paper-raised underline decoration-[var(--color-gold)]/40 underline-offset-4 hover:decoration-[var(--color-gold)]">
         Открыть полное меню →
       </a>
     </div>
-
-    <div class="mt-8 divide-y divide-line border-y border-line">
-      {teaserDishes.map((dish) => (
-        <div class="flex items-center justify-between gap-6 py-5" data-reveal>
-          <span class="text-ink">{dish.name}</span>
-          <span class="font-mono text-sm text-brass">{dish.price.toLocaleString("ru-RU")} ₽</span>
-        </div>
-      ))}
-    </div>
-    <a href={withBase("/menu/")} class="mt-6 inline-block font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:hidden">
-      Открыть полное меню →
-    </a>
   </section>
 
-  <!-- 5. Тизер галереи — реальные фото, без карусели -->
+  <!-- 6. Своя ферма — панорама вместо иконки-факта -->
+  <section class="relative overflow-hidden">
+    <img src={withBase("/img/gallery/farm/full/8.webp")} alt="Коровы на ферме «Лесной Заимки»" loading="lazy" class="h-[70vh] min-h-[420px] w-full object-cover" />
+    <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/90 via-ink/10 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 px-5 pb-12 md:px-8 md:pb-16">
+      <div class="mx-auto max-w-6xl">
+        <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Своя земля</p>
+        <h2 class="mt-3 max-w-[20ch] font-display font-semibold leading-[0.95] text-paper-raised" style="font-size: clamp(2.25rem, 5vw, 3.75rem)" data-reveal>
+          Собственная ферма поставляет стол
+        </h2>
+        <p class="mt-4 max-w-[58ch] text-paper-raised/85" data-reveal>
+          Молочные продукты, мясо и сезонные овощи — со своей фермы, а не с рынка.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Залы — крупный разворот вместо сетки карточек -->
+  <section class="relative overflow-hidden bg-ink">
+    <img src={withBase("/img/gallery/interiors/full/6.webp")} alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover opacity-40" />
+    <div class="pointer-events-none absolute inset-0 bg-linear-to-r from-ink via-ink/80 to-ink/30"></div>
+    <div class="relative mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Мероприятия</p>
+      <h2 class="mt-3 max-w-[16ch] font-display font-semibold leading-[0.95] text-paper-raised" style="font-size: clamp(2.5rem, 6vw, 4.5rem)" data-reveal>
+        6 залов — до 500 гостей
+      </h2>
+      <p class="mt-5 max-w-[56ch] text-[17px] text-paper-sunk/85" data-reveal>
+        Медовые брёвна сруба, хрустальные люстры, бархат и резное дерево — от камерных 30 гостей
+        до банкета на 500. Свадьбы, корпоративы, кейтеринг и выезд шеф-повара.
+      </p>
+      <a href={withBase("/events/")} class="plaque mt-8 inline-flex items-center gap-2 bg-[var(--color-gold)] px-5 py-3 font-mono text-[13px] tracking-wide text-ink transition-colors hover:bg-paper-raised">
+        Смотреть залы и оставить заявку →
+      </a>
+    </div>
+  </section>
+
+  <!-- 8. Поводы — тот же безопасный паттерн превью (ссылка на полную галерею), крупнее типографика -->
   <section class="border-t border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
       <div class="flex items-end justify-between gap-6" data-reveal>
         <div>
-          <p class="font-mono text-xs uppercase tracking-wide text-brass">Галерея</p>
-          <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">93 кадра из жизни дома</h2>
+          <p class="font-mono text-xs uppercase tracking-wide text-brass">Поводы</p>
+          <h2 class="mt-3 font-display font-semibold text-ink" style="font-size: clamp(1.75rem, 3.5vw, 2.75rem)">93 кадра из жизни дома</h2>
         </div>
         <a href={withBase("/gallery/")} class="hidden shrink-0 font-mono text-[13px] text-ink underline decoration-line underline-offset-4 hover:decoration-brass md:inline-block">
           Вся галерея →
@@ -236,8 +298,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
-  <!-- Цитата владельца — «парадный» тёмный момент на бархате, в паре с каруселью
-       истории (тот же приём: свет/тьма чередуются вниз по странице). -->
+  <!-- Цитата владельца — «парадный» тёмный момент на бархате -->
   <section class="bg-[var(--color-velvet-deep)] py-16 md:py-24">
     <div class="mx-auto max-w-6xl px-5 md:px-8">
       <blockquote class="frame-gold mx-auto max-w-3xl p-8 md:p-12" data-reveal>
@@ -251,18 +312,12 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   </section>
 
   <script>
-    import { initReveal, motionEnabled } from "@/lib/motion";
+    import { initReveal, motionEnabled, ScrollTrigger } from "@/lib/motion";
     initReveal();
 
-    // Фоновое видео в шапке запускаем только если анимации разрешены (системная
-    // prefers-reduced-motion и ручной тумблер в футере) — иначе остаётся статичный
-    // постер видео, а не сломанный/дёрганый плеер. Это единственное видео на сайте
-    // теперь (полный ролик, зациклен), поэтому даём кнопку включить звук.
     const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
     if (heroVideo && motionEnabled()) {
-      heroVideo.play().catch(() => {
-        // Автовоспроизведение иногда блокируется даже для muted-видео (редко) — постер остаётся.
-      });
+      heroVideo.play().catch(() => {});
     }
 
     const muteToggle = document.getElementById("hero-mute-toggle");
@@ -275,5 +330,56 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
       muteToggle.setAttribute("aria-label", withSound ? "Выключить звук фильма" : "Включить звук фильма");
       muteSlash?.setAttribute("opacity", withSound ? "0" : "1");
     });
+
+    // «Хроника»: один набор из 6 статей в DOM всегда (см. разметку выше — без
+    // дублирующегося фолбэка, чтобы не плодить повторные заголовки). На десктопе
+    // с разрешёнными анимациями скрипт прогрессивно превращает список в закреплённую
+    // секцию с перекрёстным fade между статьями по прогрессу скролла. На мобильном
+    // и при reduced-motion — просто обычный читаемый список, каким он и рендерится
+    // по умолчанию без каких-либо изменений.
+    const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
+    const chronicleSection = document.getElementById("chronicle");
+    const track = document.getElementById("chronicle-track");
+    const progressRail = document.getElementById("chronicle-progress-rail");
+    const progressEl = document.getElementById("chronicle-progress");
+    const entries = track ? Array.from(track.querySelectorAll<HTMLElement>(".chronicle-entry")) : [];
+
+    if (chronicleSection && track && entries.length && motionEnabled() && !isMobileViewport) {
+      chronicleSection.style.height = "500vh";
+      chronicleSection.style.paddingTop = "0";
+      chronicleSection.style.paddingBottom = "0";
+      track.style.position = "sticky";
+      track.style.top = "0";
+      track.style.height = "100vh";
+      track.style.display = "block";
+      track.style.overflow = "hidden";
+      progressRail?.classList.remove("hidden");
+
+      entries.forEach((entry, i) => {
+        entry.style.position = "absolute";
+        entry.style.inset = "0";
+        entry.style.display = "flex";
+        entry.style.flexDirection = "column";
+        entry.style.justifyContent = "center";
+        entry.style.borderTop = "none";
+        entry.style.opacity = i === 0 ? "1" : "0";
+      });
+
+      let currentIndex = 0;
+      ScrollTrigger.create({
+        trigger: chronicleSection,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.4,
+        onUpdate: (self) => {
+          const idx = Math.min(entries.length - 1, Math.floor(self.progress * entries.length));
+          if (progressEl) progressEl.style.width = `${self.progress * 100}%`;
+          if (idx === currentIndex) return;
+          entries[currentIndex].style.opacity = "0";
+          entries[idx].style.opacity = "1";
+          currentIndex = idx;
+        },
+      });
+    }
   </script>
 </Layout>
