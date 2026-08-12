@@ -78,7 +78,13 @@ import { CONTACTS } from "@/data/contacts";
   function open() {
     overlay?.classList.remove("hidden");
     drawer?.classList.remove("hidden");
-    requestAnimationFrame(() => drawer?.classList.remove("translate-x-full"));
+    // setTimeout, а не requestAnimationFrame: нужно только дать браузеру один тик,
+    // чтобы снятие display:none (через classList "hidden") успело примениться до
+    // снятия transform — иначе transition схлопывается в мгновенный прыжок.
+    // rAF для этого не подходит: он привязан к циклу компоновки/отрисовки и не
+    // гарантированно срабатывает в фоновой/неактивной вкладке — а именно так вело
+    // себя на реальном мобильном тесте (панель оставалась за экраном).
+    window.setTimeout(() => drawer?.classList.remove("translate-x-full"), 10);
     document.body.style.overflow = "hidden";
   }
 
