@@ -201,21 +201,22 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
     </div>
   </section>
 
-  <!-- 4. Хроника — пиннинг-скрол по 6 реальным вехам, единственная вторая закреплённая
-       секция сайта (бюджет производительности — не больше двух пиннинг-секций). -->
-  <!-- Единый набор из 6 реальных статей — ровно один экземпляр заголовков на весь
-       сайт (без параллельной SSR-копии для «мобильного фолбэка», которая раньше
-       давала дублирующиеся h-элементы и ловилась heading-order аудитом). По
-       умолчанию (без JS, мобильный, reduced-motion) — обычный читаемый список.
-       На десктопе с разрешёнными анимациями скрипт ниже прогрессивно превращает
-       контейнер в закреплённую секцию с перекрёстным fade между статьями —
-       та же разметка, только другая раскладка, без дублирования DOM. -->
-  <section id="chronicle" class="bg-ink py-16 md:py-24">
+  <!-- 4. Хроника — 6 реальных вех. Раньше здесь был закреплённый scroll-scrub с
+       ручным кросс-фейдом через ScrollTrigger.onUpdate: на живом сайте это гасило
+       все статьи до opacity:0 (конфликт с глобальным initReveal, который через
+       свой ScrollTrigger держит [data-reveal] в autoAlpha:0, пока не сработает
+       собственный триггер, — а элементы внутри position:sticky/absolute контейнера
+       регулярно путают его расчёт позиции). Эффект был не критичен для смысла
+       секции, а риск (второй самописный ScrollTrigger поверх Lenis) — реальный
+       и уже стоил рабочего сайта, поэтому сознательно упрощено до обычного
+       читаемого списка на всех размерах экрана — тот же приём reveal-on-scroll,
+       что и везде на сайте, без специальной логики для этой секции. -->
+  <section class="bg-ink py-16 md:py-24">
     <div class="mx-auto max-w-6xl px-5 md:px-8">
       <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Хроника дома</p>
-      <div id="chronicle-track" class="relative mt-6 flex flex-col divide-y divide-paper-sunk/15">
+      <div class="mt-6 flex flex-col divide-y divide-paper-sunk/15">
         {HISTORY.map((h) => (
-          <article class="chronicle-entry grid grid-cols-[80px_1fr] gap-6 py-8 md:grid-cols-[120px_1fr]" data-reveal>
+          <article class="grid grid-cols-[80px_1fr] gap-6 py-8 md:grid-cols-[120px_1fr]" data-reveal>
             <p class="font-mono text-2xl font-semibold text-[var(--color-gold)] md:text-3xl">{h.year}</p>
             <div>
               <h3 class="font-display text-xl font-semibold text-paper-raised md:text-2xl">{h.title}</h3>
@@ -223,9 +224,6 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
             </div>
           </article>
         ))}
-      </div>
-      <div id="chronicle-progress-rail" class="mt-2 hidden h-px w-full max-w-2xl bg-paper-sunk/20">
-        <div id="chronicle-progress" class="h-px bg-[var(--color-gold)]" style="width: 0%"></div>
       </div>
     </div>
   </section>
@@ -334,7 +332,7 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
   </section>
 
   <script>
-    import { initReveal, motionEnabled, ScrollTrigger } from "@/lib/motion";
+    import { initReveal, motionEnabled } from "@/lib/motion";
     initReveal();
 
     const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
@@ -352,56 +350,5 @@ const galleryTeaser = ZAIMKA_GALLERY.sections.slice(0, 6).map((s) => ({
       muteToggle.setAttribute("aria-label", withSound ? "Выключить звук фильма" : "Включить звук фильма");
       muteSlash?.setAttribute("opacity", withSound ? "0" : "1");
     });
-
-    // «Хроника»: один набор из 6 статей в DOM всегда (см. разметку выше — без
-    // дублирующегося фолбэка, чтобы не плодить повторные заголовки). На десктопе
-    // с разрешёнными анимациями скрипт прогрессивно превращает список в закреплённую
-    // секцию с перекрёстным fade между статьями по прогрессу скролла. На мобильном
-    // и при reduced-motion — просто обычный читаемый список, каким он и рендерится
-    // по умолчанию без каких-либо изменений.
-    const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
-    const chronicleSection = document.getElementById("chronicle");
-    const track = document.getElementById("chronicle-track");
-    const progressRail = document.getElementById("chronicle-progress-rail");
-    const progressEl = document.getElementById("chronicle-progress");
-    const entries = track ? Array.from(track.querySelectorAll<HTMLElement>(".chronicle-entry")) : [];
-
-    if (chronicleSection && track && entries.length && motionEnabled() && !isMobileViewport) {
-      chronicleSection.style.height = "500vh";
-      chronicleSection.style.paddingTop = "0";
-      chronicleSection.style.paddingBottom = "0";
-      track.style.position = "sticky";
-      track.style.top = "0";
-      track.style.height = "100vh";
-      track.style.display = "block";
-      track.style.overflow = "hidden";
-      progressRail?.classList.remove("hidden");
-
-      entries.forEach((entry, i) => {
-        entry.style.position = "absolute";
-        entry.style.inset = "0";
-        entry.style.display = "flex";
-        entry.style.flexDirection = "column";
-        entry.style.justifyContent = "center";
-        entry.style.borderTop = "none";
-        entry.style.opacity = i === 0 ? "1" : "0";
-      });
-
-      let currentIndex = 0;
-      ScrollTrigger.create({
-        trigger: chronicleSection,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.4,
-        onUpdate: (self) => {
-          const idx = Math.min(entries.length - 1, Math.floor(self.progress * entries.length));
-          if (progressEl) progressEl.style.width = `${self.progress * 100}%`;
-          if (idx === currentIndex) return;
-          entries[currentIndex].style.opacity = "0";
-          entries[idx].style.opacity = "1";
-          currentIndex = idx;
-        },
-      });
-    }
   </script>
 </Layout>
