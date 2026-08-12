@@ -1,7 +1,7 @@
 ---
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import AmbientBackground from "@/components/AmbientBackground";
+import TimberBackdrop from "@/components/TimberBackdrop.astro";
 import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import "@/styles/global.css";
@@ -70,15 +70,15 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
     </script>
   </head>
   <body class="bg-paper text-ink">
-    <AmbientBackground client:load />
+    <TimberBackdrop />
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-paper-raised">
       Перейти к содержанию
     </a>
     <Header />
-    <!-- Полупрозрачная подложка над анимированным фоном: держит гарантированный
-         контраст текста (шейдер намного насыщеннее прежней CSS-текстуры), при
-         этом цвет всё равно просвечивает по краям секций и между карточками. -->
-    <main id="main" class="relative bg-paper/85">
+    <!-- Полупрозрачная подложка над фото сруба: держит гарантированный
+         контраст текста, при этом фактура дерева всё равно просвечивает
+         по краям секций и в промежутках между карточками. -->
+    <main id="main" class="relative bg-paper/90">
       <slot />
     </main>
     <Footer />

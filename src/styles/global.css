@@ -123,30 +123,38 @@
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     @apply bg-background text-foreground;
-    /* Задний фон — результат исследования 40 агентов (Фаза «Материалы»: разбор 93 реальных
-       фото заведения — мрамор/травертин, латунь и золото люстр/лепнины, медовое дерево сруба,
-       тёмный дуб резных панелей; Фаза «GitHub»: техника — SVG feTurbulence + CSS-градиент,
-       без JS/WebGL, по мотивам cjimmy/grainy-gradients; Фаза «Критика»: 3 независимых судьи
-       на 6 концепций — эта прошла с contrastSafe:true у всех троих).
-       Латунная жилка на тёплом травертине: непрерывная (без порога — без рваных краёв)
-       анизотропная жилка цвета люстр/лепнины (#D4AF37) поверх тёплой кремовой диагонали,
-       опциональная встречная жилка тёмного дуба (#3B2A1A, 2%) для глубины.
-       Контраст проверен: база = --color-paper буквально, после наложения обоих слоёв
-       светлота падает <1% — контраст с --color-ink остаётся >12:1 (WCAG AAA с запасом). */
+    /* Фактура теперь идёт от реального фото сруба (TimberBackdrop, fixed-слой
+       позади всего контента) — этот сплошной цвет служит ему запасным фоном
+       на время загрузки картинки и подложкой под непрозрачные карточки. */
     background-color: var(--color-paper);
-    background-image:
-      /* дубовая встречная жилка — глубина, можно убрать для максимальной сдержанности */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='o'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.006' numOctaves='3' seed='47' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0.231  0 0 0 0 0.165  0 0 0 0 0.102  0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23o)'/%3E%3C/svg%3E"),
-      /* основная латунная жилка — мрамор/травертин, непрерывная альфа */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='v'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.05' numOctaves='3' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0.831  0 0 0 0 0.686  0 0 0 0 0.216  0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23v)'/%3E%3C/svg%3E"),
-      /* тёплая диагональ бумаги — все стопы внутри одной светлой семьи */
-      linear-gradient(135deg, var(--color-paper) 0%, #F2E9D6 55%, var(--color-paper-sunk) 100%);
-    background-repeat: repeat, repeat, no-repeat;
-    background-size: 1100px 1100px, 1000px 1000px, cover;
-    background-blend-mode: soft-light, multiply, normal;
-    /* Синтез агентов рекомендовал background-attachment:fixed для лёгкого параллакса —
-       сознательно не ставлю: это известная причина скролл-джанка на части мобильных
-       браузеров, а страницы без видео и так уже не на 100 по Performance. */
+  }
+
+  /* «Латунная плашка» — акцент музейного экспоната/премиальной карточки:
+     срезанные уголки + тонкая двойная рамка, по мотивам кованых уголков
+     на дверях дома (см. интерьерные фото). Используется на карточках истории
+     и на ключевых CTA, чтобы дом-сруб читался не только в фоне, но и в деталях. */
+  .plaque {
+    position: relative;
+    border: 1px solid var(--color-line);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .plaque::before,
+  .plaque::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-brass);
+    opacity: 0.55;
+  }
+  .plaque::before {
+    top: 7px;
+    left: 7px;
+  }
+  .plaque::after {
+    bottom: 7px;
+    right: 7px;
   }
 
   /* Видимый фокус латунным кольцом — не дефолтный синий и не скрыт */
