@@ -1,0 +1,54 @@
+---
+// Отзывы с 2ГИС и Яндекс — по прямому запросу клиента, с вопросом «автоматически
+// они будут обновляться?». Честный ответ разный для двух площадок:
+//
+// Яндекс — да, автоматически: это официальный встраиваемый виджет Яндекса
+// (yandex.ru/maps-reviews-widget/{id}) для организации «Лесная Заимка»
+// (ул. Маковского, 290, id подтверждён: 1081573454) — реальный iframe с живыми
+// отзывами, обновляется сам, никакого стороннего сервиса и оплаты не требует.
+//
+// 2ГИС — официального бесплатного авто-обновляемого виджета у 2ГИС нет; есть
+// платные сторонние агрегаторы (SmartWidgets, Widster и т.п.), но подключать
+// платную подписку без согласия клиента на стоимость — не наше решение.
+// Поставлена честная прямая ссылка на реальный профиль 2ГИС (тоже всегда
+// актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
+const YANDEX_ORG_ID = "1081573454";
+const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews";
+---
+
+<section class="border-t border-line bg-paper-sunk/40 py-16 md:py-24">
+  <div class="mx-auto max-w-6xl px-5 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Отзывы гостей</p>
+    <h2 class="mt-3 max-w-[30ch] font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>
+      Живые отзывы с Яндекс Карт и 2ГИС
+    </h2>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+      <div class="border border-line bg-paper-raised" data-reveal>
+        <iframe
+          title="Отзывы Яндекс Карт — Лесная Заимка"
+          src={`https://yandex.ru/maps-reviews-widget/${YANDEX_ORG_ID}?comments`}
+          class="h-[560px] w-full border-0"
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <a
+        href={DGIS_URL}
+        target="_blank"
+        rel="noopener"
+        class="plaque flex flex-col justify-between bg-paper-raised p-8 transition-colors hover:bg-[var(--color-burgundy-soft)]"
+        data-reveal
+      >
+        <div>
+          <span class="font-mono text-xs uppercase tracking-wide text-brass">2ГИС</span>
+          <p class="mt-3 font-display text-xl font-semibold text-ink">Смотреть отзывы на 2ГИС</p>
+          <p class="mt-3 text-sm text-ink-soft">
+            Реальный профиль заведения — рейтинг и отзывы гостей всегда актуальны на самой площадке.
+          </p>
+        </div>
+        <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">Открыть профиль →</span>
+      </a>
+    </div>
+  </div>
+</section>

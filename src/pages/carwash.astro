@@ -1,0 +1,64 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { CONTACTS } from "@/data/contacts";
+import { CARWASH_CATEGORIES } from "@/data/carwash";
+
+// Раздел добавлен по прямой просьбе клиента (рукописная схема сайта: «Автомойка»
+// отдельным блоком внизу структуры). Реальных фото/цен/описаний услуг клиент
+// пока не прислал — честно показываем список категорий и контакт для уточнения,
+// а не выдумываем цены или фотографии, которых нет.
+---
+
+<Layout
+  title="Автомойка — Лесная Заимка, Владивосток"
+  description="Автомойка в комплексе «Лесная Заимка»: интерьер, корпоративное обслуживание, выкуп авто, бонусная система и подарочные сертификаты."
+>
+  <section class="border-b border-line bg-[var(--color-forest-deep)]">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Автомойка</p>
+      <h1 class="mt-4 max-w-[22ch] font-display text-3xl font-semibold leading-[1.02] text-paper-raised md:text-5xl" data-reveal>
+        Автомойка в комплексе «Лесная Заимка»
+      </h1>
+      <p class="mt-5 max-w-[62ch] text-paper-sunk/85 md:text-lg" data-reveal>
+        Часть того же комплекса на ул. Маковского, 290 — рядом с рестораном и банкетными залами.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Услуги</p>
+    <div class="mt-6 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 md:grid-cols-3" data-reveal>
+      {CARWASH_CATEGORIES.map((cat) => (
+        <div class="bg-paper-raised p-6">
+          <span class="font-display text-lg text-ink">{cat}</span>
+        </div>
+      ))}
+    </div>
+    <p class="mt-6 max-w-[62ch] text-sm text-ink-faint" data-reveal>
+      Подробности, цены и фотографии этого раздела уточняются — актуальную информацию
+      можно получить по телефону.
+    </p>
+
+    <div class="mt-10 flex flex-wrap gap-3" data-reveal>
+      <a
+        href={CONTACTS.phoneTableHref}
+        class="plaque bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
+      >
+        {CONTACTS.phoneTable}
+      </a>
+      <a
+        href={CONTACTS.whatsapp}
+        target="_blank"
+        rel="noopener"
+        class="border border-ink px-5 py-3 font-mono text-[13px] text-ink transition-colors hover:bg-ink hover:text-paper-raised"
+      >
+        Написать в WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

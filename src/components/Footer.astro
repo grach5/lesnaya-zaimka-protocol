@@ -1,49 +1,76 @@
 ---
 import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
+import { NAV_GROUPS } from "@/data/nav";
+
+function resolveHref(href: string, external?: boolean) {
+  return external ? href : withBase(href);
+}
 ---
 
+<!-- Футер по рукописной схеме клиента: разделы комплекса колонками
+     (Ресторан / Отель / Банкетный комплекс), автомойка и контакты отдельно. -->
 <footer class="border-t-2 border-[var(--color-gold)]/50 bg-[var(--color-velvet-deep)] text-paper-sunk">
   <div class="mx-auto max-w-6xl px-5 py-16 md:px-8">
-    <div class="grid gap-10 md:grid-cols-3">
-      <div>
-        <p class="font-display text-lg text-paper-raised"><span class="text-[var(--color-gold)]">✦</span> {CONTACTS.name}</p>
-        <p class="mt-3 max-w-[36ch] text-sm text-paper-sunk/80">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-1">
+        <img src={withBase("/img/brand/logo.png")} alt={CONTACTS.name} class="h-10 w-auto" />
+        <p class="mt-3 max-w-[30ch] text-sm text-paper-sunk/80">
           Ресторанный комплекс с 1974 года. Бревенчатый терем на въезде во Владивосток.
         </p>
-        <a
-          href={CONTACTS.hotel.url}
-          target="_blank"
-          rel="noopener"
-          class="mt-4 inline-block font-mono text-xs tracking-wide text-[var(--color-gold)]"
-        >
-          Отель и сауна {CONTACTS.hotel.name} →
-        </a>
       </div>
 
+      {NAV_GROUPS.map((group) => (
+        <div>
+          <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">{group.label}</p>
+          <ul class="mt-3 flex flex-col gap-2 text-sm">
+            {group.items.map((item) => (
+              <li>
+                <a href={resolveHref(item.href, item.external)} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
       <div>
-        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Разделы</p>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Автомойка</p>
         <ul class="mt-3 flex flex-col gap-2 text-sm">
-          <li><a href={withBase("/history/")}>История</a></li>
-          <li><a href={withBase("/menu/")}>Меню</a></li>
-          <li><a href={withBase("/events/")}>Мероприятия и залы</a></li>
-          <li><a href={withBase("/gallery/")}>Галерея</a></li>
-          <li><a href={withBase("/reviews/")}>Отзывы</a></li>
+          <li><a href={withBase("/carwash/")}>О разделе</a></li>
         </ul>
-      </div>
 
-      <div>
-        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Контакты</p>
+        <p class="mt-6 font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Ещё</p>
         <ul class="mt-3 flex flex-col gap-2 text-sm">
-          <li><a href={CONTACTS.phoneTableHref}>{CONTACTS.phoneTable}</a></li>
-          <li><a href={CONTACTS.phoneEventsHref}>{CONTACTS.phoneEvents}</a></li>
-          <li><a href={CONTACTS.whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>
-          <li>{CONTACTS.address}</li>
+          <li><a href={withBase("/reviews/")}>Отзывы</a></li>
+          <li><a href={withBase("/gallery/")}>Галерея</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper-sunk/15 pt-6 font-mono text-xs text-paper-sunk/70">
+    <div class="mt-12 grid gap-10 border-t border-paper-sunk/15 pt-10 sm:grid-cols-2">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Контакты</p>
+        <ul class="mt-3 flex flex-col gap-2 text-sm">
+          <li><a href={CONTACTS.phoneTableHref}>{CONTACTS.phoneTable}</a> — бронь столов</li>
+          <li><a href={CONTACTS.phoneEventsHref}>{CONTACTS.phoneEvents}</a> — банкетный отдел</li>
+          <li><a href={CONTACTS.whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>{CONTACTS.address}</li>
+          <li>{CONTACTS.hours}</li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">Рядом</p>
+        <p class="mt-3 text-sm">
+          <a href={CONTACTS.hotel.url} target="_blank" rel="noopener" class="text-[var(--color-gold)] underline underline-offset-4">
+            Отель и сауна {CONTACTS.hotel.name} →
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-paper-sunk/15 pt-6 font-mono text-xs text-paper-sunk/70">
       <span>© 1974 — 2026 Ресторан «{CONTACTS.name}»</span>
       <button
         id="motion-toggle"

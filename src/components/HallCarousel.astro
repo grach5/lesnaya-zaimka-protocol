@@ -1,0 +1,63 @@
+---
+import { withBase } from "@/lib/url";
+import { hallPhotos, type Hall } from "@/data/halls";
+
+interface Props {
+  hall: Hall;
+  index: number;
+}
+const { hall, index } = Astro.props;
+const photos = hallPhotos(hall);
+---
+
+<!-- Карусель фото одного зала — по прямому запросу клиента: «побольше фото
+     каждого зала чтобы их можно было листать». Тот же безопасный паттерн
+     scroll-snap, что и в HistoryCarousel/HistoryCarousel.astro, без новых
+     зависимостей. -->
+<article class="flex flex-col bg-paper-raised" data-reveal>
+  <div class="relative">
+    <div id={`hall-track-${index}`} class="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {photos.map((src, i) => (
+        <img
+          src={withBase(src)}
+          alt={`${hall.name} — фото ${i + 1} из ${photos.length}`}
+          loading="lazy"
+          class="aspect-[4/3] w-full shrink-0 snap-start object-cover"
+        />
+      ))}
+    </div>
+    <button
+      type="button"
+      class="hall-prev absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-paper-raised/40 bg-ink/50 text-paper-raised backdrop-blur-sm transition-colors hover:bg-ink/80"
+      aria-label={`Предыдущее фото — ${hall.name}`}
+      data-target={`hall-track-${index}`}
+      data-dir="-1"
+    >
+      <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true"><path d="M6 1L1 6L6 11" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+    <button
+      type="button"
+      class="hall-next absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-paper-raised/40 bg-ink/50 text-paper-raised backdrop-blur-sm transition-colors hover:bg-ink/80"
+      aria-label={`Следующее фото — ${hall.name}`}
+      data-target={`hall-track-${index}`}
+      data-dir="1"
+    >
+      <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true"><path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+    <span class="absolute bottom-2 right-2 bg-ink/60 px-2 py-0.5 font-mono text-[11px] text-paper-raised backdrop-blur-sm">{photos.length} фото</span>
+  </div>
+  <div class="flex flex-1 flex-col p-6">
+    <h2 class="font-display text-lg font-semibold text-ink">{hall.name}</h2>
+    <p class="mt-2 flex-1 text-sm text-ink-soft">{hall.description}</p>
+    <div class="mt-4 flex items-center justify-between border-t border-line pt-4 font-mono text-xs">
+      <span class="text-ink-faint">Вместимость</span>
+      <span class="text-[var(--color-burgundy)]">{hall.capacity}</span>
+    </div>
+    {hall.area && (
+      <div class="mt-2 flex items-center justify-between font-mono text-xs">
+        <span class="text-ink-faint">Площадь</span>
+        <span class="text-[var(--color-burgundy)]">{hall.area}</span>
+      </div>
+    )}
+  </div>
+</article>

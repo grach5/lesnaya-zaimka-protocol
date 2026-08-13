@@ -1,0 +1,51 @@
+---
+import { UPCOMING_EVENTS } from "@/data/events-board";
+import { CONTACTS } from "@/data/contacts";
+import { withBase } from "@/lib/url";
+
+const hasEvents = UPCOMING_EVENTS.length > 0;
+const formatDate = (iso: string) =>
+  new Date(iso + "T00:00:00").toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
+---
+
+<!-- Плашка «События/Афиша» — по прямому запросу клиента, тёмно-зелёным цветом.
+     Данные — src/data/events-board.ts, добавляются клиентом/менеджером по мере
+     появления реальных афиш; пустой массив ⇒ честный empty-state, а не выдуманные события. -->
+<section class="bg-[var(--color-forest)] py-16 md:py-24">
+  <div class="mx-auto max-w-6xl px-5 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Афиша</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold text-paper-raised md:text-3xl" data-reveal>
+      События и мероприятия дома
+    </h2>
+
+    {hasEvents ? (
+      <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {UPCOMING_EVENTS.map((ev) => (
+          <article class="plaque flex flex-col bg-[var(--color-forest-deep)] p-6" data-reveal>
+            {ev.image && (
+              <img src={withBase(ev.image)} alt={ev.title} loading="lazy" class="mb-4 aspect-[4/3] w-full object-cover" />
+            )}
+            <p class="font-mono text-xs uppercase tracking-wide text-[var(--color-gold)]">{formatDate(ev.date)}</p>
+            <h3 class="mt-2 font-display text-lg font-semibold text-paper-raised">{ev.title}</h3>
+            {ev.description && <p class="mt-2 text-sm text-paper-sunk/80">{ev.description}</p>}
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="frame-gold mt-10 max-w-xl bg-transparent p-8" data-reveal>
+        <p class="text-paper-raised">
+          Ближайшие события скоро появятся здесь. Актуальную афишу пока можно уточнить по телефону
+          или в WhatsApp.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href={CONTACTS.phoneTableHref} class="font-mono text-sm text-[var(--color-gold)] underline underline-offset-4">
+            {CONTACTS.phoneTable}
+          </a>
+          <a href={CONTACTS.whatsapp} target="_blank" rel="noopener" class="font-mono text-sm text-[var(--color-gold)] underline underline-offset-4">
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+</section>

@@ -1,59 +1,72 @@
-// Реальные данные залов — единственный источник: раздел «Аренда залов»
-// lesnaya-zaimka-vl.ru (числа сверены, расхождений с другими страницами сайта-источника нет).
-// ДОПУЩЕНИЕ, нужно проверить: фото ниже — реальные фото ресторана из архива сайта,
-// но привязка конкретного кадра к конкретному залу НЕ подтверждена (в архиве нет
-// подписей «это именно Бордовый зал» и т.п.) — при передаче клиенту сверить визуально.
+// Реальные данные залов — числа сверены с разделом «Аренда залов»
+// lesnaya-zaimka-vl.ru. Фото — реальные кадры, присланные клиентом напрямую
+// (Yandex Disk, папки названы по залам: «Банкетный зал», «Бордовый зал»,
+// «Изумрудный зал», «Основной зал», «Терраса», «Фиолетовый зал») — привязка
+// кадра к залу теперь ПОДТВЕРЖДЕНА клиентом, прежнее допущение снято.
+// Имена залов приведены в точности как в присланных папках («Основной зал»,
+// «Терраса» — раньше на сайте было «Большой зал»/«Летняя терраса», выровнено).
 export type Hall = {
   name: string;
+  slug: string;
   description: string;
   capacity: string;
   area?: string;
-  image: string;
+  photoCount: number;
 };
 
 export const HALLS: Hall[] = [
   {
-    name: "Большой зал",
-    description: "Основной зал, 1-й этаж, сцена, танцпол, проектор.",
+    name: "Основной зал",
+    slug: "osnovnoy",
+    description: "1-й этаж, сцена, танцпол, проектор.",
     capacity: "200–250 чел",
     area: "400 м²",
-    image: "/img/gallery/holidays/thumb/1.webp",
+    photoCount: 6,
   },
   {
-    name: "Летняя терраса",
+    name: "Терраса",
+    slug: "terrasa",
     description: "Открытая терраса в два этажа — для больших торжеств и мероприятий на свежем воздухе.",
     capacity: "до 500 чел",
-    image: "/img/gallery/holidays/thumb/2.webp",
+    photoCount: 6,
   },
   {
     name: "Фиолетовый зал",
+    slug: "fioletovy",
     description: "Нижний этаж, отдельный выход на улицу, проектор.",
     capacity: "80–100 чел",
     area: "180 м²",
-    image: "/img/gallery/corporate/thumb/1.webp",
+    photoCount: 6,
   },
   {
     name: "Бордовый зал",
+    slug: "bordovy",
     description: "3-й этаж, ЖК-экран — для торжеств камернее.",
     capacity: "до 40 чел",
     area: "70 м²",
-    image: "/img/gallery/wedding/thumb/1.webp",
+    photoCount: 6,
   },
   {
     name: "Изумрудный зал",
+    slug: "izumrudny",
     description: "2-й этаж, ЖК-экран.",
     capacity: "до 35 чел",
     area: "70 м²",
-    image: "/img/gallery/corporate/thumb/2.webp",
+    photoCount: 6,
   },
   {
     name: "Банкетный зал",
+    slug: "banketny",
     description: "2-й этаж, ЖК-экран — самый камерный из шести.",
     capacity: "до 30 чел",
     area: "60 м²",
-    image: "/img/gallery/wedding/thumb/2.webp",
+    photoCount: 6,
   },
 ];
+
+export function hallPhotos(hall: Hall): string[] {
+  return Array.from({ length: hall.photoCount }, (_, i) => `/img/halls/${hall.slug}/${i + 1}.webp`);
+}
 
 export const EVENT_FORMATS = [
   "Организация банкетов и фуршетов",
