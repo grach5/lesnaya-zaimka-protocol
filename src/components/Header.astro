@@ -110,12 +110,37 @@ function resolveHref(href: string, external?: boolean) {
       </svg>
     </button>
   </div>
+</header>
 
-  <nav
+<!-- Вынесены за пределы <header>: у него position:sticky, а sticky-предок
+     создаёт containing block для position:fixed потомков — драйвер вместо
+     экрана позиционировался бы относительно 64px-полосы шапки. -->
+<div
+  id="mobile-nav-overlay"
+  class="fixed inset-0 z-40 hidden bg-ink/60 backdrop-blur-sm lg:hidden"
+></div>
+
+<nav
     id="mobile-nav"
-    class="hidden max-h-[calc(100svh-60px)] flex-col gap-1 overflow-y-auto border-t border-line bg-paper-raised px-5 py-4 lg:hidden"
+    class="fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-[340px] -translate-x-full flex-col gap-1 overflow-y-auto bg-paper-raised px-5 py-4 shadow-2xl transition-transform duration-300 ease-out lg:hidden"
     aria-label="Мобильная навигация"
   >
+    <div class="flex items-center justify-between border-b border-line pb-3">
+      <a href={withBase("/")} class="flex items-center gap-2">
+        <img src={withBase("/img/brand/logo.png")} alt="Лесная Заимка" class="h-9 w-auto" />
+      </a>
+      <button
+        id="mobile-nav-close"
+        type="button"
+        aria-label="Закрыть меню"
+        class="flex h-9 w-9 items-center justify-center border border-line text-ink-soft"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+
     <a href={withBase("/")} class="py-2.5 font-mono text-sm font-semibold text-ink">Главная</a>
 
     {NAV_GROUPS.map((group) => (
@@ -155,17 +180,35 @@ function resolveHref(href: string, external?: boolean) {
       <a href={eventsFormHref} class="border border-ink px-4 py-3 text-center font-mono text-[13px] text-ink">Заявка на мероприятие</a>
       <a href={contactsHref} class="plaque bg-[var(--color-burgundy)] px-4 py-3 text-center font-mono text-[13px] text-paper-raised">Бронь стола</a>
     </div>
-  </nav>
-</header>
+</nav>
 
 <script>
+  // Мобильное меню — выезжающая слева панель (off-canvas), как у burnyrest.ru:
+  // фиксированная панель translate-x на весь экран по высоте + затемнение фона,
+  // а не выпадающий блок под шапкой.
   const burger = document.getElementById("nav-burger");
   const mobileNav = document.getElementById("mobile-nav");
+  const mobileNavClose = document.getElementById("mobile-nav-close");
+  const mobileNavOverlay = document.getElementById("mobile-nav-overlay");
+
+  function openMobileNav() {
+    mobileNav?.classList.remove("-translate-x-full");
+    mobileNavOverlay?.classList.remove("hidden");
+    burger?.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+  function closeMobileNav() {
+    mobileNav?.classList.add("-translate-x-full");
+    mobileNavOverlay?.classList.add("hidden");
+    burger?.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
   burger?.addEventListener("click", () => {
-    const isOpen = mobileNav?.classList.toggle("flex");
-    mobileNav?.classList.toggle("hidden");
-    burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    const isOpen = burger.getAttribute("aria-expanded") === "true";
+    isOpen ? closeMobileNav() : openMobileNav();
   });
+  mobileNavClose?.addEventListener("click", closeMobileNav);
+  mobileNavOverlay?.addEventListener("click", closeMobileNav);
 
   // Мобильные группы — аккордеон (клик разворачивает, остальные не трогает,
   // можно открыть несколько сразу — это ожидаемое поведение accordion-меню).
@@ -213,6 +256,9 @@ function resolveHref(href: string, external?: boolean) {
   });
   document.addEventListener("click", () => closeAll());
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAll();
+    if (e.key === "Escape") {
+      closeAll();
+      closeMobileNav();
+    }
   });
 </script>
