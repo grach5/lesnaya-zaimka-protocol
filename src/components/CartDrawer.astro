@@ -31,8 +31,9 @@ import { CONTACTS } from "@/data/contacts";
     <div class="border-t border-line px-5 py-4">
       <p class="font-mono text-xs uppercase tracking-wide text-ink-faint">Формат</p>
       <div class="mt-2 flex gap-2">
-        <button type="button" data-format="hall" class="cart-format-btn flex-1 border border-ink px-3 py-2 font-mono text-[13px]" aria-pressed="true">В зале</button>
-        <button type="button" data-format="takeaway" class="cart-format-btn flex-1 border border-line px-3 py-2 font-mono text-[13px] text-ink-soft" aria-pressed="false">С собой</button>
+        <button type="button" data-format="hall" class="cart-format-btn flex-1 border border-ink px-2 py-2 font-mono text-[12px]" aria-pressed="true">В зале</button>
+        <button type="button" data-format="takeaway" class="cart-format-btn flex-1 border border-line px-2 py-2 font-mono text-[12px] text-ink-soft" aria-pressed="false">С собой</button>
+        <button type="button" data-format="delivery" class="cart-format-btn flex-1 border border-line px-2 py-2 font-mono text-[12px] text-ink-soft" aria-pressed="false">Доставка</button>
       </div>
     </div>
 
@@ -46,7 +47,7 @@ import { CONTACTS } from "@/data/contacts";
         href="#"
         target="_blank"
         rel="noopener"
-        class="mt-4 flex items-center justify-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"
+        class="plaque mt-4 flex items-center justify-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"
       >
         Отправить предзаказ в WhatsApp →
       </a>
@@ -73,39 +74,86 @@ import { CONTACTS } from "@/data/contacts";
   const menuLink = document.querySelector<HTMLAnchorElement>("[data-cart-menu-link]");
   if (menuLink) menuLink.href = withBase("/menu/");
 
-  let format: "hall" | "takeaway" = "hall";
+  let format: "hall" | "takeaway" | "delivery" = "hall";
+
+  // Найдено реальным аудитом: незакрытый таймер close() мог сработать ПОСЛЕ
+  // быстрого повторного open() и скрыть только что открытую панель, оставив
+  // body.overflow="hidden" навсегда (страница переставала скроллиться).
+  // Единственная переменная под оба таймера + явный clearTimeout перед стартом
+  // нового цикла устраняет гонку.
+  let transitionTimer: number | null = null;
+  let lastFocused: HTMLElement | null = null;
+
+  function setBackgroundInert(on: boolean) {
+    // Модалка была role="dialog" aria-modal="true" без реальной изоляции —
+    // клавиатурный пользователь мог провалиться в контент под панелью.
+    // inert одновременно прячет фон от скринридера и убирает его из порядка
+    // Tab — простой и надёжный аналог ручной focus-trap.
+    document.querySelector("header")?.toggleAttribute("inert", on);
+    document.querySelector("main")?.toggleAttribute("inert", on);
+    document.querySelector("footer")?.toggleAttribute("inert", on);
+  }
 
   function open() {
+    if (transitionTimer) window.clearTimeout(transitionTimer);
+    lastFocused = document.activeElement as HTMLElement | null;
     overlay?.classList.remove("hidden");
     drawer?.classList.remove("hidden");
+    setBackgroundInert(true);
     // setTimeout, а не requestAnimationFrame: нужно только дать браузеру один тик,
     // чтобы снятие display:none (через classList "hidden") успело примениться до
     // снятия transform — иначе transition схлопывается в мгновенный прыжок.
     // rAF для этого не подходит: он привязан к циклу компоновки/отрисовки и не
     // гарантированно срабатывает в фоновой/неактивной вкладке — а именно так вело
     // себя на реальном мобильном тесте (панель оставалась за экраном).
-    window.setTimeout(() => drawer?.classList.remove("translate-x-full"), 10);
+    transitionTimer = window.setTimeout(() => {
+      drawer?.classList.remove("translate-x-full");
+      closeBtn?.focus();
+    }, 10);
     document.body.style.overflow = "hidden";
   }
 
   function close() {
+    if (transitionTimer) window.clearTimeout(transitionTimer);
     drawer?.classList.add("translate-x-full");
     document.body.style.overflow = "";
-    window.setTimeout(() => {
+    setBackgroundInert(false);
+    transitionTimer = window.setTimeout(() => {
       overlay?.classList.add("hidden");
       drawer?.classList.add("hidden");
     }, 300);
+    lastFocused?.focus();
   }
 
   overlay?.addEventListener("click", close);
   closeBtn?.addEventListener("click", close);
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !drawer?.classList.contains("hidden")) close();
+    if (e.key !== "Escape" || drawer?.classList.contains("hidden")) return;
+    close();
+  });
+  drawer?.addEventListener("keydown", (e) => {
+    // inert на фоне уже не даёт табу выйти за пределы панели, но без хотя бы
+    // одного цикла оборачивания Tab с последнего фокусируемого элемента может
+    // уйти в адресную строку браузера — простой цикл внутри самой панели.
+    if (e.key !== "Tab") return;
+    const focusable = drawer.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   document.querySelectorAll<HTMLButtonElement>(".cart-format-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      format = btn.dataset.format === "takeaway" ? "takeaway" : "hall";
+      format = btn.dataset.format === "takeaway" ? "takeaway" : btn.dataset.format === "delivery" ? "delivery" : "hall";
       document.querySelectorAll<HTMLButtonElement>(".cart-format-btn").forEach((b) => {
         const active = b === btn;
         b.setAttribute("aria-pressed", String(active));
@@ -122,7 +170,7 @@ import { CONTACTS } from "@/data/contacts";
     const total = cartTotal(items);
     if (!submitEl) return;
     const lines = items.map((i) => `${i.qty} × ${i.name} — ${(i.price * i.qty).toLocaleString("ru-RU")} ₽`);
-    const formatLabel = format === "hall" ? "В зале" : "С собой";
+    const formatLabel = format === "hall" ? "В зале" : format === "delivery" ? "Доставка" : "С собой";
     const text = [
       `Здравствуйте! Хочу сделать предзаказ в «${CONTACTS.name}»:`,
       "",
@@ -156,10 +204,10 @@ import { CONTACTS } from "@/data/contacts";
             <p class="truncate text-sm text-ink">${item.name}</p>
             <p class="font-mono text-xs text-ink-faint">${item.price.toLocaleString("ru-RU")} ₽</p>
           </div>
-          <div class="flex shrink-0 items-center gap-2">
-            <button type="button" data-action="dec" class="flex h-7 w-7 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">−</button>
+          <div class="flex shrink-0 items-center gap-1.5">
+            <button type="button" data-action="dec" aria-label="Уменьшить количество: ${item.name}" class="flex h-10 w-10 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">−</button>
             <span class="w-5 text-center font-mono text-sm">${item.qty}</span>
-            <button type="button" data-action="inc" class="flex h-7 w-7 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">+</button>
+            <button type="button" data-action="inc" aria-label="Увеличить количество: ${item.name}" class="flex h-10 w-10 items-center justify-center border border-line text-ink-soft hover:border-ink hover:text-ink">+</button>
           </div>
         `;
         row.querySelector('[data-action="dec"]')?.addEventListener("click", () => setQty(item.name, item.qty - 1));

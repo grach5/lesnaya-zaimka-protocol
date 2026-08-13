@@ -9,7 +9,7 @@ import BookingForm from "@/components/BookingForm";
 <Layout
   title="Мероприятия и банкеты — Лесная Заимка, Владивосток"
   description="6 залов от 30 до 500 гостей: свадьбы, банкеты, корпоративы, фуршеты, кейтеринг и выезд шеф-повара в ресторанном комплексе «Лесная Заимка». Оставьте заявку с датой и числом гостей."
-  image={HALLS[0].image}
+  image="/img/gallery/holidays/full/1.webp"
 >
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
@@ -19,7 +19,6 @@ import BookingForm from "@/components/BookingForm";
       </h1>
       <p class="mt-5 max-w-[62ch] text-ink-soft md:text-lg" data-reveal>
         Свадьбы, банкеты, корпоративные приёмы, кейтеринг и выезд шеф-повара, доставка блюд.
-        Цифры ниже — единственный официальный источник: раздел аренды залов сайта-источника.
       </p>
       <div class="mt-6 flex flex-wrap gap-2" data-reveal>
         {EVENT_FORMATS.map((f) => (
@@ -34,7 +33,7 @@ import BookingForm from "@/components/BookingForm";
       {HALLS.map((hall) => (
         <article class="flex flex-col bg-paper-raised" data-reveal>
           <div class="aspect-[4/3] overflow-hidden bg-paper-sunk">
-            <img src={withBase(hall.image)} alt={hall.name} loading="lazy" class="h-full w-full object-cover" />
+            <img src={withBase(hall.image)} alt="Интерьер ресторанного комплекса «Лесная Заимка»" loading="lazy" class="h-full w-full object-cover" />
           </div>
           <div class="flex flex-1 flex-col p-6">
             <h2 class="font-display text-lg font-semibold text-ink">{hall.name}</h2>
@@ -69,7 +68,7 @@ import BookingForm from "@/components/BookingForm";
           <div class="mt-8 border-t border-line pt-6">
             <p class="font-mono text-xs uppercase tracking-wide text-ink-faint">Банкетный отдел</p>
             <a href={CONTACTS.phoneEventsHref} class="mt-2 block font-display text-xl text-ink">{CONTACTS.phoneEvents}</a>
-            <a href={CONTACTS.whatsapp} target="_blank" rel="noopener" class="mt-1 block font-mono text-sm text-brass">Написать в WhatsApp</a>
+            <p class="mt-1 text-xs text-ink-faint">Или заполните форму — заявка уйдёт в WhatsApp с пометкой «мероприятие»</p>
           </div>
         </div>
 

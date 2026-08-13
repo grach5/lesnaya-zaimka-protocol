@@ -16,7 +16,7 @@ function tagFor(entry: HistoryEntry): string {
 }
 ---
 
-<div class="relative -mx-5 md:-mx-8">
+<div class="relative">
   <div class="border-y-2 border-[var(--color-gold)]/40 bg-[var(--color-velvet-deep)]/80 py-10 backdrop-blur-md md:py-14">
     <div class="mb-6 flex items-center justify-between px-5 md:px-8">
       <h2 class="font-mono text-xs tracking-[0.16em] text-[var(--color-gold)] uppercase">✦ Моменты истории</h2>
@@ -58,10 +58,16 @@ function tagFor(entry: HistoryEntry): string {
   const prev = document.getElementById("hc-prev");
   const next = document.getElementById("hc-next");
   if (track && prev && next) {
+    // Абсолютный scrollTo от текущей позиции, а не относительный scrollBy:
+    // при быстрых повторных кликах несколько smooth-scrollBy гасили друг друга
+    // (каждый вызов считался от позиции ДО начала предыдущей анимации) — карусель
+    // переставала двигаться. scrollTo с целью, посчитанной от scrollLeft на
+    // момент клика, устойчив к повторным нажатиям.
     const scrollByCard = (dir: 1 | -1) => {
       const card = track.querySelector("article");
       const step = card ? card.getBoundingClientRect().width + 20 : 320;
-      track.scrollBy({ left: dir * step, behavior: "smooth" });
+      const current = Math.round(track.scrollLeft / step);
+      track.scrollTo({ left: (current + dir) * step, behavior: "smooth" });
     };
     prev.addEventListener("click", () => scrollByCard(-1));
     next.addEventListener("click", () => scrollByCard(1));

@@ -6,6 +6,7 @@ import { withBase } from "@/lib/url";
 <Layout
   title="Страница не найдена — Лесная Заимка"
   description="Такой страницы нет. Вернитесь на главную «Лесной Заимки» или откройте меню, мероприятия и контакты."
+  noindex
 >
   <section class="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-start justify-center px-5 py-24 md:px-8">
     <p class="font-mono text-xs uppercase tracking-wide text-brass">Ошибка 404</p>
@@ -14,7 +15,7 @@ import { withBase } from "@/lib/url";
       Ссылка устарела или введена с ошибкой. Ниже — разделы, которые точно существуют.
     </p>
     <div class="mt-8 flex flex-wrap gap-3">
-      <a href={withBase("/")} class="bg-ink px-5 py-3 font-mono text-[13px] text-paper-raised hover:bg-brass">На главную</a>
+      <a href={withBase("/")} class="plaque bg-ink px-5 py-3 font-mono text-[13px] text-paper-raised hover:bg-brass">На главную</a>
       <a href={withBase("/menu/")} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">Меню</a>
       <a href={withBase("/events/")} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">Мероприятия</a>
       <a href={withBase("/contacts/")} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">Контакты</a>

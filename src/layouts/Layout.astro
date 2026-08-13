@@ -4,6 +4,7 @@ import Footer from "@/components/Footer.astro";
 import TimberBackdrop from "@/components/TimberBackdrop.astro";
 import CartDrawer from "@/components/CartDrawer.astro";
 import { CONTACTS } from "@/data/contacts";
+import { ZAIMKA_MENU } from "@/data/menu";
 import { withBase } from "@/lib/url";
 import "@/styles/global.css";
 
@@ -12,9 +13,16 @@ interface Props {
   description: string;
   /** Путь до превью-картинки (без домена, с withBase уже проведён снаружи не нужно — Layout сам достроит абсолютный URL). */
   image?: string;
+  /** Для страниц, которые не должны индексироваться (404 и т.п.) */
+  noindex?: boolean;
 }
 
-const { title, description, image = "/img/hero-index.webp" } = Astro.props;
+const { title, description, image = "/img/hero-index.webp", noindex = false } = Astro.props;
+
+// Реальный диапазон цен из данных меню — для priceRange в JSON-LD, не выдумано.
+const allPrices = ZAIMKA_MENU.categories.flatMap((c) => c.items.map((i) => i.price));
+const minPrice = Math.min(...allPrices);
+const maxPrice = Math.max(...allPrices);
 // Astro.site не задан (нужно проверить: домен продакшена ещё не определён — см. Фазу 7,
 // «что проверить перед публикацией»), поэтому canonical/og:image рендерим только когда он есть —
 // у соцсетей и мессенджеров превью всё равно требует абсолютный URL, относительный не сработает.
@@ -23,13 +31,14 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" prefix="og: http://ogp.me/ns# restaurant: http://ogp.me/ns/restaurant#">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
     {canonicalURL && <link rel="canonical" href={canonicalURL} />}
     <!-- Шрифты самохостятся через fontsource в global.css — сторонний Google Fonts
          запрос больше не нужен (см. комментарий в global.css). -->
@@ -47,6 +56,10 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
       "@context": "https://schema.org",
       "@type": "Restaurant",
       name: CONTACTS.name,
+      ...(Astro.site ? { url: new URL(withBase("/"), Astro.site).toString() } : {}),
+      ...(Astro.site ? { image: new URL(withBase("/img/hero-index.webp"), Astro.site).toString() } : {}),
+      ...(Astro.site ? { menu: new URL(withBase("/menu/"), Astro.site).toString() } : {}),
+      priceRange: `${minPrice}–${maxPrice} ₽`,
       servesCuisine: ["Русская", "Охотничья", "Дальневосточная", "Кавказская"],
       address: {
         "@type": "PostalAddress",

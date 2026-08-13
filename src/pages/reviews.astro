@@ -1,0 +1,74 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { REVIEWS } from "@/data/reviews";
+import { GUEST_QUOTES } from "@/data/history";
+
+// Отдельная страница отзывов — на оригинальном сайте (lesnaya-zaimka-vl.ru/ru/reviews/)
+// это полноценный раздел с ~10 реальными отзывами; у нас раньше были только 2 цитаты
+// на /history/. Тексты ниже — реальные отзывы с источника (src/data/reviews.ts),
+// без единого выдуманного слова.
+---
+
+<Layout
+  title="Отзывы — Лесная Заимка, Владивосток"
+  description="Реальные отзывы гостей ресторанного комплекса «Лесная Заимка»: обслуживание, кухня, организация банкетов и свадеб."
+>
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Отзывы</p>
+      <h1 class="mt-4 max-w-[24ch] font-display text-3xl font-semibold leading-[1.02] text-ink md:text-5xl" data-reveal>
+        О доме говорят гости
+      </h1>
+      <p class="mt-5 max-w-[62ch] text-ink-soft md:text-lg" data-reveal>
+        Не редакционные тексты — то, что гости пишут после банкетов, свадеб и обычных ужинов.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {REVIEWS.map((r) => (
+        <blockquote class="plaque flex flex-col justify-between bg-paper-raised p-7" data-reveal>
+          <p class="text-ink">«{r.text}»</p>
+          <footer class="mt-5 border-t border-line pt-4 font-mono text-xs text-ink-faint">
+            <span class="block font-body text-sm text-ink">{r.author}</span>
+          </footer>
+        </blockquote>
+      ))}
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-[var(--color-velvet-deep)] py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-5 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>Почётные гости</p>
+      <div class="mt-8 grid gap-6 md:grid-cols-2">
+        {GUEST_QUOTES.map((q) => (
+          <blockquote class="frame-gold bg-transparent p-7" data-reveal>
+            <p class="text-paper-raised">«{q.text}»</p>
+            <footer class="mt-4 font-mono text-xs text-paper-sunk/70">
+              <span class="block font-body text-sm not-italic text-[var(--color-gold)]">{q.author}</span>
+              {q.role}
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-16 text-center md:px-8 md:py-20">
+    <p class="text-ink-soft">Были у нас и хотите поделиться впечатлением?</p>
+    <a
+      href="https://wa.me/74232931133"
+      target="_blank"
+      rel="noopener"
+      class="plaque mt-5 inline-flex items-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"
+    >
+      Написать в WhatsApp →
+    </a>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

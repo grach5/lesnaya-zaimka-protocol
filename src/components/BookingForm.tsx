@@ -38,7 +38,12 @@ export default function BookingForm() {
     if (!guests || guests < 1) nextErrors.guests = "Укажите число гостей";
 
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) {
+      const fieldOrder = ["name", "phone", "date", "guests"] as const;
+      const firstInvalid = fieldOrder.find((f) => nextErrors[f]);
+      if (firstInvalid) e.currentTarget.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+      return;
+    }
 
     const lines = [
       `Здравствуйте! Хочу оставить заявку на мероприятие в «${CONTACTS.name}»:`,
@@ -85,7 +90,7 @@ export default function BookingForm() {
         <select
           id="ev-type"
           name="type"
-          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
+          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {EVENT_TYPES.map((t) => (
             <option key={t} value={t}>{t}</option>
@@ -98,7 +103,7 @@ export default function BookingForm() {
         <select
           id="ev-hall"
           name="hall"
-          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-brass"
+          className="h-11 border border-line bg-paper px-3 text-sm text-ink outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <option value="">Подскажите вы</option>
           {HALLS.map((h) => (
@@ -125,7 +130,7 @@ export default function BookingForm() {
       </div>
 
       <div className="md:col-span-2">
-        <Button type="submit" className="h-11 w-full md:w-auto">Отправить заявку в WhatsApp</Button>
+        <Button type="submit" className="plaque h-11 w-full md:w-auto">Отправить заявку в WhatsApp</Button>
       </div>
     </form>
   );

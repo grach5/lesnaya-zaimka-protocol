@@ -24,7 +24,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
 
   <section class="mx-auto max-w-6xl px-5 py-10 md:px-8">
     <nav id="gallery-tabs" class="flex flex-wrap gap-2" aria-label="Фильтр галереи">
-      <button type="button" class="gallery-tab border border-line px-3 py-1.5 font-mono text-xs text-ink-soft" data-section="all" aria-pressed="true">
+      <button type="button" class="gallery-tab border border-ink bg-ink px-3 py-1.5 font-mono text-xs text-paper-raised" data-section="all" aria-pressed="true">
         Все фото
       </button>
       {ZAIMKA_GALLERY.sections.map((s) => (
@@ -35,19 +35,33 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     </nav>
 
     <div id="gallery-grid" class="mt-8 grid grid-cols-2 gap-2 pb-20 sm:grid-cols-3 md:grid-cols-4">
-      {ZAIMKA_GALLERY.sections.flatMap((s) =>
-        s.images.map((img) => (
-          <button
-            type="button"
-            class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
-            data-section={s.name}
-            data-full={withBase(img.full)}
-            aria-label={`Открыть фото: ${s.name}`}
-          >
-            <img src={withBase(img.thumb)} alt={`${s.name} — Лесная Заимка`} loading="lazy" width="400" height="400" class="h-full w-full object-cover" />
-          </button>
-        ))
-      )}
+      {(() => {
+        let globalIndex = 0;
+        return ZAIMKA_GALLERY.sections.flatMap((s) =>
+          s.images.map((img, i) => {
+            const isAboveFold = globalIndex < 8;
+            globalIndex += 1;
+            return (
+              <button
+                type="button"
+                class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
+                data-section={s.name}
+                data-full={withBase(img.full)}
+                aria-label={`Открыть фото: ${s.name}, ${i + 1} из ${s.images.length}`}
+              >
+                <img
+                  src={withBase(img.thumb)}
+                  alt={`${s.name} — Лесная Заимка, фото ${i + 1} из ${s.images.length}`}
+                  loading={isAboveFold ? "eager" : "lazy"}
+                  width="400"
+                  height="400"
+                  class="h-full w-full object-cover"
+                />
+              </button>
+            );
+          })
+        );
+      })()}
     </div>
   </section>
 
@@ -88,10 +102,12 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
       if (!btn) return;
       tabsEl.querySelectorAll(".gallery-tab").forEach((t) => {
         t.setAttribute("aria-pressed", "false");
-        t.classList.remove("bg-ink", "text-paper-raised");
+        t.classList.remove("bg-ink", "text-paper-raised", "border-ink");
+        t.classList.add("border-line", "text-ink-soft");
       });
       btn.setAttribute("aria-pressed", "true");
-      btn.classList.add("bg-ink", "text-paper-raised");
+      btn.classList.add("bg-ink", "text-paper-raised", "border-ink");
+      btn.classList.remove("border-line", "text-ink-soft");
       applyFilter(btn.dataset.section ?? "all");
     });
 
@@ -99,7 +115,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
       currentIndex = idx;
       lastFocused = triggerEl ?? (document.activeElement as HTMLElement | null);
       lightboxImg.src = visibleThumbs[idx].dataset.full ?? "";
-      lightboxImg.alt = visibleThumbs[idx].dataset.section + " — Лесная Заимка";
+      lightboxImg.alt = `${visibleThumbs[idx].dataset.section} — Лесная Заимка, фото ${idx + 1} из ${visibleThumbs.length}`;
       lightbox.classList.remove("hidden");
       lightbox.classList.add("flex");
       closeBtn.focus();
@@ -112,7 +128,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     function step(delta: number) {
       currentIndex = (currentIndex + delta + visibleThumbs.length) % visibleThumbs.length;
       lightboxImg.src = visibleThumbs[currentIndex].dataset.full ?? "";
-      lightboxImg.alt = visibleThumbs[currentIndex].dataset.section + " — Лесная Заимка";
+      lightboxImg.alt = `${visibleThumbs[currentIndex].dataset.section} — Лесная Заимка, фото ${currentIndex + 1} из ${visibleThumbs.length}`;
     }
 
     allThumbs.forEach((thumb) => {
