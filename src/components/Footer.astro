@@ -9,8 +9,13 @@ function resolveHref(href: string, external?: boolean) {
 ---
 
 <!-- Футер по рукописной схеме клиента: разделы комплекса колонками
-     (Ресторан / Отель / Банкетный комплекс), автомойка и контакты отдельно. -->
-<footer class="border-t-2 border-[var(--color-gold)]/50 bg-[var(--color-velvet-deep)] text-paper-sunk">
+     (Ресторан / Отель / Банкетный комплекс), автомойка и контакты отдельно.
+     relative — обязателен: TimberBackdrop (position:fixed) красится в том же
+     слое стекинга, что и любой ПОЗИЦИОНИРОВАННЫЙ потомок body (см. main
+     с его же relative); без этого статичный (position:static) <footer>
+     красится РАНЬШЕ фикс-фона и оказывается полностью перекрыт им — сам
+     футер и его контент при этом абсолютно рабочие, просто невидимые. -->
+<footer class="relative border-t-2 border-[var(--color-gold)]/50 bg-[var(--color-velvet-deep)] text-paper-sunk">
   <div class="mx-auto max-w-6xl px-5 py-16 md:px-8">
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
       <div class="lg:col-span-1">
