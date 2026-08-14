@@ -18,12 +18,21 @@ const photos = hallPhotos(hall);
   <div class="relative">
     <div id={`hall-track-${index}`} class="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {photos.map((src, i) => (
-        <img
-          src={withBase(src)}
-          alt={`${hall.name} — фото ${i + 1} из ${photos.length}`}
-          loading="lazy"
-          class="aspect-[4/3] w-full shrink-0 snap-start object-cover"
-        />
+        <button
+          type="button"
+          class="hall-photo group relative aspect-[4/3] w-full shrink-0 snap-start overflow-hidden"
+          data-track={index}
+          data-full={withBase(src)}
+          aria-label={`Открыть фото: ${hall.name}, ${i + 1} из ${photos.length}`}
+        >
+          <img
+            src={withBase(src)}
+            alt={`${hall.name} — фото ${i + 1} из ${photos.length}`}
+            loading="lazy"
+            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <span class="pointer-events-none absolute inset-0 bg-ink/0 transition-colors group-hover:bg-ink/10" aria-hidden="true"></span>
+        </button>
       ))}
     </div>
     <button

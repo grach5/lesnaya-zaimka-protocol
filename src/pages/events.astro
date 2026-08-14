@@ -40,7 +40,7 @@ import HallCarousel from "@/components/HallCarousel.astro";
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
     <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Аренда залов</p>
     <h2 class="mt-3 max-w-[30ch] font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>
-      Листайте фото каждого зала
+      Листайте и открывайте фото каждого зала
     </h2>
     <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {HALLS.map((hall, i) => (
@@ -74,6 +74,13 @@ import HallCarousel from "@/components/HallCarousel.astro";
     </div>
   </section>
 
+  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
+    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+    <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
+    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
+  </div>
+
   <script>
     import { initReveal } from "@/lib/motion";
     initReveal();
@@ -88,6 +95,64 @@ import HallCarousel from "@/components/HallCarousel.astro";
         const step = img ? img.getBoundingClientRect().width : 320;
         track.scrollBy({ left: dir * step, behavior: "smooth" });
       });
+    });
+
+    // Лайтбокс для фото залов — тот же паттерн, что и в /gallery/, но группа
+    // prev/next ограничена фотографиями ОДНОГО зала (data-track), а не всех сразу.
+    const lightbox = document.getElementById("lightbox") as HTMLElement;
+    const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const closeBtn = document.getElementById("lightbox-close") as HTMLButtonElement;
+    const prevBtn = document.getElementById("lightbox-prev") as HTMLButtonElement;
+    const nextBtn = document.getElementById("lightbox-next") as HTMLButtonElement;
+
+    const allPhotoBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".hall-photo"));
+    let currentGroup: HTMLButtonElement[] = [];
+    let currentIndex = 0;
+    let lastFocused: HTMLElement | null = null;
+
+    function setImage() {
+      const btn = currentGroup[currentIndex];
+      lightboxImg.src = btn.dataset.full ?? "";
+      lightboxImg.alt = btn.getAttribute("aria-label") ?? "";
+    }
+    function openLightbox(btn: HTMLButtonElement) {
+      currentGroup = allPhotoBtns.filter((b) => b.dataset.track === btn.dataset.track);
+      currentIndex = currentGroup.indexOf(btn);
+      lastFocused = btn;
+      setImage();
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      closeBtn.focus();
+    }
+    function closeLightbox() {
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      lastFocused?.focus();
+    }
+    function step(delta: number) {
+      currentIndex = (currentIndex + delta + currentGroup.length) % currentGroup.length;
+      setImage();
+    }
+
+    allPhotoBtns.forEach((btn) => btn.addEventListener("click", () => openLightbox(btn)));
+    closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", () => step(-1));
+    nextBtn.addEventListener("click", () => step(1));
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (lightbox.classList.contains("hidden")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "Tab") {
+        const focusables = [prevBtn, nextBtn, closeBtn];
+        const idx = focusables.indexOf(document.activeElement as HTMLButtonElement);
+        e.preventDefault();
+        const next = e.shiftKey ? (idx <= 0 ? focusables.length - 1 : idx - 1) : idx === -1 || idx === focusables.length - 1 ? 0 : idx + 1;
+        focusables[next].focus();
+      }
     });
   </script>
 </Layout>
