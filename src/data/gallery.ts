@@ -238,31 +238,30 @@ export const ZAIMKA_GALLERY: GalleryData = {
     {
       "name": "Детский уголок",
       "images": [
-        {
-          "full": "/img/gallery/children/full/1.webp",
-          "thumb": "/img/gallery/children/thumb/1.webp",
-          "source": "https://www.lesnaya-zaimka-vl.ru/upload/iblock/f6e/f6e397fa94f6af7b5c37df7c2ac4f567.jpg"
-        },
-        {
-          "full": "/img/gallery/children/full/2.webp",
-          "thumb": "/img/gallery/children/thumb/2.webp",
-          "source": "https://www.lesnaya-zaimka-vl.ru/upload/iblock/7c9/7c9162bb8505c9b59ad064fd6e933652.png"
-        },
-        {
-          "full": "/img/gallery/children/full/3.webp",
-          "thumb": "/img/gallery/children/thumb/3.webp",
-          "source": "https://www.lesnaya-zaimka-vl.ru/upload/iblock/5de/5de26917428db0a8a6418eb432c78c47.png"
-        },
-        {
-          "full": "/img/gallery/children/full/4.webp",
-          "thumb": "/img/gallery/children/thumb/4.webp",
-          "source": "https://www.lesnaya-zaimka-vl.ru/upload/iblock/f16/f16023e3b6ae4ebed76553ccf87d5e18.jpg"
-        },
-        {
-          "full": "/img/gallery/children/full/5.webp",
-          "thumb": "/img/gallery/children/thumb/5.webp",
-          "source": "https://www.lesnaya-zaimka-vl.ru/upload/iblock/fe7/fe741fea4c1cf268aebb56bf428d23f4.JPG"
-        }
+        { "full": "/img/gallery/children/full/1.webp", "thumb": "/img/gallery/children/thumb/1.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/2.webp", "thumb": "/img/gallery/children/thumb/2.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/3.webp", "thumb": "/img/gallery/children/thumb/3.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/4.webp", "thumb": "/img/gallery/children/thumb/4.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/5.webp", "thumb": "/img/gallery/children/thumb/5.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/6.webp", "thumb": "/img/gallery/children/thumb/6.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/7.webp", "thumb": "/img/gallery/children/thumb/7.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/8.webp", "thumb": "/img/gallery/children/thumb/8.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/9.webp", "thumb": "/img/gallery/children/thumb/9.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/10.webp", "thumb": "/img/gallery/children/thumb/10.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/11.webp", "thumb": "/img/gallery/children/thumb/11.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/12.webp", "thumb": "/img/gallery/children/thumb/12.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/13.webp", "thumb": "/img/gallery/children/thumb/13.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/14.webp", "thumb": "/img/gallery/children/thumb/14.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/15.webp", "thumb": "/img/gallery/children/thumb/15.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/16.webp", "thumb": "/img/gallery/children/thumb/16.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/17.webp", "thumb": "/img/gallery/children/thumb/17.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/18.webp", "thumb": "/img/gallery/children/thumb/18.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/19.webp", "thumb": "/img/gallery/children/thumb/19.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/20.webp", "thumb": "/img/gallery/children/thumb/20.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/21.webp", "thumb": "/img/gallery/children/thumb/21.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/22.webp", "thumb": "/img/gallery/children/thumb/22.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/23.webp", "thumb": "/img/gallery/children/thumb/23.webp", "source": "client (Детская комната)" },
+        { "full": "/img/gallery/children/full/24.webp", "thumb": "/img/gallery/children/thumb/24.webp", "source": "client (Детская комната)" }
       ]
     },
     {
