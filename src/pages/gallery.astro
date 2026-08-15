@@ -68,6 +68,11 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
   <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
     <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
     <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+    <div
+      id="lightbox-spinner"
+      class="pointer-events-none absolute hidden h-8 w-8 animate-spin rounded-full border-2 border-paper-raised/25 border-t-paper-raised"
+      aria-hidden="true"
+    ></div>
     <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
     <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
   </div>
@@ -80,6 +85,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     const gridEl = document.getElementById("gallery-grid") as HTMLElement;
     const lightbox = document.getElementById("lightbox") as HTMLElement;
     const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const lightboxSpinner = document.getElementById("lightbox-spinner") as HTMLElement;
     const closeBtn = document.getElementById("lightbox-close") as HTMLButtonElement;
     const prevBtn = document.getElementById("lightbox-prev") as HTMLButtonElement;
     const nextBtn = document.getElementById("lightbox-next") as HTMLButtonElement;
@@ -111,11 +117,58 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
       applyFilter(btn.dataset.section ?? "all");
     });
 
+    // Полноразмерное фото раньше не было предзагружено: клик открывал модалку,
+    // но <img src> переключался на неполученный файл — на тёмном фоне лайтбокса
+    // это выглядело как «ничего не произошло» (баг «фото не открываются с
+    // первого раза»). Теперь сразу показываем уже загруженную миниатюру
+    // (мгновенно, из кеша) и подменяем на полный размер, когда он догрузится —
+    // плюс спиннер и предзагрузка соседних фото для мгновенного prev/next.
+    const fullImageCache = new Set<string>();
+    function preload(src: string) {
+      if (!src || fullImageCache.has(src)) return;
+      fullImageCache.add(src);
+      const img = new Image();
+      img.src = src;
+    }
+    function preloadNeighbors(idx: number) {
+      const next = visibleThumbs[(idx + 1) % visibleThumbs.length]?.dataset.full;
+      const prev = visibleThumbs[(idx - 1 + visibleThumbs.length) % visibleThumbs.length]?.dataset.full;
+      if (next) preload(next);
+      if (prev) preload(prev);
+    }
+    function showPhoto(idx: number) {
+      const thumb = visibleThumbs[idx];
+      const thumbSrc = thumb.querySelector("img")?.src ?? "";
+      const fullSrc = thumb.dataset.full ?? "";
+      const alt = `${thumb.dataset.section} — Лесная Заимка, фото ${idx + 1} из ${visibleThumbs.length}`;
+      lightboxImg.alt = alt;
+
+      if (fullImageCache.has(fullSrc)) {
+        // Уже гружено (в т.ч. как сосед) — показываем сразу, без мигания плейсхолдером.
+        lightboxImg.src = fullSrc;
+        lightboxSpinner.classList.add("hidden");
+      } else {
+        lightboxImg.src = thumbSrc; // мгновенный плейсхолдер из кеша браузера
+        lightboxSpinner.classList.remove("hidden");
+        const loader = new Image();
+        loader.onload = () => {
+          fullImageCache.add(fullSrc);
+          if (currentIndex === idx) {
+            lightboxImg.src = fullSrc;
+            lightboxSpinner.classList.add("hidden");
+          }
+        };
+        loader.onerror = () => {
+          if (currentIndex === idx) lightboxSpinner.classList.add("hidden");
+        };
+        loader.src = fullSrc;
+      }
+      preloadNeighbors(idx);
+    }
     function openLightbox(idx: number, triggerEl: HTMLElement | null) {
       currentIndex = idx;
       lastFocused = triggerEl ?? (document.activeElement as HTMLElement | null);
-      lightboxImg.src = visibleThumbs[idx].dataset.full ?? "";
-      lightboxImg.alt = `${visibleThumbs[idx].dataset.section} — Лесная Заимка, фото ${idx + 1} из ${visibleThumbs.length}`;
+      showPhoto(idx);
       lightbox.classList.remove("hidden");
       lightbox.classList.add("flex");
       closeBtn.focus();
@@ -127,8 +180,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     }
     function step(delta: number) {
       currentIndex = (currentIndex + delta + visibleThumbs.length) % visibleThumbs.length;
-      lightboxImg.src = visibleThumbs[currentIndex].dataset.full ?? "";
-      lightboxImg.alt = `${visibleThumbs[currentIndex].dataset.section} — Лесная Заимка, фото ${currentIndex + 1} из ${visibleThumbs.length}`;
+      showPhoto(currentIndex);
     }
 
     allThumbs.forEach((thumb) => {

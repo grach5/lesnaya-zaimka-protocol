@@ -77,6 +77,11 @@ import HallCarousel from "@/components/HallCarousel.astro";
   <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
     <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
     <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+    <div
+      id="lightbox-spinner"
+      class="pointer-events-none absolute hidden h-8 w-8 animate-spin rounded-full border-2 border-paper-raised/25 border-t-paper-raised"
+      aria-hidden="true"
+    ></div>
     <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
     <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
   </div>
@@ -101,6 +106,7 @@ import HallCarousel from "@/components/HallCarousel.astro";
     // prev/next ограничена фотографиями ОДНОГО зала (data-track), а не всех сразу.
     const lightbox = document.getElementById("lightbox") as HTMLElement;
     const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const lightboxSpinner = document.getElementById("lightbox-spinner") as HTMLElement;
     const closeBtn = document.getElementById("lightbox-close") as HTMLButtonElement;
     const prevBtn = document.getElementById("lightbox-prev") as HTMLButtonElement;
     const nextBtn = document.getElementById("lightbox-next") as HTMLButtonElement;
@@ -110,10 +116,21 @@ import HallCarousel from "@/components/HallCarousel.astro";
     let currentIndex = 0;
     let lastFocused: HTMLElement | null = null;
 
+    // data-full — тот же файл, что уже показан в карусели, обычно уже в кеше
+    // браузера. Но при быстром скролле карусели фото могло не успеть
+    // догрузиться (loading="lazy") до клика — спиннер даёт честную обратную
+    // связь вместо тишины на тёмном фоне («не открывается с первого раза»).
     function setImage() {
       const btn = currentGroup[currentIndex];
-      lightboxImg.src = btn.dataset.full ?? "";
+      const fullSrc = btn.dataset.full ?? "";
       lightboxImg.alt = btn.getAttribute("aria-label") ?? "";
+      lightboxSpinner.classList.toggle("hidden", lightboxImg.complete && lightboxImg.src === fullSrc);
+      lightboxImg.src = fullSrc;
+      // Предзагрузка соседних фото зала для мгновенного prev/next.
+      [1, -1].forEach((d) => {
+        const n = currentGroup[(currentIndex + d + currentGroup.length) % currentGroup.length];
+        if (n) new Image().src = n.dataset.full ?? "";
+      });
     }
     function openLightbox(btn: HTMLButtonElement) {
       currentGroup = allPhotoBtns.filter((b) => b.dataset.track === btn.dataset.track);
@@ -133,6 +150,9 @@ import HallCarousel from "@/components/HallCarousel.astro";
       currentIndex = (currentIndex + delta + currentGroup.length) % currentGroup.length;
       setImage();
     }
+
+    lightboxImg.addEventListener("load", () => lightboxSpinner.classList.add("hidden"));
+    lightboxImg.addEventListener("error", () => lightboxSpinner.classList.add("hidden"));
 
     allPhotoBtns.forEach((btn) => btn.addEventListener("click", () => openLightbox(btn)));
     closeBtn.addEventListener("click", closeLightbox);
