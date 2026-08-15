@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { HALLS } from "@/data/halls";
 import { CONTACTS } from "@/data/contacts";
+import { withBase } from "@/lib/url";
 
 // Форма заявки на мероприятие — единственный React-остров на странице /events/
 // (client:load), остальная страница остаётся статичным HTML/CSS без гидратации.
@@ -32,14 +33,17 @@ export default function BookingForm() {
     const hall = String(data.get("hall") ?? "").trim();
     const comment = String(data.get("comment") ?? "").trim();
 
+    const consent = data.get("consent") === "on";
+
     if (!name) nextErrors.name = "Укажите имя";
     if (!phone) nextErrors.phone = "Укажите телефон";
     if (!date) nextErrors.date = "Укажите дату мероприятия";
     if (!guests || guests < 1) nextErrors.guests = "Укажите число гостей";
+    if (!consent) nextErrors.consent = "Нужно согласие на обработку данных";
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      const fieldOrder = ["name", "phone", "date", "guests"] as const;
+      const fieldOrder = ["name", "phone", "date", "guests", "consent"] as const;
       const firstInvalid = fieldOrder.find((f) => nextErrors[f]);
       if (firstInvalid) e.currentTarget.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
       return;
@@ -128,6 +132,24 @@ export default function BookingForm() {
         <Label htmlFor="ev-comment">Комментарий</Label>
         <Textarea id="ev-comment" name="comment" rows={3} placeholder="Формат, пожелания по меню, музыка и т.д." />
       </div>
+
+      <div className="flex items-start gap-2.5 md:col-span-2">
+        <input
+          id="ev-consent"
+          name="consent"
+          type="checkbox"
+          aria-invalid={!!errors.consent}
+          aria-describedby={errors.consent ? "ev-consent-error" : undefined}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-burgundy)]"
+        />
+        <label htmlFor="ev-consent" className="text-xs text-ink-soft">
+          Согласен(на) на обработку персональных данных согласно{" "}
+          <a href={withBase("/privacy/")} target="_blank" rel="noopener" className="text-brass underline underline-offset-2">
+            Политике конфиденциальности
+          </a>
+        </label>
+      </div>
+      {errors.consent && <p id="ev-consent-error" className="md:col-span-2 -mt-3 text-xs text-destructive">{errors.consent}</p>}
 
       <div className="md:col-span-2">
         <Button type="submit" className="plaque h-11 w-full md:w-auto">Отправить заявку в WhatsApp</Button>

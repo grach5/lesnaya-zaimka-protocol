@@ -10,6 +10,7 @@ const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&
 <Layout
   title="Контакты и бронь стола — Лесная Заимка, Владивосток"
   description="Адрес, телефоны и часы работы ресторана «Лесная Заимка» во Владивостоке. Бронирование стола онлайн."
+  image="/img/hero-video-poster.webp"
 >
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
@@ -54,6 +55,14 @@ const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&
         <div class="mt-10 aspect-[4/3] overflow-hidden border border-line">
           <iframe title="Лесная Заимка на карте" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
         </div>
+        <a
+          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+          target="_blank"
+          rel="noopener"
+          class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
+        >
+          Проложить маршрут в Яндекс.Картах →
+        </a>
       </div>
 
       <div data-reveal>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CONTACTS } from "@/data/contacts";
+import { withBase } from "@/lib/url";
 
 // Форма брони стола — раньше была демонстрационным паттерном (только клиентская
 // валидация, никуда ничего не отправлялось — сайт статический, без бэкенда).
@@ -24,16 +25,19 @@ export default function ReserveForm() {
     const phone = String(data.get("phone") ?? "").trim();
     const date = String(data.get("date") ?? "").trim();
     const guests = String(data.get("guests") ?? "").trim();
+    const consent = data.get("consent") === "on";
+
     if (!name) nextErrors.name = "Укажите имя";
     if (!phone) nextErrors.phone = "Укажите телефон";
     if (date && date < new Date().toISOString().slice(0, 10)) nextErrors.date = "Дата уже прошла";
     if (guests && (Number(guests) < 1 || !Number.isFinite(Number(guests)))) nextErrors.guests = "Укажите число гостей";
+    if (!consent) nextErrors.consent = "Нужно согласие на обработку данных";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
       // aria-invalid на инпутах обновится только после ре-рендера React — здесь
       // ищем поле для фокуса по собранным nextErrors напрямую, а не по DOM,
       // иначе фокус попадёт на устаревшее (ещё не отрисованное) состояние.
-      const fieldOrder = ["name", "phone", "date", "guests"] as const;
+      const fieldOrder = ["name", "phone", "date", "guests", "consent"] as const;
       const firstInvalid = fieldOrder.find((f) => nextErrors[f]);
       if (firstInvalid) form.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
       return;
@@ -84,6 +88,24 @@ export default function ReserveForm() {
         <Input id="r-guests" name="guests" type="number" min={1} aria-invalid={!!errors.guests} aria-describedby={errors.guests ? "r-guests-error" : undefined} />
         {errors.guests && <p id="r-guests-error" className="text-xs text-destructive">{errors.guests}</p>}
       </div>
+      <div className="flex items-start gap-2.5 sm:col-span-2">
+        <input
+          id="r-consent"
+          name="consent"
+          type="checkbox"
+          aria-invalid={!!errors.consent}
+          aria-describedby={errors.consent ? "r-consent-error" : undefined}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-burgundy)]"
+        />
+        <label htmlFor="r-consent" className="text-xs text-ink-soft">
+          Согласен(на) на обработку персональных данных согласно{" "}
+          <a href={withBase("/privacy/")} target="_blank" rel="noopener" className="text-brass underline underline-offset-2">
+            Политике конфиденциальности
+          </a>
+        </label>
+      </div>
+      {errors.consent && <p id="r-consent-error" className="sm:col-span-2 -mt-3 text-xs text-destructive">{errors.consent}</p>}
+
       <div className="sm:col-span-2">
         <Button type="submit" className="plaque h-11 w-full sm:w-auto">Отправить заявку в WhatsApp</Button>
       </div>

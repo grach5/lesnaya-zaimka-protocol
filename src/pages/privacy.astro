@@ -1,0 +1,88 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { CONTACTS } from "@/data/contacts";
+
+// Политика конфиденциальности — типовой текст по 152-ФЗ «О персональных данных»,
+// составлен под реальный механизм сайта (формы отправляют данные только в WhatsApp
+// оператора, сайт статический и не хранит и не передаёт данные на сервер/в базу).
+// Это черновик-шаблон: перед публикацией должен проверить юрист клиента —
+// это юридический документ, а не просто текст страницы.
+---
+
+<Layout
+  title="Политика конфиденциальности — Лесная Заимка"
+  description="Политика обработки персональных данных ресторанного комплекса «Лесная Заимка»."
+>
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-16">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Документ</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>
+        Политика обработки персональных данных
+      </h1>
+      <p class="mt-4 text-sm text-ink-faint" data-reveal>Действует с момента публикации на сайте.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-20">
+    <div class="prose-doc flex flex-col gap-8 text-ink-soft">
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">1. Общие положения</h2>
+        <p class="mt-3">
+          Настоящая Политика определяет порядок обработки персональных данных посетителей сайта
+          ресторанного комплекса «{CONTACTS.name}» (далее — «Оператор»), адрес: {CONTACTS.address}.
+          Политика разработана в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ
+          «О персональных данных».
+        </p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">2. Какие данные собираются</h2>
+        <p class="mt-3">
+          При заполнении форм на сайте (бронирование стола, заявка на мероприятие) Оператор
+          получает: имя, номер телефона, дату и число гостей, а также комментарий, если гость его
+          оставил. Иные данные (cookies, аналитика) сайт на момент публикации не собирает.
+        </p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">3. Как обрабатываются данные</h2>
+        <p class="mt-3">
+          Сайт является статическим и не хранит введённые данные на сервере и не передаёт их
+          в базу данных. При отправке формы данные подставляются в готовое сообщение и
+          открываются в WhatsApp на номере Оператора — дальнейшая переписка ведётся напрямую
+          между гостем и сотрудником банкетного отдела или ресепшена в WhatsApp.
+        </p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">4. Цель обработки</h2>
+        <p class="mt-3">
+          Данные используются исключительно для обработки заявки на бронирование стола или
+          проведение мероприятия и обратной связи с гостем по указанному телефону.
+        </p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">5. Права гостя</h2>
+        <p class="mt-3">
+          Гость вправе запросить у Оператора уточнение, блокирование или удаление своих
+          персональных данных, направив обращение по контактам, указанным ниже.
+        </p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">6. Контакты Оператора</h2>
+        <p class="mt-3">
+          {CONTACTS.name}, {CONTACTS.address}<br />
+          Телефон: <a href={CONTACTS.phoneTableHref} class="text-brass">{CONTACTS.phoneTable}</a><br />
+          WhatsApp: <a href={CONTACTS.whatsapp} target="_blank" rel="noopener" class="text-brass">написать</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

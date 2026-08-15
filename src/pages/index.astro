@@ -19,9 +19,8 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
         muted
         loop
         playsinline
-        preload="auto"
+        preload="metadata"
         aria-label="Фильм о «Лесной Заимке»"
-        {...{ fetchpriority: "high" }}
       >
         <source src={withBase("/video/rolik.mp4")} type="video/mp4" />
       </video>
