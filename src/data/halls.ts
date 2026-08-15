@@ -67,8 +67,18 @@ export const HALLS: Hall[] = [
   },
 ];
 
-export function hallPhotos(hall: Hall): string[] {
-  return Array.from({ length: hall.photoCount }, (_, i) => `/img/halls/${hall.slug}/${i + 1}.webp`);
+export type HallPhoto = { thumb: string; full: string };
+
+// thumb (700px) — для карточки карусели; full (1600px) — только для лайтбокса
+// по клику. Раньше карусель грузила сразу 1600px-версию для каждого кадра —
+// с полным набором реальных фото (до 71 на зал) это ощутимо утяжеляло
+// загрузку страницы («долго грузятся фото»). Тот же паттерн thumb/full,
+// что уже используется в общей галерее (src/data/gallery.ts).
+export function hallPhotos(hall: Hall): HallPhoto[] {
+  return Array.from({ length: hall.photoCount }, (_, i) => ({
+    thumb: `/img/halls/${hall.slug}/thumb/${i + 1}.webp`,
+    full: `/img/halls/${hall.slug}/full/${i + 1}.webp`,
+  }));
 }
 
 export const EVENT_FORMATS = [
