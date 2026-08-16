@@ -1,0 +1,63 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { CONTACTS } from "@/data/contacts";
+import { getContent } from "@/lib/i18n";
+
+const locale = "zh" as const;
+const t = getContent(locale);
+---
+
+<Layout title={t.pages.privacy.title} description={t.pages.privacy.description} locale={locale} path="/privacy/">
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-16">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.privacy.docLabel}</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>
+        {t.pages.privacy.h1}
+      </h1>
+      <p class="mt-4 text-sm text-ink-faint" data-reveal>{t.pages.privacy.effective}</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-20">
+    <div class="prose-doc flex flex-col gap-8 text-ink-soft">
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s1h}</h2>
+        <p class="mt-3">{t.pages.privacy.s1b}</p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s2h}</h2>
+        <p class="mt-3">{t.pages.privacy.s2b}</p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s3h}</h2>
+        <p class="mt-3">{t.pages.privacy.s3b}</p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s4h}</h2>
+        <p class="mt-3">{t.pages.privacy.s4b}</p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s5h}</h2>
+        <p class="mt-3">{t.pages.privacy.s5b}</p>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-xl font-semibold text-ink">{t.pages.privacy.s6h}</h2>
+        <p class="mt-3">
+          {CONTACTS.name}, {CONTACTS.address}<br />
+          {t.pages.privacy.phoneLabel} <a href={CONTACTS.phoneTableHref} class="text-brass">{CONTACTS.phoneTable}</a><br />
+          {t.pages.privacy.whatsappLabel} <a href={CONTACTS.whatsapp} target="_blank" rel="noopener" class="text-brass">{t.pages.privacy.whatsappLinkText}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

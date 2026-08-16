@@ -1,31 +1,36 @@
 ---
 import type { HistoryEntry } from "@/data/history";
+import { getContent, type Locale } from "@/lib/i18n";
 
 interface Props {
   entries: HistoryEntry[];
+  locale?: Locale;
 }
-const { entries } = Astro.props;
+const { entries, locale = "ru" } = Astro.props;
+const t = getContent(locale);
 
 // Тег категории — честно по содержанию записи: «экспонат» только там, где
 // это буквально так (бланк меню 1979 года прямо назван хранимым экспонатом
 // в src/data/history.ts), остальное — «запись хроники», без выдумывания
 // несуществующих музейных предметов (в референсе был берестяной туесок —
 // такого подтверждённого артефакта у заведения нет, поэтому не используем).
+// Определение всегда по РУССКОМУ тексту (единый источник фактов src/data/history.ts),
+// даже когда отображается переводная запись — год/признак «экспонат» от языка не зависят.
 function tagFor(entry: HistoryEntry): string {
-  return entry.body.includes("экспонат") ? "документ · экспонат" : "запись хроники";
+  return entry.body.includes("экспонат") ? t.pages.history.tagDocument : t.pages.history.tagChronicle;
 }
 ---
 
 <div class="relative">
   <div class="border-y-2 border-[var(--color-gold)]/40 bg-[var(--color-velvet-deep)]/80 py-10 backdrop-blur-md md:py-14">
     <div class="mb-6 flex items-center justify-between px-5 md:px-8">
-      <h2 class="font-mono text-xs tracking-[0.16em] text-[var(--color-gold)] uppercase">✦ Моменты истории</h2>
+      <h2 class="font-mono text-xs tracking-[0.16em] text-[var(--color-gold)] uppercase">{t.pages.history.carouselTitle}</h2>
       <div class="flex gap-2">
         <button
           type="button"
           id="hc-prev"
           class="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-gold)]/60 text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
-          aria-label="Предыдущий момент"
+          aria-label={t.pages.history.prevAria}
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true"><path d="M7 1L1 7L7 13" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>
@@ -33,7 +38,7 @@ function tagFor(entry: HistoryEntry): string {
           type="button"
           id="hc-next"
           class="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-gold)]/60 text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
-          aria-label="Следующий момент"
+          aria-label={t.pages.history.nextAria}
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true"><path d="M1 1L7 7L1 13" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>

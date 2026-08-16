@@ -3,13 +3,13 @@ import Layout from "@/layouts/Layout.astro";
 import { withBase } from "@/lib/url";
 import EventsBoard from "@/components/EventsBoard.astro";
 import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
+import { getContent } from "@/lib/i18n";
+
+const locale = "zh" as const;
+const t = getContent(locale);
 ---
 
-<Layout
-  title="Лесная Заимка — дом, где принимали два государства. Владивосток"
-  description="Ресторанный комплекс «Лесная Заимка» во Владивостоке — терем 1974 года, в котором принимали Форда, Брежнева и Ким Чен Ира. Русская, охотничья, дальневосточная и кавказская кухня, 6 залов до 500 гостей."
-  path="/"
->
+<Layout title={t.pages.index.title} description={t.pages.index.description} locale={locale} path="/">
   <!-- 1. Протокольная шапка: видео на весь экран (заезд на объект — реальные кадры) -->
   <section class="relative">
     <div class="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink">
@@ -21,7 +21,9 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
         loop
         playsinline
         preload="metadata"
-        aria-label="Фильм о «Лесной Заимке»"
+        aria-label={t.pages.index.filmAriaLabel}
+        data-mute-on-aria={t.pages.index.muteOnAria}
+        data-mute-off-aria={t.pages.index.muteOffAria}
       >
         <source src={withBase("/video/rolik.mp4")} type="video/mp4" />
       </video>
@@ -29,7 +31,7 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
       <button
         id="hero-mute-toggle"
         type="button"
-        aria-label="Включить звук фильма"
+        aria-label={t.pages.index.muteOnAria}
         aria-pressed="false"
         class="absolute bottom-24 right-5 z-10 flex h-11 w-11 items-center justify-center border border-paper-raised/40 bg-ink/40 text-paper-raised backdrop-blur-sm transition-colors hover:border-paper-raised/70 md:bottom-28 md:right-8"
       >
@@ -45,10 +47,6 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
         class="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-overlay"
         style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"
       ></div>
-      <!-- Плотный скрим именно за текстовым блоком: ролик зациклен, и в кадре
-           регулярно оказывается яркая резная мебель — раньше заголовок читался
-           на его фоне плохо. Тёмная зона теперь начинается заметно выше и почти
-           непрозрачна у самого текста, а не только у нижнего края экрана. -->
       <div
         class="pointer-events-none absolute inset-0"
         style="background: linear-gradient(to top, rgba(20,14,10,0.97) 0%, rgba(20,14,10,0.86) 22%, rgba(20,14,10,0.4) 48%, transparent 72%);"
@@ -58,19 +56,17 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
       <div class="absolute inset-x-0 bottom-0 px-5 pb-12 md:px-8 md:pb-16">
         <div class="mx-auto max-w-6xl">
           <p class="font-mono text-xs uppercase tracking-[0.14em] text-paper-raised/75" data-reveal>
-            Владивосток · ул. Маковского, 290 · с 1974 года
+            {t.pages.index.kicker}
           </p>
           <h1
             class="mt-4 max-w-[16ch] font-display font-semibold leading-[0.95] text-paper-raised"
             style="font-size: var(--text-masthead)"
             data-reveal
           >
-            Дом, где принимали два государства
+            {t.pages.index.h1}
           </h1>
           <p class="mt-5 max-w-[56ch] text-base text-paper-raised/90 md:text-lg" data-reveal>
-            Терем 1974 года на въезде во Владивосток. Здесь принимали президента США Джеральда Форда
-            и Леонида Брежнева — а в 2002-м здесь же завтракал глава КНДР Ким Чен Ир. Кухня и традиции
-            приёма — те же, что и тогда.
+            {t.pages.index.lead}
           </p>
         </div>
       </div>
@@ -78,41 +74,38 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
       <div class="absolute right-5 top-5 md:right-8 md:top-8">
         <span class="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-paper-raised/70">
           <span class="h-1.5 w-1.5 rounded-full bg-brass"></span>
-          Съёмка объекта
+          {t.pages.index.shootingBadge}
         </span>
       </div>
     </div>
 
-    <!-- Тонкая золотая нить вместо плотной 2px-плашки — единая линия над всей
-         панелью (не повторённая в каждой ячейке) читается как ювелирная деталь,
-         а не как графический блок. -->
     <div class="relative bg-ink">
       <div class="h-px w-full" style="background: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--color-gold), transparent 15%) 15%, color-mix(in oklch, var(--color-gold), transparent 15%) 85%, transparent 100%);"></div>
       <div class="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-[var(--color-gold)]/15 md:grid-cols-4">
         <div class="px-5 py-4 md:px-8">
           <p class="font-mono text-2xl text-[var(--color-gold)]">1974</p>
-          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">год основания</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">{t.pages.index.statFoundedYear}</p>
         </div>
         <div class="px-5 py-4 md:px-8">
           <p class="font-mono text-2xl text-[var(--color-gold)]">2</p>
-          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">визита глав государств</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">{t.pages.index.statVisits}</p>
         </div>
         <div class="px-5 py-4 md:px-8">
           <p class="font-mono text-2xl text-[var(--color-gold)]">6</p>
-          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">залов, до 500 гостей</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">{t.pages.index.statHalls}</p>
         </div>
         <div class="px-5 py-4 md:px-8">
           <p class="font-mono text-2xl text-[var(--color-gold)]">4</p>
-          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">кухни на одной карте</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-paper-sunk/70">{t.pages.index.statCuisines}</p>
         </div>
       </div>
       <div class="h-px w-full" style="background: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--color-gold), transparent 55%) 15%, color-mix(in oklch, var(--color-gold), transparent 55%) 85%, transparent 100%);"></div>
     </div>
   </section>
 
-  <EventsBoard />
+  <EventsBoard locale={locale} />
 
-  <ReviewsWidgets />
+  <ReviewsWidgets locale={locale} />
 
   <script>
     import { initReveal, motionEnabled } from "@/lib/motion";
@@ -125,12 +118,14 @@ import ReviewsWidgets from "@/components/ReviewsWidgets.astro";
 
     const muteToggle = document.getElementById("hero-mute-toggle");
     const muteSlash = document.getElementById("hero-mute-slash");
+    const onLabel = heroVideo?.dataset.muteOnAria ?? "";
+    const offLabel = heroVideo?.dataset.muteOffAria ?? "";
     muteToggle?.addEventListener("click", () => {
       if (!heroVideo) return;
       heroVideo.muted = !heroVideo.muted;
       const withSound = !heroVideo.muted;
       muteToggle.setAttribute("aria-pressed", String(withSound));
-      muteToggle.setAttribute("aria-label", withSound ? "Выключить звук фильма" : "Включить звук фильма");
+      muteToggle.setAttribute("aria-label", withSound ? offLabel : onLabel);
       muteSlash?.setAttribute("opacity", withSound ? "0" : "1");
     });
   </script>

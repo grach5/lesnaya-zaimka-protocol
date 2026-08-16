@@ -2,35 +2,41 @@
 import Layout from "@/layouts/Layout.astro";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
 import { withBase } from "@/lib/url";
+import { getContent } from "@/lib/i18n";
+
+const locale = "en" as const;
+const t = getContent(locale);
 
 const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.length, 0);
+// Переведённые названия разделов — по индексу, порядок идентичен ZAIMKA_GALLERY.
+const sectionNames = ZAIMKA_GALLERY.sections.map((s, i) => t.data.gallerySections[i] ?? s.name);
 ---
 
 <Layout
-  title="Галерея — Лесная Заимка, Владивосток"
-  description={`Фотогалерея ресторана «Лесная Заимка»: интерьеры, ферма, кухня, праздники, детский уголок, корпоративы, свадьбы. ${totalImages} реальных фотографий.`}
+  title={t.pages.gallery.title}
+  description={t.pages.gallery.description.replace("{n}", String(totalImages))}
   image={ZAIMKA_GALLERY.sections[0].images[0].full}
+  locale={locale}
   path="/gallery/"
 >
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
-      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фотографии дома</p>
-      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{totalImages} кадров из жизни Заимки</h1>
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.gallery.eyebrow}</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{t.pages.gallery.h1.replace("{n}", String(totalImages))}</h1>
       <p class="mt-4 max-w-[62ch] text-ink-soft" data-reveal>
-        Интерьеры, ферма, кухня, праздники, детский уголок, корпоративы и свадьбы — без стоковых
-        вставок, только реальные фотографии ресторана.
+        {t.pages.gallery.lead}
       </p>
     </div>
   </section>
 
   <section class="mx-auto max-w-6xl px-5 py-10 md:px-8">
-    <nav id="gallery-tabs" class="flex flex-wrap gap-2" aria-label="Фильтр галереи">
+    <nav id="gallery-tabs" class="flex flex-wrap gap-2" aria-label="Gallery filter">
       <button type="button" class="gallery-tab border border-ink bg-ink px-3 py-1.5 font-mono text-xs text-paper-raised" data-section="all" aria-pressed="true">
-        Все фото
+        {t.pages.gallery.allPhotos}
       </button>
-      {ZAIMKA_GALLERY.sections.map((s) => (
+      {ZAIMKA_GALLERY.sections.map((s, si) => (
         <button type="button" class="gallery-tab border border-line px-3 py-1.5 font-mono text-xs text-ink-soft" data-section={s.name} aria-pressed="false">
-          {s.name} ({s.images.length})
+          {sectionNames[si]} ({s.images.length})
         </button>
       ))}
     </nav>
@@ -38,7 +44,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     <div id="gallery-grid" class="mt-8 grid grid-cols-2 gap-2 pb-20 sm:grid-cols-3 md:grid-cols-4">
       {(() => {
         let globalIndex = 0;
-        return ZAIMKA_GALLERY.sections.flatMap((s) =>
+        return ZAIMKA_GALLERY.sections.flatMap((s, si) =>
           s.images.map((img, i) => {
             const isAboveFold = globalIndex < 8;
             globalIndex += 1;
@@ -48,11 +54,11 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
                 class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
                 data-section={s.name}
                 data-full={withBase(img.full)}
-                aria-label={`Открыть фото: ${s.name}, ${i + 1} из ${s.images.length}`}
+                aria-label={t.pages.events.hallPhotoAria.replace("{hall}", sectionNames[si]).replace("{i}", String(i + 1)).replace("{n}", String(s.images.length))}
               >
                 <img
                   src={withBase(img.thumb)}
-                  alt={`${s.name} — Лесная Заимка, фото ${i + 1} из ${s.images.length}`}
+                  alt={`${sectionNames[si]} — Lesnaya Zaimka, photo ${i + 1}/${s.images.length}`}
                   loading={isAboveFold ? "eager" : "lazy"}
                   width="400"
                   height="400"
@@ -66,22 +72,19 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
     </div>
   </section>
 
-  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
-    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
-    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.closeAria}>✕</button>
+    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.prevPhotoAria}>‹</button>
     <div
       id="lightbox-spinner"
       class="pointer-events-none absolute hidden h-8 w-8 animate-spin rounded-full border-2 border-paper-raised/25 border-t-paper-raised"
       aria-hidden="true"
     ></div>
     <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
-    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
+    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.nextPhotoAria}>›</button>
   </div>
 
   <script>
-    // Фильтр по разделам + лайтбокс с клавиатурной навигацией и фокус-трапом —
-    // тот же проверенный паттерн, что использовался в предыдущих итерациях сайта
-    // в этой сессии, перенесён без изменений логики (только вёрстка новая).
     const tabsEl = document.getElementById("gallery-tabs") as HTMLElement;
     const gridEl = document.getElementById("gallery-grid") as HTMLElement;
     const lightbox = document.getElementById("lightbox") as HTMLElement;
@@ -118,12 +121,6 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
       applyFilter(btn.dataset.section ?? "all");
     });
 
-    // Полноразмерное фото раньше не было предзагружено: клик открывал модалку,
-    // но <img src> переключался на неполученный файл — на тёмном фоне лайтбокса
-    // это выглядело как «ничего не произошло» (баг «фото не открываются с
-    // первого раза»). Теперь сразу показываем уже загруженную миниатюру
-    // (мгновенно, из кеша) и подменяем на полный размер, когда он догрузится —
-    // плюс спиннер и предзагрузка соседних фото для мгновенного prev/next.
     const fullImageCache = new Set<string>();
     function preload(src: string) {
       if (!src || fullImageCache.has(src)) return;
@@ -141,15 +138,13 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
       const thumb = visibleThumbs[idx];
       const thumbSrc = thumb.querySelector("img")?.src ?? "";
       const fullSrc = thumb.dataset.full ?? "";
-      const alt = `${thumb.dataset.section} — Лесная Заимка, фото ${idx + 1} из ${visibleThumbs.length}`;
-      lightboxImg.alt = alt;
+      lightboxImg.alt = thumb.querySelector("img")?.alt ?? "";
 
       if (fullImageCache.has(fullSrc)) {
-        // Уже гружено (в т.ч. как сосед) — показываем сразу, без мигания плейсхолдером.
         lightboxImg.src = fullSrc;
         lightboxSpinner.classList.add("hidden");
       } else {
-        lightboxImg.src = thumbSrc; // мгновенный плейсхолдер из кеша браузера
+        lightboxImg.src = thumbSrc;
         lightboxSpinner.classList.remove("hidden");
         const loader = new Image();
         loader.onload = () => {

@@ -12,15 +12,23 @@
 // платную подписку без согласия клиента на стоимость — не наше решение.
 // Поставлена честная прямая ссылка на реальный профиль 2ГИС (тоже всегда
 // актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
+import { getContent, type Locale } from "@/lib/i18n";
+
+interface Props {
+  locale?: Locale;
+}
+const { locale = "ru" } = Astro.props;
+const t = getContent(locale);
+
 const YANDEX_ORG_ID = "1081573454";
 const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews";
 ---
 
 <section class="border-t border-line bg-paper-sunk/40 py-16 md:py-24">
   <div class="mx-auto max-w-6xl px-5 md:px-8">
-    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Отзывы гостей</p>
+    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.index.reviewsEyebrow}</p>
     <h2 class="mt-3 max-w-[30ch] font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>
-      Живые отзывы с Яндекс Карт и 2ГИС
+      {t.pages.index.reviewsH2}
     </h2>
 
     <div class="mt-10 grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-start">
@@ -40,12 +48,12 @@ const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews
         class="plaque flex flex-col bg-paper-raised p-8 transition-colors hover:bg-[var(--color-burgundy-soft)]"
         data-reveal
       >
-        <span class="font-mono text-xs uppercase tracking-wide text-brass">2ГИС</span>
-        <p class="mt-3 font-display text-xl font-semibold text-ink">Смотреть отзывы на 2ГИС</p>
+        <span class="font-mono text-xs uppercase tracking-wide text-brass">{t.pages.index.reviewsDgisLabel}</span>
+        <p class="mt-3 font-display text-xl font-semibold text-ink">{t.pages.index.reviewsDgisTitle}</p>
         <p class="mt-3 text-sm text-ink-soft">
-          Реальный профиль заведения — рейтинг и отзывы гостей всегда актуальны на самой площадке.
+          {t.pages.index.reviewsDgisNote}
         </p>
-        <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">Открыть профиль →</span>
+        <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">{t.pages.index.reviewsDgisOpen}</span>
       </a>
     </div>
   </div>

@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getContent, localizedHref } from "@/lib/i18n";
+
+const locale = "ko" as const;
+const t = getContent(locale);
+---
+
+<Layout title={t.pages.notFound.title} description={t.pages.notFound.description} noindex locale={locale} path="/404/">
+  <section class="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-start justify-center px-5 py-24 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-wide text-brass">{t.pages.notFound.errorLabel}</p>
+    <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-5xl">{t.pages.notFound.h1}</h1>
+    <p class="mt-5 max-w-[52ch] text-ink-soft md:text-lg">
+      {t.pages.notFound.lead}
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href={localizedHref("/", locale)} class="plaque bg-ink px-5 py-3 font-mono text-[13px] text-paper-raised hover:bg-brass">{t.pages.notFound.home}</a>
+      <a href={localizedHref("/menu/", locale)} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">{t.pages.notFound.menu}</a>
+      <a href={localizedHref("/events/", locale)} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">{t.pages.notFound.events}</a>
+      <a href={localizedHref("/contacts/", locale)} class="border border-ink px-5 py-3 font-mono text-[13px] text-ink hover:bg-ink hover:text-paper-raised">{t.pages.notFound.contacts}</a>
+    </div>
+  </section>
+</Layout>

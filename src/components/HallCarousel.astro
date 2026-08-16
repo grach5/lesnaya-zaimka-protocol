@@ -1,12 +1,20 @@
 ---
 import { withBase } from "@/lib/url";
 import { hallPhotos, type Hall } from "@/data/halls";
+import { getContent, type Locale } from "@/lib/i18n";
 
 interface Props {
   hall: Hall;
   index: number;
+  locale?: Locale;
+  /** Переведённые поля зала (по умолчанию — русские, из src/data/halls.ts). */
+  name?: string;
+  description?: string;
+  capacity?: string;
+  area?: string;
 }
-const { hall, index } = Astro.props;
+const { hall, index, locale = "ru", name = hall.name, description = hall.description, capacity = hall.capacity, area = hall.area } = Astro.props;
+const t = getContent(locale);
 const photos = hallPhotos(hall);
 ---
 
@@ -23,11 +31,11 @@ const photos = hallPhotos(hall);
           class="hall-photo group relative aspect-[4/3] w-full shrink-0 snap-start overflow-hidden"
           data-track={index}
           data-full={withBase(photo.full)}
-          aria-label={`Открыть фото: ${hall.name}, ${i + 1} из ${photos.length}`}
+          aria-label={t.pages.events.hallPhotoAria.replace("{hall}", name).replace("{i}", String(i + 1)).replace("{n}", String(photos.length))}
         >
           <img
             src={withBase(photo.thumb)}
-            alt={`${hall.name} — фото ${i + 1} из ${photos.length}`}
+            alt={`${name} — ${i + 1}/${photos.length}`}
             loading={i === 0 ? "eager" : "lazy"}
             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -38,7 +46,7 @@ const photos = hallPhotos(hall);
     <button
       type="button"
       class="hall-prev absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-paper-raised/40 bg-ink/50 text-paper-raised backdrop-blur-sm transition-colors hover:bg-ink/80"
-      aria-label={`Предыдущее фото — ${hall.name}`}
+      aria-label={`${t.ui.common.prevPhotoAria} — ${name}`}
       data-target={`hall-track-${index}`}
       data-dir="-1"
     >
@@ -47,25 +55,25 @@ const photos = hallPhotos(hall);
     <button
       type="button"
       class="hall-next absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-paper-raised/40 bg-ink/50 text-paper-raised backdrop-blur-sm transition-colors hover:bg-ink/80"
-      aria-label={`Следующее фото — ${hall.name}`}
+      aria-label={`${t.ui.common.nextPhotoAria} — ${name}`}
       data-target={`hall-track-${index}`}
       data-dir="1"
     >
       <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true"><path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" /></svg>
     </button>
-    <span class="absolute bottom-2 right-2 bg-ink/60 px-2 py-0.5 font-mono text-[11px] text-paper-raised backdrop-blur-sm">{photos.length} фото</span>
+    <span class="absolute bottom-2 right-2 bg-ink/60 px-2 py-0.5 font-mono text-[11px] text-paper-raised backdrop-blur-sm">{photos.length} {t.pages.events.photosCountSuffix}</span>
   </div>
   <div class="flex flex-1 flex-col p-6">
-    <h2 class="font-display text-lg font-semibold text-ink">{hall.name}</h2>
-    <p class="mt-2 flex-1 text-sm text-ink-soft">{hall.description}</p>
+    <h2 class="font-display text-lg font-semibold text-ink">{name}</h2>
+    <p class="mt-2 flex-1 text-sm text-ink-soft">{description}</p>
     <div class="mt-4 flex items-center justify-between border-t border-line pt-4 font-mono text-xs">
-      <span class="text-ink-faint">Вместимость</span>
-      <span class="text-[var(--color-burgundy)]">{hall.capacity}</span>
+      <span class="text-ink-faint">{t.pages.events.capacityLabel}</span>
+      <span class="text-[var(--color-burgundy)]">{capacity}</span>
     </div>
-    {hall.area && (
+    {area && (
       <div class="mt-2 flex items-center justify-between font-mono text-xs">
-        <span class="text-ink-faint">Площадь</span>
-        <span class="text-[var(--color-burgundy)]">{hall.area}</span>
+        <span class="text-ink-faint">{t.pages.events.areaLabel}</span>
+        <span class="text-[var(--color-burgundy)]">{area}</span>
       </div>
     )}
   </div>

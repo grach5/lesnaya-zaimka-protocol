@@ -1,0 +1,70 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HistoryCarousel from "@/components/HistoryCarousel.astro";
+import { HISTORY } from "@/data/history";
+import { getContent } from "@/lib/i18n";
+
+const locale = "zh" as const;
+const t = getContent(locale);
+
+// Переведённые записи хроники — тот же порядок/годы, что и HISTORY (канонический
+// источник), только title/body заменены на перевод по индексу.
+const entries = HISTORY.map((h, i) => ({
+  ...h,
+  title: t.data.history[i]?.title ?? h.title,
+  body: t.data.history[i]?.body ?? h.body,
+}));
+---
+
+<Layout title={t.pages.history.title} description={t.pages.history.description} image="/img/gallery/interiors/full/1.webp" locale={locale} path="/history/">
+  <section class="border-b border-line bg-paper-sunk/40">
+    <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.history.eyebrow}</p>
+      <h1 class="mt-4 max-w-[24ch] font-display text-3xl font-semibold leading-[1.02] text-ink md:text-5xl" data-reveal>
+        {t.pages.history.h1}
+      </h1>
+      <p class="mt-5 max-w-[62ch] text-ink-soft md:text-lg" data-reveal>
+        {t.pages.history.lead}
+      </p>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24">
+    <HistoryCarousel entries={entries} locale={locale} />
+  </section>
+
+  <section class="mx-auto max-w-4xl px-5 pb-16 md:px-8 md:pb-24">
+    <blockquote class="frame-gold max-w-2xl bg-paper-raised p-8" data-reveal>
+      <p class="font-display text-xl italic leading-relaxed text-ink">«{t.data.ownerQuote.text}»</p>
+      <footer class="mt-4 font-mono text-xs text-ink-faint">
+        <span class="block font-body text-sm not-italic text-ink">{t.data.ownerQuote.author}</span>
+        {t.data.ownerQuote.role}
+      </footer>
+    </blockquote>
+  </section>
+
+  <section class="border-t border-line bg-[var(--color-velvet-deep)] py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-5 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>{t.pages.history.honoredEyebrow}</p>
+      <h2 class="mt-3 max-w-[28ch] font-display text-2xl font-semibold text-paper-raised md:text-3xl" data-reveal>
+        {t.pages.history.honoredH2}
+      </h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {t.data.guestQuotes.map((q) => (
+          <blockquote class="frame-gold bg-transparent p-7" data-reveal>
+            <p class="text-paper-raised">«{q.text}»</p>
+            <footer class="mt-4 font-mono text-xs text-paper-sunk/70">
+              <span class="block font-body text-sm not-italic text-[var(--color-gold)]">{q.author}</span>
+              {q.role}
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { initReveal } from "@/lib/motion";
+    initReveal();
+  </script>
+</Layout>

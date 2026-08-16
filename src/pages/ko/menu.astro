@@ -2,21 +2,34 @@
 import Layout from "@/layouts/Layout.astro";
 import { ZAIMKA_MENU } from "@/data/menu";
 import { withBase } from "@/lib/url";
+import { getContent } from "@/lib/i18n";
 
-const categories = ZAIMKA_MENU.categories.map((cat, idx) => ({ ...cat, slug: `cat-${idx}` }));
+const locale = "ko" as const;
+const t = getContent(locale);
 
-// Schema.org Menu — реальные разделы и блюда, без выдуманных описаний/ингредиентов
-// (правило ТЗ: факты только из источника; у нас есть только name+price).
+// Переведённые названия зафиксированы по ИНДЕКСУ категории/блюда — цены и
+// порядок всегда берутся из канонического ZAIMKA_MENU (src/data/menu.ts),
+// перевод меняет только отображаемый текст, не цифры.
+const categories = ZAIMKA_MENU.categories.map((cat, idx) => ({
+  ...cat,
+  slug: `cat-${idx}`,
+  displayName: t.data.menuCategories[idx]?.name ?? cat.name,
+  items: cat.items.map((item, ii) => ({
+    ...item,
+    displayName: t.data.menuCategories[idx]?.items[ii] ?? item.name,
+  })),
+}));
+
 const menuSchema = {
   "@context": "https://schema.org",
   "@type": "Menu",
-  name: "Меню ресторана «Лесная Заимка»",
-  hasMenuSection: ZAIMKA_MENU.categories.map((cat) => ({
+  name: t.pages.menu.title,
+  hasMenuSection: categories.map((cat) => ({
     "@type": "MenuSection",
-    name: cat.name,
+    name: cat.displayName,
     hasMenuItem: cat.items.map((item) => ({
       "@type": "MenuItem",
-      name: item.name,
+      name: item.displayName,
       offers: {
         "@type": "Offer",
         price: item.price,
@@ -27,22 +40,17 @@ const menuSchema = {
 };
 ---
 
-<Layout
-  title="Меню — Лесная Заимка, Владивосток"
-  description="Полное меню ресторана «Лесная Заимка»: холодные закуски, дичь, дальневосточная и кавказская кухня, банкетное и фуршетное меню. 13 разделов, реальные цены."
-  image="/img/gallery/kitchen/full/1.webp"
-  path="/menu/"
->
+<Layout title={t.pages.menu.title} description={t.pages.menu.description} image="/img/gallery/kitchen/full/1.webp" locale={locale} path="/menu/">
   <script type="application/ld+json" is:inline set:html={JSON.stringify(menuSchema)} />
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
-      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Меню ресторана</p>
-      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>Традиции щедрого стола</h1>
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.menu.eyebrow}</p>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{t.pages.menu.h1}</h1>
       <p class="mt-4 max-w-[62ch] text-ink-soft" data-reveal>
-        13 разделов, больше сотни блюд русской, охотничьей, дальневосточной и кавказской кухни.
+        {t.pages.menu.lead}
       </p>
       <p class="mt-3 max-w-[62ch] font-mono text-xs text-ink-faint" data-reveal>
-        Нет времени приехать — соберите предзаказ кнопкой «+» у блюда и выберите «Доставка» в корзине.
+        {t.pages.menu.preorderNote}
       </p>
       <div class="mt-6 flex flex-wrap gap-3" data-reveal>
         <a
@@ -51,7 +59,7 @@ const menuSchema = {
           rel="noopener"
           class="plaque inline-flex items-center gap-2 border border-[var(--color-burgundy)] px-4 py-2.5 font-mono text-[13px] tracking-wide text-[var(--color-burgundy)] transition-colors hover:bg-[var(--color-burgundy)] hover:text-paper-raised"
         >
-          Детское меню (PDF) →
+          {t.pages.menu.kidsMenuBtn}
         </a>
         <a
           href={withBase("/pdf/bar-menu.pdf")}
@@ -59,7 +67,7 @@ const menuSchema = {
           rel="noopener"
           class="plaque inline-flex items-center gap-2 border border-[var(--color-burgundy)] px-4 py-2.5 font-mono text-[13px] tracking-wide text-[var(--color-burgundy)] transition-colors hover:bg-[var(--color-burgundy)] hover:text-paper-raised"
         >
-          Карта бара (PDF) →
+          {t.pages.menu.barMenuBtn}
         </a>
       </div>
     </div>
@@ -67,14 +75,14 @@ const menuSchema = {
 
   <section class="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
     <div class="grid gap-10 lg:grid-cols-[220px_1fr]">
-      <nav class="top-24 flex flex-row flex-wrap gap-x-1 gap-y-1 self-start lg:sticky lg:flex-col lg:gap-0" aria-label="Категории меню">
+      <nav class="top-24 flex flex-row flex-wrap gap-x-1 gap-y-1 self-start lg:sticky lg:flex-col lg:gap-0" aria-label="메뉴 카테고리">
         {categories.map((cat) => (
           <a
             href={`#${cat.slug}`}
             class="menu-cat-link border-b-2 border-transparent px-2 py-2 font-mono text-[13px] text-ink-soft lg:border-b-0 lg:border-l-2 lg:pl-3"
             data-slug={cat.slug}
           >
-            {cat.name}
+            {cat.displayName}
           </a>
         ))}
       </nav>
@@ -82,11 +90,11 @@ const menuSchema = {
       <div>
         {categories.map((cat, idx) => (
           <div id={cat.slug} class="menu-cat scroll-mt-24 pt-6" data-reveal>
-            <h2 class="font-display text-2xl font-semibold text-ink">{cat.name}</h2>
+            <h2 class="font-display text-2xl font-semibold text-ink">{cat.displayName}</h2>
             <div class="mt-5 divide-y divide-dashed divide-line">
               {cat.items.map((item) => (
                 <div class="flex items-center justify-between gap-4 py-3.5">
-                  <span class="text-ink">{item.name}</span>
+                  <span class="text-ink">{item.displayName}</span>
                   <span class="flex shrink-0 items-center gap-3">
                     <span class="font-mono text-sm text-brass">{item.price.toLocaleString("ru-RU")} ₽</span>
                     <button
@@ -94,7 +102,7 @@ const menuSchema = {
                       data-add-item
                       data-name={item.name}
                       data-price={item.price}
-                      aria-label={`Добавить «${item.name}» в предзаказ`}
+                      aria-label={t.pages.menu.addItemAria.replace("{name}", item.displayName)}
                       class="flex h-9 w-9 shrink-0 items-center justify-center border border-line text-ink-soft transition-colors hover:border-ink hover:bg-ink hover:text-paper-raised"
                     >
                       +
@@ -115,6 +123,9 @@ const menuSchema = {
     import { addToCart } from "@/lib/cart";
     initReveal();
 
+    // Корзина/WhatsApp-сообщение (src/lib/cart.ts, CartDrawer.astro) работает
+    // с data-name — оставляем там РЕАЛЬНОЕ русское название блюда (то, что
+    // поймёт кухня/менеджер), а на кнопке гость видит переведённый displayName.
     document.querySelectorAll<HTMLButtonElement>("[data-add-item]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const name = btn.dataset.name;
@@ -131,8 +142,6 @@ const menuSchema = {
       });
     });
 
-    // Подсветка активной категории при скролле — тот же паттерн, что применялся
-    // в предыдущих версиях сайта этого ресторана и уже проверен в этой сессии.
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".menu-cat-link"));
     const sections = Array.from(document.querySelectorAll<HTMLElement>(".menu-cat"));
     if ("IntersectionObserver" in window) {

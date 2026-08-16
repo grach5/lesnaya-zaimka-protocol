@@ -6,6 +6,7 @@ import CartDrawer from "@/components/CartDrawer.astro";
 import { CONTACTS } from "@/data/contacts";
 import { ZAIMKA_MENU } from "@/data/menu";
 import { withBase } from "@/lib/url";
+import { LOCALES, DEFAULT_LOCALE, localizedHref, type Locale } from "@/lib/i18n";
 import "@/styles/global.css";
 
 interface Props {
@@ -15,9 +16,20 @@ interface Props {
   image?: string;
   /** Для страниц, которые не должны индексироваться (404 и т.п.) */
   noindex?: boolean;
+  /** Язык страницы. По умолчанию "ru" — не влияет на существующие RU-страницы. */
+  locale?: Locale;
+  /**
+   * Путь БЕЗ языкового префикса и БЕЗ base, например "/menu/" — нужен только
+   * чтобы построить hreflang-альтернативы на другие языковые версии этой же
+   * страницы. Если не передан, hreflang-блок не рендерится (для страниц без
+   * переводов, напр. /carwash/, /privacy/).
+   */
+  path?: string;
 }
 
-const { title, description, image = "/img/hero-index.webp", noindex = false } = Astro.props;
+const { title, description, image = "/img/hero-index.webp", noindex = false, locale = DEFAULT_LOCALE, path } = Astro.props;
+
+const OG_LOCALE: Record<Locale, string> = { ru: "ru_RU", en: "en_US", zh: "zh_CN", ko: "ko_KR" };
 
 // Реальный диапазон цен из данных меню — для priceRange в JSON-LD, не выдумано.
 const allPrices = ZAIMKA_MENU.categories.flatMap((c) => c.items.map((i) => i.price));
@@ -31,7 +43,7 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
 ---
 
 <!doctype html>
-<html lang="ru" prefix="og: http://ogp.me/ns# restaurant: http://ogp.me/ns/restaurant#">
+<html lang={locale} prefix="og: http://ogp.me/ns# restaurant: http://ogp.me/ns/restaurant#">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,12 +52,15 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+    {path && LOCALES.map((l) => <link rel="alternate" hreflang={l} href={new URL(localizedHref(path, l), Astro.site)} />)}
+    {path && <link rel="alternate" hreflang="x-default" href={new URL(localizedHref(path, DEFAULT_LOCALE), Astro.site)} />}
     <!-- Шрифты самохостятся через fontsource в global.css — сторонний Google Fonts
          запрос больше не нужен (см. комментарий в global.css). -->
     <meta property="og:type" content="restaurant.restaurant" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    {LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
     {canonicalURL && <meta property="og:url" content={canonicalURL} />}
     {ogImageURL && <meta property="og:image" content={ogImageURL} />}
     {ogImageURL && <meta name="twitter:card" content="summary_large_image" />}
@@ -86,17 +101,17 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
   <body class="bg-paper text-ink">
     <TimberBackdrop />
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-paper-raised">
-      Перейти к содержанию
+      {locale === "ru" ? "Перейти к содержанию" : "Skip to content"}
     </a>
-    <Header />
+    <Header locale={locale} path={path} />
     <!-- Полупрозрачная подложка над фото сруба: держит гарантированный
          контраст текста, при этом фактура дерева всё равно просвечивает
          по краям секций и в промежутках между карточками. -->
     <main id="main" class="relative bg-paper/90">
       <slot />
     </main>
-    <Footer />
-    <CartDrawer />
+    <Footer locale={locale} />
+    <CartDrawer locale={locale} />
     <script>
       import { initSmoothScroll } from "@/lib/motion";
       initSmoothScroll();

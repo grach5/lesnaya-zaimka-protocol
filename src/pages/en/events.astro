@@ -1,29 +1,34 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { HALLS, EVENT_FORMATS } from "@/data/halls";
+import { HALLS } from "@/data/halls";
 import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
+import { getContent } from "@/lib/i18n";
+
+const locale = "en" as const;
+const t = getContent(locale);
 ---
 
 <Layout
-  title="Банкетный комплекс — Лесная Заимка, Владивосток"
-  description="6 залов от 30 до 500 гостей: свадьбы, банкеты, корпоративы, фуршеты, кейтеринг и выезд шеф-повара в ресторанном комплексе «Лесная Заимка». Оставьте заявку с датой и числом гостей."
+  title={t.pages.events.title}
+  description={t.pages.events.description}
   image="/img/halls/osnovnoy/full/1.webp"
+  locale={locale}
   path="/events/"
 >
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
-      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Банкетный комплекс</p>
+      <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.events.eyebrow}</p>
       <h1 class="mt-4 max-w-[22ch] font-display text-3xl font-semibold leading-[1.02] text-ink md:text-5xl" data-reveal>
-        Шесть залов — от камерного ужина до приёма на 500 гостей
+        {t.pages.events.h1}
       </h1>
       <p class="mt-5 max-w-[62ch] text-ink-soft md:text-lg" data-reveal>
-        Свадьбы, банкеты, корпоративные приёмы, кейтеринг и выезд шеф-повара, доставка блюд.
+        {t.pages.events.lead}
       </p>
       <div class="mt-6 flex flex-wrap gap-2" data-reveal>
-        {EVENT_FORMATS.map((f) => (
+        {t.data.eventFormats.map((f) => (
           <span class="border border-line bg-paper-raised px-3 py-1.5 font-mono text-xs text-ink-soft">{f}</span>
         ))}
       </div>
@@ -33,19 +38,27 @@ import HallCarousel from "@/components/HallCarousel.astro";
         rel="noopener"
         class="plaque mt-6 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
       >
-        Открыть банкетное меню (PDF) →
+        {t.pages.events.menuPdfBtn}
       </a>
     </div>
   </section>
 
   <section class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Аренда залов</p>
+    <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.events.hallsEyebrow}</p>
     <h2 class="mt-3 max-w-[30ch] font-display text-2xl font-semibold text-ink md:text-3xl" data-reveal>
-      Листайте и открывайте фото каждого зала
+      {t.pages.events.hallsH2}
     </h2>
     <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {HALLS.map((hall, i) => (
-        <HallCarousel hall={hall} index={i} />
+        <HallCarousel
+          hall={hall}
+          index={i}
+          locale={locale}
+          name={t.data.halls[i]?.name}
+          description={t.data.halls[i]?.description}
+          capacity={t.data.halls[i]?.capacity}
+          area={t.data.halls[i]?.area}
+        />
       ))}
     </div>
   </section>
@@ -54,37 +67,37 @@ import HallCarousel from "@/components/HallCarousel.astro";
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
       <div class="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
         <div data-reveal>
-          <p class="font-mono text-xs uppercase tracking-wide text-brass">Заявка на мероприятие</p>
+          <p class="font-mono text-xs uppercase tracking-wide text-brass">{t.pages.events.formEyebrow}</p>
           <h2 class="mt-3 font-display text-2xl font-semibold text-ink md:text-3xl">
-            Расскажите о вашем событии
+            {t.pages.events.formH2}
           </h2>
           <p class="mt-4 max-w-[46ch] text-ink-soft">
-            Укажите дату и число гостей — банкетный отдел подберёт зал и вернётся с расчётом.
+            {t.pages.events.formLead}
           </p>
           <div class="mt-8 border-t border-line pt-6">
-            <p class="font-mono text-xs uppercase tracking-wide text-ink-faint">Банкетный отдел</p>
+            <p class="font-mono text-xs uppercase tracking-wide text-ink-faint">{t.pages.events.deptLabel}</p>
             <a href={CONTACTS.phoneEventsHref} class="mt-2 block font-display text-xl text-ink">{CONTACTS.phoneEvents}</a>
-            <p class="mt-1 text-xs text-ink-faint">Или заполните форму — заявка уйдёт в WhatsApp с пометкой «мероприятие»</p>
+            <p class="mt-1 text-xs text-ink-faint">{t.pages.events.formNote}</p>
           </div>
         </div>
 
         <div data-reveal>
-          <BookingForm client:load />
+          <BookingForm client:load locale={locale} />
         </div>
       </div>
     </div>
   </section>
 
-  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
-    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Закрыть">✕</button>
-    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Предыдущее фото">‹</button>
+  <div id="lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center bg-ink/95 p-6" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button id="lightbox-close" type="button" class="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.closeAria}>✕</button>
+    <button id="lightbox-prev" type="button" class="absolute left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.prevPhotoAria}>‹</button>
     <div
       id="lightbox-spinner"
       class="pointer-events-none absolute hidden h-8 w-8 animate-spin rounded-full border-2 border-paper-raised/25 border-t-paper-raised"
       aria-hidden="true"
     ></div>
     <img id="lightbox-img" src="" alt="" class="max-h-[86vh] max-w-[92vw] object-contain" />
-    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label="Следующее фото">›</button>
+    <button id="lightbox-next" type="button" class="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center border border-paper-raised/30 text-paper-raised" aria-label={t.ui.common.nextPhotoAria}>›</button>
   </div>
 
   <script>
@@ -103,8 +116,6 @@ import HallCarousel from "@/components/HallCarousel.astro";
       });
     });
 
-    // Лайтбокс для фото залов — тот же паттерн, что и в /gallery/, но группа
-    // prev/next ограничена фотографиями ОДНОГО зала (data-track), а не всех сразу.
     const lightbox = document.getElementById("lightbox") as HTMLElement;
     const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
     const lightboxSpinner = document.getElementById("lightbox-spinner") as HTMLElement;
@@ -117,17 +128,12 @@ import HallCarousel from "@/components/HallCarousel.astro";
     let currentIndex = 0;
     let lastFocused: HTMLElement | null = null;
 
-    // data-full — тот же файл, что уже показан в карусели, обычно уже в кеше
-    // браузера. Но при быстром скролле карусели фото могло не успеть
-    // догрузиться (loading="lazy") до клика — спиннер даёт честную обратную
-    // связь вместо тишины на тёмном фоне («не открывается с первого раза»).
     function setImage() {
       const btn = currentGroup[currentIndex];
       const fullSrc = btn.dataset.full ?? "";
       lightboxImg.alt = btn.getAttribute("aria-label") ?? "";
       lightboxSpinner.classList.toggle("hidden", lightboxImg.complete && lightboxImg.src === fullSrc);
       lightboxImg.src = fullSrc;
-      // Предзагрузка соседних фото зала для мгновенного prev/next.
       [1, -1].forEach((d) => {
         const n = currentGroup[(currentIndex + d + currentGroup.length) % currentGroup.length];
         if (n) new Image().src = n.dataset.full ?? "";
