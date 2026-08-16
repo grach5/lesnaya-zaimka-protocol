@@ -95,7 +95,8 @@ if (locale !== "ru") {
   import { getCart, setQty, cartCount, cartTotal, onCartChange, type CartItem } from "@/lib/cart";
   import { CONTACTS } from "@/data/contacts";
   import { withBase } from "@/lib/url";
-  import { getCurrentLocalePath } from "@/lib/currentLocale";
+  import { getCurrentLocalePath, getCurrentLocale } from "@/lib/currentLocale";
+  import { sendToCrm } from "@/lib/crm";
 
   const overlay = document.getElementById("cart-overlay");
   const drawer = document.getElementById("cart-drawer");
@@ -233,6 +234,18 @@ if (locale !== "ru") {
     ].join("\n");
     submitEl.href = `${CONTACTS.whatsapp}?text=${encodeURIComponent(text)}`;
   }
+
+  submitEl?.addEventListener("click", () => {
+    const items = getCart();
+    if (!items.length) return;
+    sendToCrm({
+      source: "cart",
+      items: items.map((i) => ({ name: i.name, price: i.price, qty: i.qty })),
+      total: cartTotal(items),
+      locale: getCurrentLocale(),
+      pageUrl: window.location.href,
+    });
+  });
 
   function render(): void {
     const items = getCart();

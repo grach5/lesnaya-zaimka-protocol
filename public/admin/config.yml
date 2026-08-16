@@ -1,0 +1,70 @@
+# CMS-панель редактирования (Decap CMS) — открывается по адресу /admin/
+# на сайте. Технически всё готово к работе; чтобы панель заработала, нужен
+# ОДИН оставшийся шаг — авторизация через GitHub App (без сервера-посредника,
+# без затрат):
+#
+# 1. GitHub → Settings → Developer settings → GitHub Apps → New GitHub App
+# 2. Homepage URL: https://grach5.github.io/lesnaya-zaimka-protocol/
+#    Callback URL: https://grach5.github.io/lesnaya-zaimka-protocol/admin/
+#    Разрешения (Repository permissions): Contents — Read and write
+# 3. Установите приложение на репозиторий grach5/lesnaya-zaimka-protocol
+# 4. Скопируйте "Client ID" приложения и вставьте ниже вместо app_id
+#
+# После этого на /admin/ можно будет войти через GitHub-аккаунт и редактировать
+# меню и контакты — изменения сохраняются напрямую в этот репозиторий и сайт
+# пересоберётся автоматически (тот же процесс, что при обычном git push).
+
+backend:
+  name: github
+  repo: grach5/lesnaya-zaimka-protocol
+  branch: master
+  auth_type: pkce
+  app_id: "REPLACE_WITH_GITHUB_APP_CLIENT_ID"
+
+site_url: https://grach5.github.io/lesnaya-zaimka-protocol/
+display_url: https://grach5.github.io/lesnaya-zaimka-protocol/
+logo_url: /lesnaya-zaimka-protocol/img/brand/logo.png
+
+media_folder: "public/img/uploads"
+public_folder: "/img/uploads"
+
+locale: "ru"
+
+collections:
+  - name: "menu"
+    label: "Меню ресторана"
+    files:
+      - name: "menu"
+        label: "Меню (все разделы)"
+        file: "src/data/menu.json"
+        fields:
+          - label: "Разделы меню"
+            name: "categories"
+            widget: "list"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Название раздела", name: "name", widget: "string" }
+              - label: "Блюда"
+                name: "items"
+                widget: "list"
+                summary: "{{fields.name}} — {{fields.price}} ₽"
+                fields:
+                  - { label: "Название блюда", name: "name", widget: "string" }
+                  - { label: "Цена, ₽", name: "price", widget: "number", value_type: "int" }
+
+  - name: "contacts"
+    label: "Контакты"
+    files:
+      - name: "contacts"
+        label: "Контакты ресторана"
+        file: "src/data/contacts.json"
+        fields:
+          - { label: "Название", name: "name", widget: "string" }
+          - { label: "Адрес", name: "address", widget: "string" }
+          - { label: "Телефон (бронь стола)", name: "phoneTable", widget: "string", hint: "Формат: +7 (423) 293-11-33 — используется и для WhatsApp-ссылки" }
+          - { label: "Телефон (банкетный отдел)", name: "phoneEvents", widget: "string" }
+          - { label: "Часы работы", name: "hours", widget: "string" }
+          - { label: "Название отеля-партнёра", name: "hotelName", widget: "string" }
+          - { label: "Сайт отеля-партнёра", name: "hotelUrl", widget: "string" }
+          - { label: "Широта (lat)", name: "lat", widget: "number", value_type: "float" }
+          - { label: "Долгота (lon)", name: "lon", widget: "number", value_type: "float" }

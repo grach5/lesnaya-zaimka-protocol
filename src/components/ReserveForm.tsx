@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import { getContent, type Locale } from "@/lib/i18n";
+import { sendToCrm } from "@/lib/crm";
 
 // Форма брони стола — раньше была демонстрационным паттерном (только клиентская
 // валидация, никуда ничего не отправлялось — сайт статический, без бэкенда).
@@ -60,6 +61,7 @@ export default function ReserveForm({ locale = "ru" }: Props) {
       locale !== "ru" && `(Заявка с ${locale.toUpperCase()}-версии сайта)`,
     ].filter(Boolean);
     window.open(`${CONTACTS.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+    sendToCrm({ source: "reserve", name, phone, date, guests, locale, pageUrl: window.location.href });
     setSubmitted(true);
   }
 

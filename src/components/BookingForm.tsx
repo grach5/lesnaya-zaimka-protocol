@@ -7,6 +7,7 @@ import { HALLS } from "@/data/halls";
 import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import { getContent, type Locale } from "@/lib/i18n";
+import { sendToCrm } from "@/lib/crm";
 
 // Форма заявки на мероприятие — единственный React-остров на странице /events/
 // (client:load), остальная страница остаётся статичным HTML/CSS без гидратации.
@@ -75,6 +76,7 @@ export default function BookingForm({ locale = "ru" }: Props) {
       locale !== "ru" && `(Заявка с ${locale.toUpperCase()}-версии сайта)`,
     ].filter(Boolean);
     window.open(`${CONTACTS.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+    sendToCrm({ source: "event", name, phone, date, guests: guestsRaw, eventType: type, hall, comment, locale, pageUrl: window.location.href });
     setSubmitted(true);
   }
 
