@@ -14,6 +14,7 @@
 // актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
 import { getContent, type Locale } from "@/lib/i18n";
 import { CONTACTS } from "@/data/contacts";
+import { staticMapUrl } from "@/lib/map";
 
 interface Props {
   locale?: Locale;
@@ -26,10 +27,10 @@ const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews
 // Карта в пустом месте под карточкой 2ГИС — по прямой правке клиента
 // («добавь на главной внизу справа в пустом месте карту»): у правой колонки
 // была лишняя высота ниже плашки 2ГИС, потому что слева высокий iframe
-// отзывов (560px), а справа — только текстовая карточка. Тот же Яндекс-виджет,
-// что и на /contacts/, тем же провайдером, что уже используется здесь для
-// отзывов и на /contacts/ для маршрута.
-const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS.lat}&z=16&pt=${CONTACTS.lon},${CONTACTS.lat},pm2rdm`;
+// отзывов (560px), а справа — только текстовая карточка.
+// Картинка (см. src/lib/map.ts), а не интерактивный iframe-виджет — тот же
+// урок с «карта не открылась у клиента», см. contacts.astro.
+const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 ---
 
 <section class="border-t border-line bg-paper-sunk/40 py-16 md:py-24">
@@ -65,9 +66,16 @@ const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS
           <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">{t.pages.index.reviewsDgisOpen}</span>
         </a>
 
-        <div class="min-h-[280px] flex-1 overflow-hidden border border-line" data-reveal>
-          <iframe title="Лесная Заимка на карте" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
-        </div>
+        <a
+          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+          target="_blank"
+          rel="noopener"
+          class="block min-h-[280px] flex-1 overflow-hidden border border-line"
+          aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
+          data-reveal
+        >
+          <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
+        </a>
       </div>
     </div>
   </div>

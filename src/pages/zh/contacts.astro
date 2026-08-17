@@ -3,11 +3,12 @@ import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { getContent } from "@/lib/i18n";
+import { staticMapUrl } from "@/lib/map";
 
 const locale = "zh" as const;
 const t = getContent(locale);
 
-const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS.lat}&z=16&pt=${CONTACTS.lon},${CONTACTS.lat},pm2rdm`;
+const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 ---
 
 <Layout
@@ -61,9 +62,15 @@ const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS
           </div>
         </div>
 
-        <div class="mt-10 h-[420px] overflow-hidden border border-line md:h-[520px]">
-          <iframe title="莱斯纳亚·扎伊姆卡地图位置" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
-        </div>
+        <a
+          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+          target="_blank"
+          rel="noopener"
+          class="mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
+          aria-label="在Яндекс地图中查看「莱斯纳亚·扎伊姆卡」的位置"
+        >
+          <img src={mapImgSrc} alt="地图 — 莱斯纳亚·扎伊姆卡，马科夫斯基街290号" class="h-full w-full object-cover" />
+        </a>
         <a
           href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
           target="_blank"
