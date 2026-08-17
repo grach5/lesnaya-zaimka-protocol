@@ -18,10 +18,14 @@ export type SiteContent = {
       barMenuPdf: string;
       interior: string;
       hotelGroup: string;
+      /** Короткая версия — только для кнопки в шапке (там мало места для полного «Гостиница Villa ArtE»). */
+      hotelGroupShort: string;
       bookRoom: string;
       sauna: string;
       hotelServices: string;
       banquetGroup: string;
+      /** Короткая версия — только для кнопки в шапке, см. hotelGroupShort. */
+      banquetGroupShort: string;
       hallRental: string;
       banquetMenuPdf: string;
       eventsCatering: string;

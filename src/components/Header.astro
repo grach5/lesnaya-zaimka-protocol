@@ -24,7 +24,14 @@ function resolveHref(href: string, external?: boolean) {
 
 // Подписи меню переведены по фиксированному порядку пунктов в nav.ts —
 // сама структура/href остаются едиными для всех языков.
-const navGroupLabels = [t.ui.nav.restaurantGroup, t.ui.nav.hotelGroup, t.ui.nav.banquetGroup];
+// Короткие подписи — полные («Гостиница Villa ArtE», «Банкетный комплекс») не
+// помещаются в один ряд шапки на десктопе вместе с остальными пунктами и двумя
+// CTA-кнопками, из-за чего текст переносился и ломал вёрстку. Полные версии
+// остаются в футере (Footer.astro), где места достаточно.
+const navGroupLabels = [t.ui.nav.restaurantGroup, t.ui.nav.hotelGroupShort, t.ui.nav.banquetGroupShort];
+// В мобильном меню строка на всю ширину экрана — короткие подписи там не нужны,
+// показываем полные («Гостиница Villa ArtE», «Банкетный комплекс»).
+const mobileNavGroupLabels = [t.ui.nav.restaurantGroup, t.ui.nav.hotelGroup, t.ui.nav.banquetGroup];
 const navGroupItemLabels = [
   [t.ui.nav.history, t.ui.nav.mainMenu, t.ui.nav.kidsMenuPdf, t.ui.nav.barMenuPdf, t.ui.nav.interior],
   [t.ui.nav.bookRoom, t.ui.nav.sauna, t.ui.nav.hotelServices],
@@ -39,7 +46,7 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
       <button
         id="nav-burger"
         type="button"
-        class="flex h-10 w-10 shrink-0 items-center justify-center border border-line lg:hidden"
+        class="flex h-10 w-10 shrink-0 items-center justify-center border border-line xl:hidden"
         aria-label={t.ui.nav.openMenuAria}
         aria-expanded="false"
         aria-controls="mobile-nav"
@@ -55,12 +62,15 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
       </a>
     </div>
 
-    <nav class="hidden items-center gap-1 lg:flex" aria-label="Основная навигация">
+    {/* Порог xl (1280px), а не lg (1024px): при 3 группах-дропдаунах + 4 одиночных
+       пунктах + переключателе языка + двух CTA-кнопках + корзине десктопный ряд
+       физически не помещается до 1280px — при lg текст переносился и ломал вёрстку. */}
+    <nav class="hidden items-center gap-1 xl:flex" aria-label="Основная навигация">
       {NAV_GROUPS.map((group, gi) => (
         <div class="nav-group relative">
           <button
             type="button"
-            class="nav-group-btn flex items-center gap-1 px-3 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
+            class="nav-group-btn flex items-center gap-1 whitespace-nowrap px-2.5 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
             aria-expanded="false"
           >
             {navGroupLabels[gi]}
@@ -85,14 +95,14 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
       {NAV_SINGLE.map((item, i) => (
         <a
           href={resolveHref(item.href, item.external)}
-          class="px-3 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
+          class="whitespace-nowrap px-2.5 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
         >
           {navSingleLabels[i]}
         </a>
       ))}
     </nav>
 
-    <div class="hidden items-center gap-3 lg:flex">
+    <div class="hidden items-center gap-2.5 xl:flex">
       <div class="nav-group relative">
         <button type="button" class="nav-group-btn flex items-center gap-1 border border-line px-2.5 py-2 font-mono text-[12px] tracking-wide text-ink-soft transition-colors hover:text-ink" aria-expanded="false">
           {LOCALE_LABELS[locale]}
@@ -111,13 +121,13 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
       </div>
       <a
         href={eventsFormHref}
-        class="border border-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
+        class="whitespace-nowrap border border-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
       >
         {t.ui.common.eventRequestBtn}
       </a>
       <a
         href={contactsHref}
-        class="plaque bg-[var(--color-burgundy)] px-4 py-2 font-mono text-[12.5px] tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-[var(--color-gold)] hover:text-ink"
+        class="plaque whitespace-nowrap bg-[var(--color-burgundy)] px-4 py-2 font-mono text-[12.5px] tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-[var(--color-gold)] hover:text-ink"
       >
         {t.ui.common.bookTableBtn}
       </a>
@@ -143,12 +153,12 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
      экрана позиционировался бы относительно 64px-полосы шапки. -->
 <div
   id="mobile-nav-overlay"
-  class="fixed inset-0 z-40 hidden bg-ink/60 backdrop-blur-sm lg:hidden"
+  class="fixed inset-0 z-40 hidden bg-ink/60 backdrop-blur-sm xl:hidden"
 ></div>
 
 <nav
     id="mobile-nav"
-    class="fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-[340px] -translate-x-full flex-col gap-1 overflow-y-auto bg-paper-raised px-5 py-4 shadow-2xl transition-transform duration-300 ease-out lg:hidden"
+    class="fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-[340px] -translate-x-full flex-col gap-1 overflow-y-auto bg-paper-raised px-5 py-4 shadow-2xl transition-transform duration-300 ease-out xl:hidden"
     aria-label="Мобильная навигация"
   >
     <div class="flex items-center justify-between border-b border-line pb-3">
@@ -203,7 +213,7 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
           class="mobile-nav-group-btn flex w-full items-center justify-between py-2.5 font-mono text-sm font-semibold text-ink"
           aria-expanded="false"
         >
-          {navGroupLabels[gi]}
+          {mobileNavGroupLabels[gi]}
           <svg width="10" height="7" viewBox="0 0 9 6" fill="none" aria-hidden="true" class="mobile-nav-caret transition-transform">
             <path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.4" />
           </svg>
