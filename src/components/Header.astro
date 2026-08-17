@@ -41,8 +41,8 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
 ---
 
 <header class="sticky top-0 z-50 border-b border-[var(--color-burgundy)]/25 bg-paper/95 backdrop-blur-sm">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 md:px-8">
-    <div class="flex items-center gap-3">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3 md:px-6">
+    <div class="flex shrink-0 items-center gap-3">
       <button
         id="nav-burger"
         type="button"
@@ -70,7 +70,7 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
         <div class="nav-group relative">
           <button
             type="button"
-            class="nav-group-btn flex items-center gap-1 whitespace-nowrap px-2.5 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
+            class="nav-group-btn flex items-center gap-1 whitespace-nowrap px-2 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
             aria-expanded="false"
           >
             {navGroupLabels[gi]}
@@ -95,14 +95,14 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
       {NAV_SINGLE.map((item, i) => (
         <a
           href={resolveHref(item.href, item.external)}
-          class="whitespace-nowrap px-2.5 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
+          class="whitespace-nowrap px-2 py-2 font-mono text-[13px] tracking-wide text-ink-soft transition-colors hover:text-ink"
         >
           {navSingleLabels[i]}
         </a>
       ))}
     </nav>
 
-    <div class="hidden items-center gap-2.5 xl:flex">
+    <div class="hidden shrink-0 items-center gap-2 xl:flex">
       <div class="nav-group relative">
         <button type="button" class="nav-group-btn flex items-center gap-1 border border-line px-2.5 py-2 font-mono text-[12px] tracking-wide text-ink-soft transition-colors hover:text-ink" aria-expanded="false">
           {LOCALE_LABELS[locale]}
@@ -119,15 +119,20 @@ const navSingleLabels = [t.ui.nav.carwash, t.ui.nav.reviews, t.ui.nav.gallery, t
           ))}
         </div>
       </div>
+      {/* Эти 2 кнопки, в отличие от пунктов меню выше, НЕ получают whitespace-nowrap:
+         перенос в 2 строки внутри собственной кнопки — обычный, не "сломанный" вид
+         (клиент жаловался только на перенос текста в выпадающих пунктах меню, где
+         он ломал стрелку-указатель; кнопки так же переносились и раньше, вопросов
+         не вызывало). max-w держит перенос предсказуемым при узких xl-экранах. */}
       <a
         href={eventsFormHref}
-        class="whitespace-nowrap border border-ink px-4 py-2 font-mono text-[12.5px] tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
+        class="max-w-[110px] border border-ink px-3 py-2 text-center font-mono text-[12.5px] leading-tight tracking-wide text-ink transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-ink hover:text-paper-raised"
       >
         {t.ui.common.eventRequestBtn}
       </a>
       <a
         href={contactsHref}
-        class="plaque whitespace-nowrap bg-[var(--color-burgundy)] px-4 py-2 font-mono text-[12.5px] tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-[var(--color-gold)] hover:text-ink"
+        class="plaque max-w-[92px] bg-[var(--color-burgundy)] px-3 py-2 text-center font-mono text-[12.5px] leading-tight tracking-wide text-paper-raised transition-colors duration-[var(--dur-micro)] ease-[var(--ease-micro)] hover:bg-[var(--color-gold)] hover:text-ink"
       >
         {t.ui.common.bookTableBtn}
       </a>
