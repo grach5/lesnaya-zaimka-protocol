@@ -3,8 +3,12 @@ import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 
-const mapBbox = "132.0629,43.2597,132.0829,43.2717";
-const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&layer=mapnik&marker=${CONTACTS.lat}%2C${CONTACTS.lon}`;
+// Яндекс.Карты вместо OpenStreetMap — по прямой правке клиента («карта плохо
+// грузит или вообще не грузит»): встраиваемый OSM зависит от их публичных
+// тайл-серверов без SLA, и во Владивостоке это ощутимо. Яндекс уже используется
+// на этой странице для маршрута и на главной — для виджета отзывов, так что
+// это тот же провайдер, а не третий сервис, и грузится он в России быстро.
+const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS.lat}&z=16&pt=${CONTACTS.lon},${CONTACTS.lat},pm2rdm`;
 ---
 
 <Layout
@@ -57,7 +61,7 @@ const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&
           </div>
         </div>
 
-        <div class="mt-10 aspect-[4/3] overflow-hidden border border-line">
+        <div class="mt-10 h-[420px] overflow-hidden border border-line md:h-[520px]">
           <iframe title="Лесная Заимка на карте" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
         </div>
         <a

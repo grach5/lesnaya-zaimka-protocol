@@ -7,8 +7,7 @@ import { getContent } from "@/lib/i18n";
 const locale = "ko" as const;
 const t = getContent(locale);
 
-const mapBbox = "132.0629,43.2597,132.0829,43.2717";
-const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&layer=mapnik&marker=${CONTACTS.lat}%2C${CONTACTS.lon}`;
+const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS.lat}&z=16&pt=${CONTACTS.lon},${CONTACTS.lat},pm2rdm`;
 ---
 
 <Layout
@@ -62,7 +61,7 @@ const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapBbox}&
           </div>
         </div>
 
-        <div class="mt-10 aspect-[4/3] overflow-hidden border border-line">
+        <div class="mt-10 h-[420px] overflow-hidden border border-line md:h-[520px]">
           <iframe title="레스나야 자임카 지도 위치" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
         </div>
         <a

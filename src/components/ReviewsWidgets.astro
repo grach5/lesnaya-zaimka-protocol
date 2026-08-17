@@ -13,6 +13,7 @@
 // Поставлена честная прямая ссылка на реальный профиль 2ГИС (тоже всегда
 // актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
 import { getContent, type Locale } from "@/lib/i18n";
+import { CONTACTS } from "@/data/contacts";
 
 interface Props {
   locale?: Locale;
@@ -22,6 +23,13 @@ const t = getContent(locale);
 
 const YANDEX_ORG_ID = "1081573454";
 const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews";
+// Карта в пустом месте под карточкой 2ГИС — по прямой правке клиента
+// («добавь на главной внизу справа в пустом месте карту»): у правой колонки
+// была лишняя высота ниже плашки 2ГИС, потому что слева высокий iframe
+// отзывов (560px), а справа — только текстовая карточка. Тот же Яндекс-виджет,
+// что и на /contacts/, тем же провайдером, что уже используется здесь для
+// отзывов и на /contacts/ для маршрута.
+const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${CONTACTS.lon}%2C${CONTACTS.lat}&z=16&pt=${CONTACTS.lon},${CONTACTS.lat},pm2rdm`;
 ---
 
 <section class="border-t border-line bg-paper-sunk/40 py-16 md:py-24">
@@ -41,20 +49,26 @@ const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews
         ></iframe>
       </div>
 
-      <a
-        href={DGIS_URL}
-        target="_blank"
-        rel="noopener"
-        class="plaque flex flex-col bg-paper-raised p-8 transition-colors hover:bg-[var(--color-burgundy-soft)]"
-        data-reveal
-      >
-        <span class="font-mono text-xs uppercase tracking-wide text-brass">{t.pages.index.reviewsDgisLabel}</span>
-        <p class="mt-3 font-display text-xl font-semibold text-ink">{t.pages.index.reviewsDgisTitle}</p>
-        <p class="mt-3 text-sm text-ink-soft">
-          {t.pages.index.reviewsDgisNote}
-        </p>
-        <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">{t.pages.index.reviewsDgisOpen}</span>
-      </a>
+      <div class="flex flex-col gap-4 lg:h-[560px]">
+        <a
+          href={DGIS_URL}
+          target="_blank"
+          rel="noopener"
+          class="plaque flex flex-col bg-paper-raised p-8 transition-colors hover:bg-[var(--color-burgundy-soft)]"
+          data-reveal
+        >
+          <span class="font-mono text-xs uppercase tracking-wide text-brass">{t.pages.index.reviewsDgisLabel}</span>
+          <p class="mt-3 font-display text-xl font-semibold text-ink">{t.pages.index.reviewsDgisTitle}</p>
+          <p class="mt-3 text-sm text-ink-soft">
+            {t.pages.index.reviewsDgisNote}
+          </p>
+          <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">{t.pages.index.reviewsDgisOpen}</span>
+        </a>
+
+        <div class="min-h-[280px] flex-1 overflow-hidden border border-line" data-reveal>
+          <iframe title="Лесная Заимка на карте" loading="lazy" src={mapSrc} class="h-full w-full border-0"></iframe>
+        </div>
+      </div>
     </div>
   </div>
 </section>
