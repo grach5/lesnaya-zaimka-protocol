@@ -30,7 +30,11 @@ import { HISTORY, OWNER_QUOTE, GUEST_QUOTES } from "@/data/history";
 
   <section class="mx-auto max-w-4xl px-5 pb-16 md:px-8 md:pb-24">
     <blockquote class="frame-gold max-w-2xl bg-paper-raised p-8" data-reveal>
-      <p class="font-display text-xl italic leading-relaxed text-ink">«{OWNER_QUOTE.text}»</p>
+      {/* font-body, не font-display: у Podkova (дисплейный шрифт) нет курсивного
+         начертания вообще — браузер рисовал бы синтетический наклон вместо
+         настоящих курсивных литер. PT Serif курсив импортирован отдельно
+         именно под эту цитату (cyrillic-400-italic в global.css). */}
+      <p class="font-body text-xl italic leading-relaxed text-ink">«{OWNER_QUOTE.text}»</p>
       <footer class="mt-4 font-mono text-xs text-ink-faint">
         <span class="block font-body text-sm not-italic text-ink">{OWNER_QUOTE.author}</span>
         {OWNER_QUOTE.role}

@@ -13,25 +13,46 @@
    самохостинг убирает этот сторонний round-trip полностью.
    ВАЖНО: Fraunces (изначальный выбор Фазы 4) не имеет кириллицы (fontsource
    metadata.json: subsets = latin/latin-ext/vietnamese, без cyrillic) — все
-   русские заголовки сайта тихо откатывались на fallback-шрифт. Заменено на
-   Spectral (подтверждённая кириллица, включая курсив для цитат). */
-@import "@fontsource-variable/inter/wght.css";
-@import "@fontsource/spectral/400.css";
-@import "@fontsource/spectral/500.css";
-@import "@fontsource/spectral/600.css";
-@import "@fontsource/spectral/600-italic.css";
-@import "@fontsource/spectral/700.css";
-@import "@fontsource/spectral/cyrillic-400.css";
-@import "@fontsource/spectral/cyrillic-500.css";
-@import "@fontsource/spectral/cyrillic-600.css";
-@import "@fontsource/spectral/cyrillic-600-italic.css";
-@import "@fontsource/spectral/cyrillic-700.css";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
-@import "@fontsource/ibm-plex-mono/600.css";
-@import "@fontsource/ibm-plex-mono/cyrillic-400.css";
-@import "@fontsource/ibm-plex-mono/cyrillic-500.css";
-@import "@fontsource/ibm-plex-mono/cyrillic-600.css";
+   русские заголовки сайта тихо откатывались на fallback-шрифт.
+
+   Фаза «Рубленый Кедр» (по прямому отзыву клиента «мне не нравится шрифт» +
+   запрос на максимально премиальный/дорогой вид): Spectral/Inter/IBM Plex Mono
+   заменены на систему, привязанную к самому зданию — настоящему рубленому
+   срубу 1974 года, а не к абстрактной «элегантности». Прогнано через
+   многоагентную мастерскую (аудит текущей типографики → 4 независимых
+   премиальных направления → 3 независимых судьи), кириллица каждого шрифта
+   проверена по метаданным fontsource ПЕРЕД выбором — тот же урок, что и с
+   Fraunces, здесь не повторён.
+     display: Podkova Variable — рубленая/резная брусковая антиква, тяжёлые
+       начертания для --text-masthead/--text-chapter читаются как вырезанные
+       топором в кедровом брусе, а не абстрактно «элегантно».
+     body: PT Serif — кириллица спроектирована ParaType «изнутри» алфавита,
+       а не адаптирована с латиницы задним числом (уместно для дома, где
+       принимали иностранных гостей на русском).
+     mono → PT Sans Caption: у IBM Plex Mono не было ни одной таблично-цифровой
+       задачи, которая оправдывала бы моноширинный шрифт — 248 использований
+       по всему сайту (навигация, кнопки, бейджи, цены) были просто «техно»
+       по ощущению, а не по функции. --font-mono переопределён на гарнитуру
+       для подписей/лейблов (табличные цифры включены отдельным правилом
+       ниже) — имя переменной осталось прежним, чтобы не трогать все 47
+       файлов, где встречается класс font-mono.
+   ВАЖНО: variable-пакет Podkova регистрирует себя в @font-face как семейство
+   "Podkova Variable" (см. node_modules/@fontsource-variable/podkova/wght.css),
+   НЕ "Podkova" — ровно та же ловушка молчаливого fallback, что и с Fraunces,
+   только на уровне имени, а не кириллицы; проверено явно перед использованием. */
+@import "@fontsource-variable/podkova/wght.css";
+@import "@fontsource/pt-serif/400.css";
+@import "@fontsource/pt-serif/400-italic.css";
+@import "@fontsource/pt-serif/700.css";
+@import "@fontsource/pt-serif/700-italic.css";
+@import "@fontsource/pt-serif/cyrillic-400.css";
+@import "@fontsource/pt-serif/cyrillic-400-italic.css";
+@import "@fontsource/pt-serif/cyrillic-700.css";
+@import "@fontsource/pt-serif/cyrillic-700-italic.css";
+@import "@fontsource/pt-sans-caption/400.css";
+@import "@fontsource/pt-sans-caption/700.css";
+@import "@fontsource/pt-sans-caption/cyrillic-400.css";
+@import "@fontsource/pt-sans-caption/cyrillic-700.css";
 
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -81,9 +102,12 @@
   --color-forest: #1F3A2E;
   --color-forest-deep: #142720;
 
-  --font-display: "Spectral", Georgia, serif;
-  --font-body: "Inter Variable", "Inter", -apple-system, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Podkova Variable", Georgia, serif;
+  --font-body: "PT Serif", Georgia, serif;
+  /* Имя переменной сохранено как --font-mono (класс font-mono используется в
+     47 файлах по всему сайту), но гарнитура — не моноширинная, см. заметку
+     выше. Табличные цифры для цен/статистики держит правило .font-mono ниже. */
+  --font-mono: "PT Sans Caption", ui-sans-serif, sans-serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -159,6 +183,14 @@
        позади всего контента) — этот сплошной цвет служит ему запасным фоном
        на время загрузки картинки и подложкой под непрозрачные карточки. */
     background-color: var(--color-paper);
+  }
+
+  /* PT Sans Caption поддерживает табличные (равноширинные) цифры — включаем
+     их явно для всего, что раньше держалось на моноширинности IBM Plex Mono
+     ради выравнивания: цены в меню, цифры статистики на главной. Без этого
+     правила цифры в пропорциональном начертании "плавали" бы по ширине. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
   }
 
   /* «Золочёная плашка» — акцент музейного экспоната/премиальной карточки:
