@@ -517,7 +517,7 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
           <Field label="Телефон (бронь стола)"><Input value={data.phoneTable} onChange={(e) => set("phoneTable", e.target.value)} /></Field>
           <Field label="Телефон (банкетный отдел)"><Input value={data.phoneEvents} onChange={(e) => set("phoneEvents", e.target.value)} /></Field>
           <Field label="Часы работы"><Input value={data.hours} onChange={(e) => set("hours", e.target.value)} /></Field>
-          <Field label="Отель-партнёр"><Input value={data.hotelName} onChange={(e) => set("hotelName", e.target.value)} /></Field>
+          <Field label="Гостиница-партнёр"><Input value={data.hotelName} onChange={(e) => set("hotelName", e.target.value)} /></Field>
           <Field label="Сайт отеля"><Input value={data.hotelUrl} onChange={(e) => set("hotelUrl", e.target.value)} /></Field>
         </div>
       </Card>

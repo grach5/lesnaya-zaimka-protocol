@@ -19,17 +19,17 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "Отель Villa ArtE",
+    label: "Гостиница Villa ArtE",
     items: [
       { label: "Забронировать номер", href: "https://villa-arte.ru/", external: true },
       { label: "Сауна", href: "https://villa-arte.ru/finskaya-sauna/", external: true },
-      { label: "Услуги отеля", href: "https://villa-arte.ru/", external: true },
+      { label: "Услуги гостиницы", href: "https://villa-arte.ru/", external: true },
     ],
   },
   {
     label: "Банкетный комплекс",
     items: [
-      { label: "Аренда залов", href: "/events/" },
+      { label: "Бронирование залов", href: "/events/" },
       { label: "Банкетное меню (PDF)", href: "/pdf/banketnoe-menu.pdf" },
       { label: "Мероприятия и кейтеринг", href: "/events/#form" },
     ],
