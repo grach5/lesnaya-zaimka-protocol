@@ -18,6 +18,7 @@ export const CONTACTS = {
   phoneEvents: contactsData.phoneEvents,
   phoneEventsHref: `tel:+${digitsOnly(contactsData.phoneEvents)}`,
   whatsapp: `https://wa.me/${digitsOnly(contactsData.phoneTable)}`,
+  telegram: contactsData.telegram,
   hours: contactsData.hours,
   hotel: { name: contactsData.hotelName, url: contactsData.hotelUrl },
   lat: contactsData.lat,

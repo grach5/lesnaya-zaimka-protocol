@@ -38,6 +38,8 @@ export type SiteContent = {
       bookTableBtn: string;
       openPreorderAria: string;
       writeWhatsapp: string;
+      writeTelegram: string;
+      contactUsAria: string;
       sendToWhatsapp: string;
       openedWhatsapp: string;
       eventFormThanks: string;
@@ -125,7 +127,7 @@ export type SiteContent = {
     gallery: { title: string; description: string; eyebrow: string; h1: string; lead: string; allPhotos: string };
     contacts: {
       title: string; description: string; eyebrow: string; h1: string; lead: string;
-      addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string;
+      addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string; telegramLabel: string;
       hoursLabel: string; nearbyLabel: string; hotelAndSauna: string; routeBtn: string;
       bookTitle: string; bookLead: string;
     };

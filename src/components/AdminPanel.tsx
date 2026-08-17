@@ -34,7 +34,7 @@ type MenuCategory = { name: string; items: MenuItem[] };
 type MenuData = { categories: MenuCategory[] };
 type Contacts = {
   name: string; address: string; phoneTable: string; phoneEvents: string;
-  hours: string; hotelName: string; hotelUrl: string; lat: number; lon: number;
+  hours: string; hotelName: string; hotelUrl: string; telegram: string; lat: number; lon: number;
 };
 type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photoCount: number };
 type HallsData = { halls: Hall[]; eventFormats: string[] };
@@ -519,6 +519,7 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
           <Field label="Часы работы"><Input value={data.hours} onChange={(e) => set("hours", e.target.value)} /></Field>
           <Field label="Гостиница-партнёр"><Input value={data.hotelName} onChange={(e) => set("hotelName", e.target.value)} /></Field>
           <Field label="Сайт отеля"><Input value={data.hotelUrl} onChange={(e) => set("hotelUrl", e.target.value)} /></Field>
+          <Field label="Telegram-канал"><Input value={data.telegram} onChange={(e) => set("telegram", e.target.value)} /></Field>
         </div>
       </Card>
     </div>
