@@ -1,0 +1,38 @@
+---
+import "@/styles/global.css";
+import AdminPanel from "@/components/AdminPanel";
+import menuData from "@/data/menu.json";
+import contactsData from "@/data/contacts.json";
+import hallsData from "@/data/halls.json";
+import historyData from "@/data/history.json";
+import reviewsData from "@/data/reviews.json";
+import carwashData from "@/data/carwash.json";
+import eventsData from "@/data/events-board.json";
+
+// Демо-панель администратора — см. подробный комментарий в
+// src/components/AdminPanel.tsx о статусе (демо-режим, не финальная защита).
+// Реальные данные сайта подгружаются на этапе сборки, чтобы демонстрация
+// всегда показывала актуальный контент, а не устаревшую копию.
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Панель администратора — Лесная Заимка</title>
+  </head>
+  <body>
+    <AdminPanel
+      client:load
+      initialMenu={menuData}
+      initialContacts={contactsData}
+      initialHalls={hallsData}
+      initialHistory={historyData}
+      initialReviews={reviewsData}
+      initialCarwash={carwashData}
+      initialEvents={eventsData}
+    />
+  </body>
+</html>
