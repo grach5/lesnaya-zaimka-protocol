@@ -16,6 +16,16 @@ function utf8ToBase64(str: string): string {
 export type SaveResult = { commitUrl: string };
 
 /**
+ * Прямая ссылка на файл в репозитории (raw.githubusercontent.com) — используется
+ * для мгновенного превью только что загруженного фото в панели, пока сайт ещё
+ * не пересобрался (правки, сохранённые через Contents API, это уже реальный
+ * коммит в master, просто GitHub Pages публикует его не мгновенно).
+ */
+export function rawContentUrl(path: string): string {
+  return `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${path}`;
+}
+
+/**
  * Сохраняет JSON-объект в файл src/data/<name>.json репозитория одним коммитом.
  * path — например "src/data/menu.json".
  */
@@ -50,6 +60,42 @@ export async function saveJsonFile(token: string, path: string, data: unknown, c
   if (!putRes.ok) {
     const body = await putRes.json().catch(() => ({}));
     throw new Error(body.message || `GitHub отклонил сохранение (${putRes.status})`);
+  }
+  const result = await putRes.json();
+  return { commitUrl: result.commit?.html_url ?? `https://github.com/${OWNER}/${REPO}/commits/${BRANCH}` };
+}
+
+/**
+ * Загружает бинарный файл (фото) в репозиторий одним коммитом. content —
+ * base64 БЕЗ префикса "data:...;base64," (см. src/lib/imageUpload.ts).
+ * В отличие от saveJsonFile путь может ещё не существовать — тогда SHA
+ * текущей версии просто не запрашиваем (создаём новый файл).
+ */
+export async function uploadBinaryFile(token: string, path: string, base64Content: string, commitMessage: string): Promise<SaveResult> {
+  const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "Content-Type": "application/json",
+  };
+
+  const currentRes = await fetch(`${apiUrl}?ref=${BRANCH}`, { headers });
+  let sha: string | undefined;
+  if (currentRes.ok) {
+    sha = (await currentRes.json()).sha;
+  } else if (currentRes.status !== 404) {
+    const body = await currentRes.text();
+    throw new Error(`Не удалось проверить путь загрузки (${currentRes.status}): ${body}`);
+  }
+
+  const putRes = await fetch(apiUrl, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ message: commitMessage, content: base64Content, sha, branch: BRANCH }),
+  });
+  if (!putRes.ok) {
+    const body = await putRes.json().catch(() => ({}));
+    throw new Error(body.message || `GitHub отклонил загрузку файла (${putRes.status})`);
   }
   const result = await putRes.json();
   return { commitUrl: result.commit?.html_url ?? `https://github.com/${OWNER}/${REPO}/commits/${BRANCH}` };

@@ -6,6 +6,7 @@ import CartDrawer from "@/components/CartDrawer.astro";
 import ContactFab from "@/components/ContactFab.astro";
 import { CONTACTS } from "@/data/contacts";
 import { ZAIMKA_MENU } from "@/data/menu";
+import { THEME } from "@/data/theme";
 import { withBase } from "@/lib/url";
 import { LOCALES, DEFAULT_LOCALE, localizedHref, type Locale } from "@/lib/i18n";
 import "@/styles/global.css";
@@ -98,6 +99,25 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
         } catch (e) {}
       })();
     </script>
+
+    <!-- Цвета оформления из /admin/ («Оформление») — переопределяют design-токены
+         global.css поверх (та же техника, что уже применялась для перекраски
+         логотипа: CSS-переменная, а не правка компонентов). -soft/line — вручную
+         пересчитаны color-mix'ом, чтобы не разъезжались с новым базовым цветом. -->
+    <style set:html={`:root {
+      --color-paper: ${THEME.paper};
+      --color-paper-raised: ${THEME.paperRaised};
+      --color-paper-sunk: ${THEME.paperSunk};
+      --color-ink: ${THEME.ink};
+      --color-burgundy: ${THEME.burgundy};
+      --color-burgundy-soft: color-mix(in srgb, ${THEME.burgundy} 10%, transparent);
+      --color-gold: ${THEME.gold};
+      --color-brass: ${THEME.brass};
+      --color-brass-soft: color-mix(in srgb, ${THEME.brass} 12%, transparent);
+      --color-velvet: ${THEME.velvet};
+      --color-velvet-deep: color-mix(in srgb, ${THEME.velvet} 75%, black);
+      --color-line: color-mix(in srgb, ${THEME.ink} 14%, transparent);
+    }`} />
   </head>
   <body class="bg-paper text-ink">
     <TimberBackdrop />
