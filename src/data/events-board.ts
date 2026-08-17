@@ -1,8 +1,8 @@
-// Афиша / события — по прямому запросу клиента («плашка «События/Новости/
-// Афиша» куда будут добавляться афиши»). Реальных предстоящих событий клиент
-// пока не присылал — массив стартует пустым, а не выдуманными датами/названиями.
-// Чтобы добавить событие, допишите объект в массив ниже:
-// { title: "Название", date: "2026-08-20", description: "Короткое описание", image: "/img/events/....webp" }
+// Афиша / события — по прямому запросу клиента. Данные — в events-board.json
+// (редактируется через /admin/, см. public/admin/config.yml), включая
+// загрузку фото афиши прямо из панели.
+import eventsData from "./events-board.json";
+
 export type PosterEvent = {
   title: string;
   date: string;
@@ -10,4 +10,4 @@ export type PosterEvent = {
   image?: string;
 };
 
-export const UPCOMING_EVENTS: PosterEvent[] = [];
+export const UPCOMING_EVENTS: PosterEvent[] = eventsData.events;

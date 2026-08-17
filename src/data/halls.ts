@@ -1,13 +1,12 @@
 // Реальные данные залов — числа сверены с разделом «Аренда залов»
-// lesnaya-zaimka-vl.ru. Фото — реальные кадры, присланные клиентом напрямую
-// (папки названы по залам: «Банкетный зал», «Бордовый зал», «Изумрудный
-// зал», «Основной зал», «Терраса», «Фиолетовый зал») — привязка кадра к
-// залу ПОДТВЕРЖДЕНА клиентом. Имена залов приведены в точности как в
-// присланных папках («Основной зал», «Терраса» — раньше на сайте было
-// «Большой зал»/«Летняя терраса», выровнено).
-// photoCount — ВСЕ реальные фото из папки клиента для каждого зала (не
-// выборка): клиент прямо просил «побольше фото... чтобы их можно было
-// листать», и на первой итерации выборка в 6 фото на зал была недочётом.
+// lesnaya-zaimka-vl.ru. Фото — реальные кадры, присланные клиентом напрямую.
+// Данные — в halls.json (редактируется через /admin/, см.
+// public/admin/config.yml); slug и photoCount там намеренно скрыты от
+// редактирования в CMS (widget: hidden) — они жёстко привязаны к реальным
+// файлам в public/img/halls/<slug>/{thumb,full}/1..N.webp, и правка этих
+// полей без одновременной загрузки/переименования файлов сломает фото.
+import hallsData from "./halls.json";
+
 export type Hall = {
   name: string;
   slug: string;
@@ -17,63 +16,13 @@ export type Hall = {
   photoCount: number;
 };
 
-export const HALLS: Hall[] = [
-  {
-    name: "Основной зал",
-    slug: "osnovnoy",
-    description: "1-й этаж, сцена, танцпол, проектор.",
-    capacity: "200–250 чел",
-    area: "400 м²",
-    photoCount: 71,
-  },
-  {
-    name: "Терраса",
-    slug: "terrasa",
-    description: "Открытая терраса в два этажа — для больших торжеств и мероприятий на свежем воздухе.",
-    capacity: "до 500 чел",
-    photoCount: 26,
-  },
-  {
-    name: "Фиолетовый зал",
-    slug: "fioletovy",
-    description: "Нижний этаж, отдельный выход на улицу, проектор.",
-    capacity: "80–100 чел",
-    area: "180 м²",
-    photoCount: 26,
-  },
-  {
-    name: "Бордовый зал",
-    slug: "bordovy",
-    description: "3-й этаж, ЖК-экран — для торжеств камернее.",
-    capacity: "до 40 чел",
-    area: "70 м²",
-    photoCount: 21,
-  },
-  {
-    name: "Изумрудный зал",
-    slug: "izumrudny",
-    description: "2-й этаж, ЖК-экран.",
-    capacity: "до 35 чел",
-    area: "70 м²",
-    photoCount: 14,
-  },
-  {
-    name: "Банкетный зал",
-    slug: "banketny",
-    description: "2-й этаж, ЖК-экран — самый камерный из шести.",
-    capacity: "до 30 чел",
-    area: "60 м²",
-    photoCount: 18,
-  },
-];
+export const HALLS: Hall[] = hallsData.halls;
 
 export type HallPhoto = { thumb: string; full: string };
 
 // thumb (700px) — для карточки карусели; full (1600px) — только для лайтбокса
-// по клику. Раньше карусель грузила сразу 1600px-версию для каждого кадра —
-// с полным набором реальных фото (до 71 на зал) это ощутимо утяжеляло
-// загрузку страницы («долго грузятся фото»). Тот же паттерн thumb/full,
-// что уже используется в общей галерее (src/data/gallery.ts).
+// по клику. Тот же паттерн thumb/full, что уже используется в общей галерее
+// (src/data/gallery.ts).
 export function hallPhotos(hall: Hall): HallPhoto[] {
   return Array.from({ length: hall.photoCount }, (_, i) => ({
     thumb: `/img/halls/${hall.slug}/thumb/${i + 1}.webp`,
@@ -81,10 +30,4 @@ export function hallPhotos(hall: Hall): HallPhoto[] {
   }));
 }
 
-export const EVENT_FORMATS = [
-  "Организация банкетов и фуршетов",
-  "Свадьбы",
-  "Корпоративные и частные мероприятия",
-  "Кейтеринг и выезд шеф-повара",
-  "Служба доставки блюд",
-];
+export const EVENT_FORMATS = hallsData.eventFormats;

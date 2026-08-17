@@ -68,3 +68,102 @@ collections:
           - { label: "Сайт отеля-партнёра", name: "hotelUrl", widget: "string" }
           - { label: "Широта (lat)", name: "lat", widget: "number", value_type: "float" }
           - { label: "Долгота (lon)", name: "lon", widget: "number", value_type: "float" }
+
+  - name: "halls"
+    label: "Залы"
+    files:
+      - name: "halls"
+        label: "Банкетные залы"
+        file: "src/data/halls.json"
+        fields:
+          - label: "Залы"
+            name: "halls"
+            widget: "list"
+            summary: "{{fields.name}} — {{fields.capacity}}"
+            fields:
+              - { label: "Название зала", name: "name", widget: "string" }
+              - { label: "Описание (этаж, оснащение)", name: "description", widget: "text" }
+              - { label: "Вместимость", name: "capacity", widget: "string", hint: "Например: 200–250 чел или до 500 чел" }
+              - { label: "Площадь", name: "area", widget: "string", required: false, hint: "Например: 400 м² — можно оставить пустым" }
+              - { label: "Технические поля — не трогать", name: "slug", widget: "hidden" }
+              - { label: "Технические поля — не трогать", name: "photoCount", widget: "hidden" }
+          - label: "Форматы мероприятий (список на странице «Мероприятия»)"
+            name: "eventFormats"
+            widget: "list"
+            field: { label: "Формат", name: "format", widget: "string" }
+
+  - name: "history"
+    label: "История"
+    files:
+      - name: "history"
+        label: "Хронология и цитаты"
+        file: "src/data/history.json"
+        fields:
+          - label: "Записи хроники"
+            name: "entries"
+            widget: "list"
+            summary: "{{fields.year}} — {{fields.title}}"
+            fields:
+              - { label: "Год", name: "year", widget: "string" }
+              - { label: "Заголовок", name: "title", widget: "string" }
+              - { label: "Текст", name: "body", widget: "text" }
+          - label: "Цитата владельца"
+            name: "ownerQuote"
+            widget: "object"
+            fields:
+              - { label: "Текст цитаты", name: "text", widget: "text" }
+              - { label: "Автор", name: "author", widget: "string" }
+              - { label: "Должность/роль", name: "role", widget: "string" }
+          - label: "Цитаты почётных гостей"
+            name: "guestQuotes"
+            widget: "list"
+            summary: "{{fields.author}}"
+            fields:
+              - { label: "Текст цитаты", name: "text", widget: "text" }
+              - { label: "Автор", name: "author", widget: "string" }
+              - { label: "Должность/роль", name: "role", widget: "string" }
+
+  - name: "reviews"
+    label: "Отзывы"
+    files:
+      - name: "reviews"
+        label: "Отзывы гостей"
+        file: "src/data/reviews.json"
+        fields:
+          - label: "Отзывы"
+            name: "reviews"
+            widget: "list"
+            summary: "{{fields.author}}"
+            fields:
+              - { label: "Автор", name: "author", widget: "string" }
+              - { label: "Текст отзыва", name: "text", widget: "text" }
+              - { label: "Короткая пометка (необязательно)", name: "highlight", widget: "string", required: false }
+
+  - name: "carwash"
+    label: "Автомойка"
+    files:
+      - name: "carwash"
+        label: "Категории услуг"
+        file: "src/data/carwash.json"
+        fields:
+          - label: "Категории"
+            name: "categories"
+            widget: "list"
+            field: { label: "Категория", name: "category", widget: "string" }
+
+  - name: "events-board"
+    label: "Афиша"
+    files:
+      - name: "events-board"
+        label: "Предстоящие события"
+        file: "src/data/events-board.json"
+        fields:
+          - label: "События"
+            name: "events"
+            widget: "list"
+            summary: "{{fields.date}} — {{fields.title}}"
+            fields:
+              - { label: "Название события", name: "title", widget: "string" }
+              - { label: "Дата", name: "date", widget: "date", format: "YYYY-MM-DD" }
+              - { label: "Описание", name: "description", widget: "text", required: false }
+              - { label: "Фото афиши", name: "image", widget: "image", required: false }
