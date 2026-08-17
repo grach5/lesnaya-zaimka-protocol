@@ -22,7 +22,6 @@ export const content: SiteContent = {
       hallRental: "홀 예약",
       banquetMenuPdf: "연회 메뉴 (PDF)",
       eventsCatering: "행사 및 케이터링",
-      carwash: "세차장",
       reviews: "후기",
       gallery: "갤러리",
       contacts: "연락처",
@@ -65,8 +64,6 @@ export const content: SiteContent = {
     },
     footer: {
       tagline: "1974년부터 이어져 온 레스토랑 컴플렉스. 블라디보스토크 초입에 자리한 통나무 저택.",
-      carwashGroup: "세차장",
-      carwashAbout: "섹션 소개",
       moreGroup: "더 보기",
       contactsGroup: "연락처",
       bookTablePhoneNote: "테이블 예약",
@@ -201,15 +198,6 @@ export const content: SiteContent = {
       honoredEyebrow: "귀빈",
       shareLead: "저희 레스토랑을 방문하셨고 소감을 남기고 싶으신가요?",
     },
-    carwash: {
-      title: "세차장 — 레스나야 자임카, 블라디보스토크",
-      description: "「레스나야 자임카」 단지 내 세차장: 인테리어, 기업 서비스, 차량 매입, 적립 시스템, 기프트 카드.",
-      eyebrow: "세차장",
-      h1: "「레스나야 자임카」 단지 내 세차장",
-      lead: "마콥스코고 거리 290의 같은 단지 내에 위치 — 레스토랑 및 연회홀 바로 옆입니다.",
-      servicesEyebrow: "서비스",
-      note: "이 섹션의 세부 정보, 가격, 사진은 준비 중입니다 — 최신 정보는 전화로 문의해 주세요.",
-    },
     privacy: {
       title: "개인정보 처리방침 — 레스나야 자임카",
       description: "레스토랑 컴플렉스 「레스나야 자임카」의 개인정보 처리방침.",
@@ -292,7 +280,6 @@ export const content: SiteContent = {
       { author: "예브게니", text: "직원들의 정중한 태도는 흔치 않은 미덕이라, 경영진께 따로 감사의 말씀을 드리고 싶습니다." },
       { author: "고객", text: "빠르고 시기적절한 서비스였습니다 — 서빙해 주신 안나 니쿨리나 님께 감사드립니다!" },
     ],
-    carwashCategories: ["인테리어", "홍보", "기업 서비스", "차량 매입", "적립 시스템", "기프트 카드", "할인"],
     gallerySections: ["인테리어", "농장", "주방", "축하 행사", "어린이 코너", "기업 행사", "결혼식"],
   },
 };

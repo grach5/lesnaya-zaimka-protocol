@@ -19,7 +19,6 @@ export const content: SiteContent = {
       hallRental: "Hall Booking",
       banquetMenuPdf: "Banquet Menu (PDF)",
       eventsCatering: "Events & Catering",
-      carwash: "Car Wash",
       reviews: "Reviews",
       gallery: "Gallery",
       contacts: "Contacts",
@@ -62,8 +61,6 @@ export const content: SiteContent = {
     },
     footer: {
       tagline: "A restaurant complex since 1974. A log-built terem at the entrance to Vladivostok.",
-      carwashGroup: "Car Wash",
-      carwashAbout: "About this section",
       moreGroup: "More",
       contactsGroup: "Contacts",
       bookTablePhoneNote: "table bookings",
@@ -198,15 +195,6 @@ export const content: SiteContent = {
       honoredEyebrow: "Honored Guests",
       shareLead: "Been our guest and want to share your impressions?",
     },
-    carwash: {
-      title: "Car Wash — Lesnaya Zaimka, Vladivostok",
-      description: "Car wash at the «Lesnaya Zaimka» complex: interior detailing, corporate service, car buy-back, loyalty program, and gift certificates.",
-      eyebrow: "Car Wash",
-      h1: "Car Wash at the «Lesnaya Zaimka» Complex",
-      lead: "Part of the same complex on 290 Makovskogo St. — right next to the restaurant and banquet halls.",
-      servicesEyebrow: "Services",
-      note: "Details, prices, and photos for this section are being finalized — call us for current information.",
-    },
     privacy: {
       title: "Privacy Policy — Lesnaya Zaimka",
       description: "Personal data processing policy of «Lesnaya Zaimka» restaurant complex.",
@@ -293,7 +281,6 @@ export const content: SiteContent = {
       { author: "Evgeny", text: "Respectful treatment from the staff is rare — I want to specifically thank management for that." },
       { author: "Guest", text: "Fast and timely service — thank you to our waitress Anna Nikulina!" },
     ],
-    carwashCategories: ["Interior Detailing", "Advertising", "Corporate Service", "Car Buy-Back", "Loyalty Program", "Gift Certificates", "Discounts"],
     gallerySections: ["Interiors", "Farm", "Kitchen", "Celebrations", "Kids' Corner", "Corporate Events", "Weddings"],
   },
 };

@@ -26,7 +26,6 @@ const FILE_PATHS = {
   halls: "src/data/halls.json",
   history: "src/data/history.json",
   reviews: "src/data/reviews.json",
-  carwash: "src/data/carwash.json",
   events: "src/data/events-board.json",
   gallery: "src/data/gallery.json",
   theme: "src/data/theme.json",
@@ -46,7 +45,6 @@ type Quote = { text: string; author: string; role: string };
 type HistoryData = { entries: HistoryEntry[]; ownerQuote: Quote; guestQuotes: Quote[] };
 type Review = { author: string; text: string; highlight?: string };
 type ReviewsData = { reviews: Review[] };
-type CarwashData = { categories: string[] };
 type BoardEvent = { title: string; date: string; description?: string; image?: string };
 type EventsBoardData = { events: BoardEvent[] };
 type GalleryImage = { full: string; thumb: string; source: string };
@@ -60,7 +58,6 @@ interface Props {
   initialHalls: HallsData;
   initialHistory: HistoryData;
   initialReviews: ReviewsData;
-  initialCarwash: CarwashData;
   initialEvents: EventsBoardData;
   initialGallery: GalleryData;
   initialTheme: ThemeData;
@@ -73,7 +70,6 @@ const SECTIONS = [
   { id: "history", label: "История", icon: "📜" },
   { id: "reviews", label: "Отзывы", icon: "★" },
   { id: "gallery", label: "Галерея", icon: "🖼" },
-  { id: "carwash", label: "Автомойка", icon: "🚗" },
   { id: "events", label: "Афиша", icon: "📣" },
   { id: "theme", label: "Оформление", icon: "🎨" },
 ] as const;
@@ -104,7 +100,7 @@ function useDraft<T>(key: string, initial: T) {
 type ToastKind = "success" | "error" | "info";
 
 export default function AdminPanel({
-  initialMenu, initialContacts, initialHalls, initialHistory, initialReviews, initialCarwash, initialEvents, initialGallery, initialTheme,
+  initialMenu, initialContacts, initialHalls, initialHistory, initialReviews, initialEvents, initialGallery, initialTheme,
 }: Props) {
   const [authed, setAuthed] = useState(false);
   const [pwInput, setPwInput] = useState("");
@@ -124,7 +120,6 @@ export default function AdminPanel({
   const halls = useDraft("halls", initialHalls);
   const history = useDraft("history", initialHistory);
   const reviews = useDraft("reviews", initialReviews);
-  const carwash = useDraft("carwash", initialCarwash);
   const events = useDraft("events", initialEvents);
   const gallery = useDraft("gallery", initialGallery);
   const theme = useDraft("theme", initialTheme);
@@ -279,7 +274,7 @@ export default function AdminPanel({
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
           {SECTIONS.map((s) => {
-            const dirty = { menu, contacts, halls, history, reviews, carwash, events, gallery, theme }[s.id].dirty;
+            const dirty = { menu, contacts, halls, history, reviews, events, gallery, theme }[s.id].dirty;
             return (
               <button
                 key={s.id}
@@ -337,7 +332,6 @@ export default function AdminPanel({
           {section === "halls" && <HallsSection draft={halls} onSave={() => saveSection("halls", halls.data, "Залы")} onDownload={() => download("halls.json", halls.data)} saving={saving === "halls"} uploadFile={uploadFile} uploading={uploading} />}
           {section === "history" && <HistorySection draft={history} onSave={() => saveSection("history", history.data, "История")} onDownload={() => download("history.json", history.data)} saving={saving === "history"} />}
           {section === "reviews" && <ReviewsSection draft={reviews} onSave={() => saveSection("reviews", reviews.data, "Отзывы")} onDownload={() => download("reviews.json", reviews.data)} saving={saving === "reviews"} />}
-          {section === "carwash" && <CarwashSection draft={carwash} onSave={() => saveSection("carwash", carwash.data, "Автомойка")} onDownload={() => download("carwash.json", carwash.data)} saving={saving === "carwash"} />}
           {section === "events" && <EventsSection draft={events} onSave={() => saveSection("events", events.data, "Афиша")} onDownload={() => download("events-board.json", events.data)} saving={saving === "events"} />}
           {section === "gallery" && <GallerySection draft={gallery} onSave={() => saveSection("gallery", gallery.data, "Галерея")} onDownload={() => download("gallery.json", gallery.data)} saving={saving === "gallery"} uploadFile={uploadFile} uploading={uploading} />}
           {section === "theme" && <ThemeSection draft={theme} onSave={() => saveSection("theme", theme.data, "Оформление")} onDownload={() => download("theme.json", theme.data)} saving={saving === "theme"} />}
@@ -783,42 +777,6 @@ function ReviewsSection({ draft, onSave, onDownload, saving }: SectionProps<Revi
         ))}
       </div>
       <button type="button" onClick={add} className="mt-3 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить отзыв</button>
-    </div>
-  );
-}
-
-/* ============== Автомойка ============== */
-function CarwashSection({ draft, onSave, onDownload, saving }: SectionProps<CarwashData>) {
-  const { data, setData, dirty, revert } = draft;
-  function update(i: number, v: string) {
-    const next = { ...data, categories: [...data.categories] };
-    next.categories[i] = v;
-    setData(next);
-  }
-  function remove(i: number) {
-    setData({ ...data, categories: data.categories.filter((_, idx) => idx !== i) });
-  }
-  function add() {
-    setData({ ...data, categories: [...data.categories, "Новая категория"] });
-  }
-  function move(i: number, dir: -1 | 1) {
-    setData({ ...data, categories: moveInArray(data.categories, i, dir) });
-  }
-  return (
-    <div>
-      <SectionHeader title="Автомойка — категории услуг" hint={`${data.categories.length} категорий`} onSave={onSave} onDownload={onDownload} dirty={dirty} onRevert={revert} saving={saving} />
-      <Card>
-        <div className="flex flex-col gap-2">
-          {data.categories.map((c, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <MoveButtons onUp={() => move(i, -1)} onDown={() => move(i, 1)} upDisabled={i === 0} downDisabled={i === data.categories.length - 1} />
-              <Input value={c} onChange={(e) => update(i, e.target.value)} />
-              <RemoveBtn onClick={() => remove(i)} />
-            </div>
-          ))}
-        </div>
-        <button type="button" onClick={add} className="mt-3 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить категорию</button>
-      </Card>
     </div>
   );
 }

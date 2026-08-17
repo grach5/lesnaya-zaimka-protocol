@@ -22,7 +22,6 @@ export const content: SiteContent = {
       hallRental: "宴会厅预订",
       banquetMenuPdf: "宴会菜单（PDF）",
       eventsCatering: "活动与餐饮服务",
-      carwash: "洗车场",
       reviews: "评价",
       gallery: "相册",
       contacts: "联系方式",
@@ -65,8 +64,6 @@ export const content: SiteContent = {
     },
     footer: {
       tagline: "自1974年起营业的餐饮综合体。坐落于符拉迪沃斯托克市入口处的原木小楼。",
-      carwashGroup: "洗车场",
-      carwashAbout: "关于本板块",
       moreGroup: "更多",
       contactsGroup: "联系方式",
       bookTablePhoneNote: "餐桌预订",
@@ -201,15 +198,6 @@ export const content: SiteContent = {
       honoredEyebrow: "尊贵宾客",
       shareLead: "光临过本店，想分享您的感受吗？",
     },
-    carwash: {
-      title: "洗车场 — 莱斯纳亚·扎伊姆卡，符拉迪沃斯托克",
-      description: "「莱斯纳亚·扎伊姆卡」综合体内的洗车场：环境设施、企业服务、汽车收购、积分制度及礼品券。",
-      eyebrow: "洗车场",
-      h1: "「莱斯纳亚·扎伊姆卡」综合体内的洗车场",
-      lead: "同属马科夫斯基街290号综合体的一部分 — 紧邻餐厅和宴会厅。",
-      servicesEyebrow: "服务项目",
-      note: "本板块的详细信息、价格和照片正在完善中 — 最新信息请致电咨询。",
-    },
     privacy: {
       title: "隐私政策 — 莱斯纳亚·扎伊姆卡",
       description: "「莱斯纳亚·扎伊姆卡」餐饮综合体个人数据处理政策。",
@@ -292,7 +280,6 @@ export const content: SiteContent = {
       { author: "叶夫根尼", text: "员工待客彬彬有礼，这样的态度实属难得，特别要感谢管理层。" },
       { author: "客人", text: "服务迅速及时 — 感谢服务员安娜·尼库利娜！" },
     ],
-    carwashCategories: ["室内环境", "宣传广告", "企业活动", "汽车收购", "积分制度", "礼品券", "折扣优惠"],
     gallerySections: ["室内环境", "农场", "厨房", "节庆活动", "儿童角", "企业活动", "婚礼"],
   },
 };

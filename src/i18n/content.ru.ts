@@ -3,7 +3,6 @@ import { ZAIMKA_MENU } from "@/data/menu";
 import { HALLS, EVENT_FORMATS } from "@/data/halls";
 import { HISTORY, OWNER_QUOTE, GUEST_QUOTES } from "@/data/history";
 import { REVIEWS } from "@/data/reviews";
-import { CARWASH_CATEGORIES } from "@/data/carwash";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
 
 // Русский вариант той же схемы SiteContent — используется ТОЛЬКО общими
@@ -31,7 +30,6 @@ export const content: SiteContent = {
       hallRental: "Бронирование залов",
       banquetMenuPdf: "Банкетное меню (PDF)",
       eventsCatering: "Мероприятия и кейтеринг",
-      carwash: "Автомойка",
       reviews: "Отзывы",
       gallery: "Галерея",
       contacts: "Контакты",
@@ -74,8 +72,6 @@ export const content: SiteContent = {
     },
     footer: {
       tagline: "Ресторанный комплекс с 1974 года. Бревенчатый терем на въезде во Владивосток.",
-      carwashGroup: "Автомойка",
-      carwashAbout: "О разделе",
       moreGroup: "Ещё",
       contactsGroup: "Контакты",
       bookTablePhoneNote: "бронь столов",
@@ -210,15 +206,6 @@ export const content: SiteContent = {
       honoredEyebrow: "Почётные гости",
       shareLead: "Были у нас и хотите поделиться впечатлением?",
     },
-    carwash: {
-      title: "Автомойка — Лесная Заимка, Владивосток",
-      description: "Автомойка в комплексе «Лесная Заимка»: интерьер, корпоративное обслуживание, выкуп авто, бонусная система и подарочные сертификаты.",
-      eyebrow: "Автомойка",
-      h1: "Автомойка в комплексе «Лесная Заимка»",
-      lead: "Часть того же комплекса на ул. Маковского, 290 — рядом с рестораном и банкетными залами.",
-      servicesEyebrow: "Услуги",
-      note: "Подробности, цены и фотографии этого раздела уточняются — актуальную информацию можно получить по телефону.",
-    },
     privacy: {
       title: "Политика конфиденциальности — Лесная Заимка",
       description: "Политика обработки персональных данных ресторанного комплекса «Лесная Заимка».",
@@ -260,7 +247,6 @@ export const content: SiteContent = {
     ownerQuote: { text: OWNER_QUOTE.text, author: OWNER_QUOTE.author, role: OWNER_QUOTE.role },
     guestQuotes: GUEST_QUOTES.map((q) => ({ text: q.text, author: q.author, role: q.role })),
     reviews: REVIEWS.map((r) => ({ author: r.author, text: r.text })),
-    carwashCategories: CARWASH_CATEGORIES,
     gallerySections: ZAIMKA_GALLERY.sections.map((s) => s.name),
   },
 };

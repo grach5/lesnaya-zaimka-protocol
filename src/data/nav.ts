@@ -37,7 +37,6 @@ export const NAV_GROUPS: NavGroup[] = [
 ];
 
 export const NAV_SINGLE: NavLink[] = [
-  { label: "Автомойка", href: "/carwash/" },
   { label: "Отзывы", href: "/reviews/" },
   { label: "Галерея", href: "/gallery/" },
   { label: "Контакты", href: "/contacts/" },

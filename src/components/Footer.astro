@@ -25,7 +25,7 @@ const navGroupItemLabels = [
 ---
 
 <!-- Футер по рукописной схеме клиента: разделы комплекса колонками
-     (Ресторан / Отель / Банкетный комплекс), автомойка и контакты отдельно.
+     (Ресторан / Отель / Банкетный комплекс), остальное и контакты отдельно.
      relative — обязателен: TimberBackdrop (position:fixed) красится в том же
      слое стекинга, что и любой ПОЗИЦИОНИРОВАННЫЙ потомок body (см. main
      с его же relative); без этого статичный (position:static) <footer>
@@ -67,12 +67,7 @@ const navGroupItemLabels = [
       ))}
 
       <div>
-        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">{t.ui.footer.carwashGroup}</p>
-        <ul class="mt-3 flex flex-col gap-2 text-sm">
-          <li><a href={localizedHref("/carwash/", locale)}>{t.ui.footer.carwashAbout}</a></li>
-        </ul>
-
-        <p class="mt-6 font-mono text-xs uppercase tracking-wide text-paper-sunk/60">{t.ui.footer.moreGroup}</p>
+        <p class="font-mono text-xs uppercase tracking-wide text-paper-sunk/60">{t.ui.footer.moreGroup}</p>
         <ul class="mt-3 flex flex-col gap-2 text-sm">
           <li><a href={localizedHref("/reviews/", locale)}>{t.ui.nav.reviews}</a></li>
           <li><a href={localizedHref("/gallery/", locale)}>{t.ui.nav.gallery}</a></li>

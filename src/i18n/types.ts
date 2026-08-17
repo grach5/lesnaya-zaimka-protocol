@@ -29,7 +29,6 @@ export type SiteContent = {
       hallRental: string;
       banquetMenuPdf: string;
       eventsCatering: string;
-      carwash: string;
       reviews: string;
       gallery: string;
       contacts: string;
@@ -72,8 +71,6 @@ export type SiteContent = {
     };
     footer: {
       tagline: string;
-      carwashGroup: string;
-      carwashAbout: string;
       moreGroup: string;
       contactsGroup: string;
       bookTablePhoneNote: string;
@@ -136,7 +133,6 @@ export type SiteContent = {
       bookTitle: string; bookLead: string;
     };
     reviews: { title: string; description: string; eyebrow: string; h1: string; lead: string; honoredEyebrow: string; shareLead: string };
-    carwash: { title: string; description: string; eyebrow: string; h1: string; lead: string; servicesEyebrow: string; note: string };
     privacy: {
       title: string; description: string; docLabel: string; h1: string; effective: string;
       s1h: string; s1b: string; s2h: string; s2b: string; s3h: string; s3b: string;
@@ -153,7 +149,6 @@ export type SiteContent = {
     ownerQuote: { text: string; author: string; role: string };
     guestQuotes: { text: string; author: string; role: string }[];
     reviews: { author: string; text: string }[];
-    carwashCategories: string[];
     gallerySections: string[];
   };
 };
