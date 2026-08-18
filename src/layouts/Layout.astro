@@ -42,6 +42,16 @@ const maxPrice = Math.max(...allPrices);
 // у соцсетей и мессенджеров превью всё равно требует абсолютный URL, относительный не сработает.
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : null;
 const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
+
+// JSON-LD ниже раньше дублировал адрес/телефон отдельными строками — правка
+// адреса или телефона в админке молча расходилась с структурированными
+// данными для поисковиков. streetAddress/telephone теперь выводятся из
+// CONTACTS (единственный источник); openingHours оставлен отдельной строкой —
+// формат schema.org ("Mo-Su 11:00-24:00") не разбирается надёжно из свободного
+// текста CONTACTS.hours ("Без выходных, с 11:00 до 00:00"), править вручную
+// при реальном изменении часов работы.
+const jsonLdStreetAddress = CONTACTS.address.replace(/^г\.\s*Владивосток,\s*/i, "");
+const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
 ---
 
 <!doctype html>
@@ -80,12 +90,12 @@ const ogImageURL = Astro.site ? new URL(withBase(image), Astro.site) : null;
       servesCuisine: ["Русская", "Охотничья", "Дальневосточная", "Кавказская"],
       address: {
         "@type": "PostalAddress",
-        streetAddress: "ул. Маковского, 290",
+        streetAddress: jsonLdStreetAddress,
         addressLocality: "Владивосток",
         addressCountry: "RU",
       },
       geo: { "@type": "GeoCoordinates", latitude: CONTACTS.lat, longitude: CONTACTS.lon },
-      telephone: "+7-423-293-11-33",
+      telephone: jsonLdTelephone,
       openingHours: "Mo-Su 11:00-24:00",
     })} />
 

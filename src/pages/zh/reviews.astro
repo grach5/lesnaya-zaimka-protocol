@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { getContent } from "@/lib/i18n";
+import { CONTACTS } from "@/data/contacts";
 
 const locale = "zh" as const;
 const t = getContent(locale);
@@ -58,7 +59,7 @@ const t = getContent(locale);
   <section class="mx-auto max-w-6xl px-5 py-16 text-center md:px-8 md:py-20">
     <p class="text-ink-soft">{t.pages.reviews.shareLead}</p>
     <a
-      href="https://wa.me/74232931133"
+      href={CONTACTS.whatsapp}
       target="_blank"
       rel="noopener"
       class="plaque mt-5 inline-flex items-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"

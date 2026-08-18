@@ -22,8 +22,8 @@ interface Props {
 const { locale = "ru" } = Astro.props;
 const t = getContent(locale);
 
-const YANDEX_ORG_ID = "1081573454";
-const DGIS_URL = "https://2gis.ru/vladivostok/firm/70000001066178670/tab/reviews";
+// ID/ссылка — из contacts.json (редактируется в админке), а не константы здесь:
+// иначе смена организации на Яндекс.Картах или профиля 2ГИС требовала бы правки кода.
 // Карта в пустом месте под карточкой 2ГИС — по прямой правке клиента
 // («добавь на главной внизу справа в пустом месте карту»): у правой колонки
 // была лишняя высота ниже плашки 2ГИС, потому что слева высокий iframe
@@ -44,7 +44,7 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
       <div class="border border-line bg-paper-raised" data-reveal>
         <iframe
           title="Отзывы Яндекс Карт — Лесная Заимка"
-          src={`https://yandex.ru/maps-reviews-widget/${YANDEX_ORG_ID}?comments`}
+          src={`https://yandex.ru/maps-reviews-widget/${CONTACTS.yandexOrgId}?comments`}
           class="h-[560px] w-full border-0"
           loading="lazy"
         ></iframe>
@@ -52,7 +52,7 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 
       <div class="flex flex-col gap-4 lg:h-[560px]">
         <a
-          href={DGIS_URL}
+          href={CONTACTS.dgisUrl}
           target="_blank"
           rel="noopener"
           class="plaque flex flex-col bg-paper-raised p-8 transition-colors hover:bg-[var(--color-burgundy-soft)]"

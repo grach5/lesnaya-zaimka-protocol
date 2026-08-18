@@ -21,6 +21,8 @@ export const CONTACTS = {
   telegram: contactsData.telegram,
   hours: contactsData.hours,
   hotel: { name: contactsData.hotelName, url: contactsData.hotelUrl },
+  yandexOrgId: contactsData.yandexOrgId,
+  dgisUrl: contactsData.dgisUrl,
   lat: contactsData.lat,
   lon: contactsData.lon,
 };

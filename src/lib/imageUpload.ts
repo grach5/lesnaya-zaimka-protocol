@@ -4,8 +4,18 @@
 // раздуло бы репозиторий и замедлило сайт, поэтому админка всегда пересобирает
 // файл через canvas перед отправкой в GitHub Contents API.
 
-/** Возвращает base64 (без префикса data:) уже уменьшенного WebP-изображения. */
-export function resizeToWebpBase64(file: File, maxDimension: number, quality = 0.82): Promise<string> {
+/**
+ * Возвращает base64 (без префикса data:) уменьшенного изображения.
+ * format по умолчанию WebP с потерями (quality) — годится для фото. Для
+ * логотипа (тонкие линии герба, текст) вызывающий код передаёт "image/png" —
+ * без потерь, иначе штриховка размывается на резких краях при сжатии 80-90%.
+ */
+export function resizeToWebpBase64(
+  file: File,
+  maxDimension: number,
+  quality = 0.82,
+  format: "image/webp" | "image/png" = "image/webp",
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
@@ -34,8 +44,8 @@ export function resizeToWebpBase64(file: File, maxDimension: number, quality = 0
           reader.onerror = () => reject(new Error("Не удалось прочитать сжатое изображение"));
           reader.readAsDataURL(blob);
         },
-        "image/webp",
-        quality,
+        format,
+        format === "image/png" ? undefined : quality,
       );
     };
     img.onerror = () => {
@@ -43,5 +53,18 @@ export function resizeToWebpBase64(file: File, maxDimension: number, quality = 0
       reject(new Error("Не удалось открыть файл как изображение"));
     };
     img.src = objectUrl;
+  });
+}
+
+/** Файл как есть, без пересжатия — для PDF и прочего не-изображения, которое канвас не откроет. */
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      resolve(dataUrl.slice(dataUrl.indexOf(",") + 1));
+    };
+    reader.onerror = () => reject(new Error("Не удалось прочитать файл"));
+    reader.readAsDataURL(file);
   });
 }

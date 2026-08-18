@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import { REVIEWS } from "@/data/reviews";
 import { GUEST_QUOTES } from "@/data/history";
+import { CONTACTS } from "@/data/contacts";
 
 // Отдельная страница отзывов — на оригинальном сайте (lesnaya-zaimka-vl.ru/ru/reviews/)
 // это полноценный раздел с ~10 реальными отзывами; у нас раньше были только 2 цитаты
@@ -60,7 +61,7 @@ import { GUEST_QUOTES } from "@/data/history";
   <section class="mx-auto max-w-6xl px-5 py-16 text-center md:px-8 md:py-20">
     <p class="text-ink-soft">Были у нас и хотите поделиться впечатлением?</p>
     <a
-      href="https://wa.me/74232931133"
+      href={CONTACTS.whatsapp}
       target="_blank"
       rel="noopener"
       class="plaque mt-5 inline-flex items-center gap-2 bg-ink px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-brass"

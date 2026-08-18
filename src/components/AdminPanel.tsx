@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { startLogin, completeLoginIfRedirected, getToken, clearToken, getClientId, setClientId } from "@/lib/githubAuth";
 import { saveJsonFile, uploadBinaryFile, rawContentUrl, fetchViewer } from "@/lib/githubContent";
-import { resizeToWebpBase64 } from "@/lib/imageUpload";
+import { resizeToWebpBase64, fileToBase64 } from "@/lib/imageUpload";
 
 // Панель администратора. Два независимых уровня доступа:
 // 1. Пароль (DEMO_PASSWORD) — просто открывает интерфейс панели в этом
@@ -36,7 +36,8 @@ type MenuCategory = { name: string; items: MenuItem[] };
 type MenuData = { categories: MenuCategory[] };
 type Contacts = {
   name: string; address: string; phoneTable: string; phoneEvents: string;
-  hours: string; hotelName: string; hotelUrl: string; telegram: string; lat: number; lon: number;
+  hours: string; hotelName: string; hotelUrl: string; telegram: string;
+  yandexOrgId: string; dgisUrl: string; lat: number; lon: number;
 };
 type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photoCount: number };
 type HallsData = { halls: Hall[]; eventFormats: string[] };
@@ -72,6 +73,7 @@ const SECTIONS = [
   { id: "gallery", label: "Галерея", icon: "🖼" },
   { id: "events", label: "Афиша", icon: "📣" },
   { id: "theme", label: "Оформление", icon: "🎨" },
+  { id: "documents", label: "Логотип и PDF", icon: "📄" },
 ] as const;
 type SectionId = (typeof SECTIONS)[number]["id"];
 
@@ -165,7 +167,7 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   }
 
-  async function saveSection(id: SectionId, data: unknown, label: string) {
+  async function saveSection(id: keyof typeof FILE_PATHS, data: unknown, label: string) {
     const token = getToken();
     if (!token) {
       showToast("info", `${label} сохранено локально (демо) — подключите GitHub в настройках для настоящей публикации`);
@@ -189,7 +191,7 @@ export default function AdminPanel({
    * Требует подключённого GitHub (см. saveSection) — в отличие от текстовых полей,
    * у бинарной загрузки нет осмысленного «локального demo-режима».
    */
-  async function uploadFile(file: File, path: string, maxDimension: number, commitMessage: string): Promise<boolean> {
+  async function uploadFile(file: File, path: string, maxDimension: number, commitMessage: string, format: "image/webp" | "image/png" = "image/webp"): Promise<boolean> {
     const token = getToken();
     if (!token) {
       showToast("info", "Загрузка фото требует подключения GitHub — откройте «Настройки» и войдите");
@@ -197,12 +199,33 @@ export default function AdminPanel({
     }
     setUploading(true);
     try {
-      const base64 = await resizeToWebpBase64(file, maxDimension);
+      const base64 = await resizeToWebpBase64(file, maxDimension, 0.82, format);
       await uploadBinaryFile(token, path, base64, commitMessage);
       showToast("success", "Фото загружено — сайт пересобирается");
       return true;
     } catch (err) {
       showToast("error", err instanceof Error ? err.message : "Не удалось загрузить фото");
+      return false;
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  /** Как uploadFile, но без пересжатия в WebP — для PDF и прочего не-изображения. */
+  async function uploadRawFile(file: File, path: string, commitMessage: string): Promise<boolean> {
+    const token = getToken();
+    if (!token) {
+      showToast("info", "Загрузка файла требует подключения GitHub — откройте «Настройки» и войдите");
+      return false;
+    }
+    setUploading(true);
+    try {
+      const base64 = await fileToBase64(file);
+      await uploadBinaryFile(token, path, base64, commitMessage);
+      showToast("success", "Файл загружен — сайт пересобирается");
+      return true;
+    } catch (err) {
+      showToast("error", err instanceof Error ? err.message : "Не удалось загрузить файл");
       return false;
     } finally {
       setUploading(false);
@@ -274,7 +297,8 @@ export default function AdminPanel({
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
           {SECTIONS.map((s) => {
-            const dirty = { menu, contacts, halls, history, reviews, events, gallery, theme }[s.id].dirty;
+            // "documents" — только загрузка файлов, без JSON-черновика и индикатора несохранённого.
+            const dirty = s.id === "documents" ? false : { menu, contacts, halls, history, reviews, events, gallery, theme }[s.id].dirty;
             return (
               <button
                 key={s.id}
@@ -332,9 +356,10 @@ export default function AdminPanel({
           {section === "halls" && <HallsSection draft={halls} onSave={() => saveSection("halls", halls.data, "Залы")} onDownload={() => download("halls.json", halls.data)} saving={saving === "halls"} uploadFile={uploadFile} uploading={uploading} />}
           {section === "history" && <HistorySection draft={history} onSave={() => saveSection("history", history.data, "История")} onDownload={() => download("history.json", history.data)} saving={saving === "history"} />}
           {section === "reviews" && <ReviewsSection draft={reviews} onSave={() => saveSection("reviews", reviews.data, "Отзывы")} onDownload={() => download("reviews.json", reviews.data)} saving={saving === "reviews"} />}
-          {section === "events" && <EventsSection draft={events} onSave={() => saveSection("events", events.data, "Афиша")} onDownload={() => download("events-board.json", events.data)} saving={saving === "events"} />}
+          {section === "events" && <EventsSection draft={events} onSave={() => saveSection("events", events.data, "Афиша")} onDownload={() => download("events-board.json", events.data)} saving={saving === "events"} uploadFile={uploadFile} uploading={uploading} />}
           {section === "gallery" && <GallerySection draft={gallery} onSave={() => saveSection("gallery", gallery.data, "Галерея")} onDownload={() => download("gallery.json", gallery.data)} saving={saving === "gallery"} uploadFile={uploadFile} uploading={uploading} />}
           {section === "theme" && <ThemeSection draft={theme} onSave={() => saveSection("theme", theme.data, "Оформление")} onDownload={() => download("theme.json", theme.data)} saving={saving === "theme"} />}
+          {section === "documents" && <DocumentsSection uploadFile={uploadFile} uploadRawFile={uploadRawFile} uploading={uploading} />}
         </div>
       </div>
 
@@ -574,6 +599,19 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
           <Field label="Гостиница-партнёр"><Input value={data.hotelName} onChange={(e) => set("hotelName", e.target.value)} /></Field>
           <Field label="Сайт отеля"><Input value={data.hotelUrl} onChange={(e) => set("hotelUrl", e.target.value)} /></Field>
           <Field label="Telegram-канал"><Input value={data.telegram} onChange={(e) => set("telegram", e.target.value)} /></Field>
+          <Field label="ID организации на Яндекс.Картах"><Input value={data.yandexOrgId} onChange={(e) => set("yandexOrgId", e.target.value)} /></Field>
+          <Field label="Ссылка на профиль 2ГИС"><Input value={data.dgisUrl} onChange={(e) => set("dgisUrl", e.target.value)} /></Field>
+        </div>
+      </Card>
+
+      <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Точка на карте</p>
+      <Card>
+        <p className="mb-3 text-xs text-[#838b9b]">
+          Управляет меткой на /contacts/ и на главной. Взять координаты: открыть место в Яндекс.Картах → ПКМ по метке → «Координаты» → скопировать в оба поля.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Широта (lat)"><Input type="number" step="0.000001" value={data.lat} onChange={(e) => set("lat", Number(e.target.value))} /></Field>
+          <Field label="Долгота (lon)"><Input type="number" step="0.000001" value={data.lon} onChange={(e) => set("lon", Number(e.target.value))} /></Field>
         </div>
       </Card>
     </div>
@@ -593,6 +631,20 @@ function HallsSection({
   function moveHall(i: number, dir: -1 | 1) {
     setData({ ...data, halls: moveInArray(data.halls, i, dir) });
   }
+  function updateFormat(i: number, v: string) {
+    const next = { ...data, eventFormats: [...data.eventFormats] };
+    next.eventFormats[i] = v;
+    setData(next);
+  }
+  function removeFormat(i: number) {
+    setData({ ...data, eventFormats: data.eventFormats.filter((_, idx) => idx !== i) });
+  }
+  function addFormat() {
+    setData({ ...data, eventFormats: [...data.eventFormats, "Новый формат"] });
+  }
+  function moveFormat(i: number, dir: -1 | 1) {
+    setData({ ...data, eventFormats: moveInArray(data.eventFormats, i, dir) });
+  }
   async function addHallPhoto(i: number, file: File) {
     const h = data.halls[i];
     const nextIndex = h.photoCount + 1;
@@ -607,6 +659,22 @@ function HallsSection({
   return (
     <div>
       <SectionHeader title="Банкетные залы" hint={`${data.halls.length} залов`} onSave={onSave} onDownload={onDownload} dirty={dirty} onRevert={revert} saving={saving} />
+
+      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Форматы мероприятий (плашки на странице «Банкеты»)</p>
+      <Card>
+        <div className="flex flex-col gap-2">
+          {data.eventFormats.map((f, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <MoveButtons onUp={() => moveFormat(i, -1)} onDown={() => moveFormat(i, 1)} upDisabled={i === 0} downDisabled={i === data.eventFormats.length - 1} />
+              <Input value={f} onChange={(e) => updateFormat(i, e.target.value)} />
+              <RemoveBtn onClick={() => removeFormat(i)} />
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={addFormat} className="mt-3 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить формат</button>
+      </Card>
+
+      <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Залы</p>
       <div className="flex flex-col gap-4">
         {data.halls.map((h, i) => (
           <Card key={h.slug}>
@@ -782,12 +850,20 @@ function ReviewsSection({ draft, onSave, onDownload, saving }: SectionProps<Revi
 }
 
 /* ============== Афиша ============== */
-function EventsSection({ draft, onSave, onDownload, saving }: SectionProps<EventsBoardData>) {
+function EventsSection({
+  draft, onSave, onDownload, saving, uploadFile, uploading,
+}: SectionProps<EventsBoardData> & { uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>; uploading: boolean }) {
   const { data, setData, dirty, revert } = draft;
   function update(i: number, patch: Partial<BoardEvent>) {
     const next = structuredClone(data);
     next.events[i] = { ...next.events[i], ...patch };
     setData(next);
+  }
+  async function addEventPhoto(i: number, file: File) {
+    const path = `public/img/events/${Date.now()}.webp`;
+    const ok = await uploadFile(file, path, 900, `Афиша «${data.events[i].title}»: фото`);
+    if (!ok) return;
+    update(i, { image: `/img/events/${path.split("/").pop()}` });
   }
   function remove(i: number) {
     const next = structuredClone(data);
@@ -816,6 +892,24 @@ function EventsSection({ draft, onSave, onDownload, saving }: SectionProps<Event
                   <Field label="Дата"><Input type="date" value={ev.date} onChange={(e) => update(i, { date: e.target.value })} /></Field>
                   <div className="sm:col-span-2">
                     <Field label="Описание"><Textarea value={ev.description ?? ""} onChange={(e) => update(i, { description: e.target.value })} rows={2} /></Field>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Field label="Фото">
+                      <div className="flex h-11 items-center gap-2">
+                        <span className="truncate text-sm text-[#838b9b]">{ev.image ? ev.image.split("/").pop() : "без фото"}</span>
+                        <label className="shrink-0 cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
+                          {uploading ? "Загрузка…" : ev.image ? "Заменить" : "+ Добавить фото"}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploading}
+                            className="hidden"
+                            onChange={(e) => { const f = e.target.files?.[0]; if (f) addEventPhoto(i, f); e.target.value = ""; }}
+                          />
+                        </label>
+                        {ev.image && <RemoveBtn onClick={() => update(i, { image: undefined })} />}
+                      </div>
+                    </Field>
                   </div>
                 </div>
                 <RemoveBtn onClick={() => remove(i)} confirmText="Удалить это событие?" />
@@ -982,6 +1076,81 @@ function ThemeSection({ draft, onSave, onDownload, saving }: SectionProps<ThemeD
           ))}
         </div>
       </Card>
+    </div>
+  );
+}
+
+/* ============== Логотип и PDF ============== */
+type DocumentsSectionProps = {
+  uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string, format?: "image/webp" | "image/png") => Promise<boolean>;
+  uploadRawFile: (file: File, path: string, commitMessage: string) => Promise<boolean>;
+  uploading: boolean;
+};
+
+const PDF_MENUS: { key: string; label: string; path: string }[] = [
+  { key: "kids", label: "Детское меню", path: "public/pdf/detskoe-menu.pdf" },
+  { key: "bar", label: "Барное меню", path: "public/pdf/bar-menu.pdf" },
+  { key: "banquet", label: "Банкетное меню", path: "public/pdf/banketnoe-menu.pdf" },
+];
+
+function DocumentsSection({ uploadFile, uploadRawFile, uploading }: DocumentsSectionProps) {
+  // Логотип и PDF публикуются сразу по выбору файла (как фото в Галерее/Залах) —
+  // здесь нет отдельного JSON-черновика, поэтому нет и кнопки «Сохранить»: сам
+  // факт загрузки уже коммит в репозиторий.
+  return (
+    <div>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold">Логотип и PDF-меню</h2>
+        <p className="mt-1 text-sm text-[#4b5262]">Загрузка публикует файл сразу — отдельного «Сохранить» здесь нет.</p>
+      </div>
+
+      <Card>
+        <p className="text-sm font-medium">Логотип</p>
+        <p className="mt-1 text-xs text-[#838b9b]">
+          Файл на сайте: <code>img/brand/logo.png</code>. Загружается без пересжатия в WebP (сохраняем PNG без потерь — иначе размывается тонкая штриховка герба).
+        </p>
+        <label className="mt-3 inline-block cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
+          {uploading ? "Загрузка…" : "+ Заменить логотип"}
+          <input
+            type="file"
+            accept="image/*"
+            disabled={uploading}
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) uploadFile(f, "public/img/brand/logo.png", 900, "Логотип: замена из админ-панели", "image/png");
+              e.target.value = "";
+            }}
+          />
+        </label>
+      </Card>
+
+      <div className="mt-4 flex flex-col gap-3">
+        {PDF_MENUS.map((pdf) => (
+          <Card key={pdf.key}>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium">{pdf.label}</p>
+                <p className="mt-1 text-xs text-[#838b9b]">{pdf.path.replace("public/", "")}</p>
+              </div>
+              <label className="shrink-0 cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
+                {uploading ? "Загрузка…" : "+ Заменить PDF"}
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  disabled={uploading}
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) uploadRawFile(f, pdf.path, `${pdf.label}: замена PDF из админ-панели`);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
