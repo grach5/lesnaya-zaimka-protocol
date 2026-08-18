@@ -58,6 +58,9 @@ export async function saveJsonFile(token: string, path: string, data: unknown, c
     }),
   });
   if (!putRes.ok) {
+    if (putRes.status === 409) {
+      throw new Error("Файл изменился в репозитории, пока вы редактировали (например, с другого устройства). Обновите страницу — черновик переживёт обновление — и сохраните ещё раз.");
+    }
     const body = await putRes.json().catch(() => ({}));
     throw new Error(body.message || `GitHub отклонил сохранение (${putRes.status})`);
   }
@@ -94,6 +97,9 @@ export async function uploadBinaryFile(token: string, path: string, base64Conten
     body: JSON.stringify({ message: commitMessage, content: base64Content, sha, branch: BRANCH }),
   });
   if (!putRes.ok) {
+    if (putRes.status === 409) {
+      throw new Error("Файл изменился в репозитории, пока вы загружали. Обновите страницу и попробуйте снова.");
+    }
     const body = await putRes.json().catch(() => ({}));
     throw new Error(body.message || `GitHub отклонил загрузку файла (${putRes.status})`);
   }

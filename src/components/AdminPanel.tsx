@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { startLogin, completeLoginIfRedirected, getToken, clearToken, getClientId, setClientId } from "@/lib/githubAuth";
 import { saveJsonFile, uploadBinaryFile, rawContentUrl, fetchViewer } from "@/lib/githubContent";
 import { resizeToWebpBase64, fileToBase64 } from "@/lib/imageUpload";
+import { withBase } from "@/lib/url";
 
 // Панель администратора. Два независимых уровня доступа:
 // 1. Пароль (DEMO_PASSWORD) — просто открывает интерфейс панели в этом
@@ -77,7 +78,15 @@ const SECTIONS = [
 ] as const;
 type SectionId = (typeof SECTIONS)[number]["id"];
 
-/** localStorage-черновик + отслеживание несохранённых изменений + откат к исходнику. */
+/**
+ * localStorage-черновик + отслеживание несохранённых изменений + откат.
+ * baseline — не исходный проп (initial), а «последнее известное сохранённое
+ * состояние»: без этого разделения индикатор «есть несохранённые правки» и
+ * кнопка «отменить правки» врали бы после первого же успешного сохранения —
+ * initial-проп фиксируется один раз при заходе на страницу и никогда не
+ * обновляется за время сессии, поэтому dirty сравнивался бы с устаревшим
+ * снимком, а не с тем, что реально сейчас лежит в репозитории.
+ */
 function useDraft<T>(key: string, initial: T) {
   const [data, setData] = useState<T>(() => {
     try {
@@ -87,6 +96,7 @@ function useDraft<T>(key: string, initial: T) {
       return structuredClone(initial);
     }
   });
+  const [baseline, setBaseline] = useState<T>(() => structuredClone(initial));
   useEffect(() => {
     try {
       localStorage.setItem(`zaimka-admin-draft-${key}`, JSON.stringify(data));
@@ -94,9 +104,11 @@ function useDraft<T>(key: string, initial: T) {
       // localStorage недоступен (приватный режим) — черновик просто не переживёт обновление
     }
   }, [key, data]);
-  const dirty = JSON.stringify(data) !== JSON.stringify(initial);
-  const revert = useCallback(() => setData(structuredClone(initial)), [initial]);
-  return { data, setData, dirty, revert };
+  const dirty = JSON.stringify(data) !== JSON.stringify(baseline);
+  const revert = useCallback(() => setData(structuredClone(baseline)), [baseline]);
+  /** Вызывается после подтверждённого успешного сохранения — двигает baseline вперёд. */
+  const markSaved = useCallback((saved: T) => setBaseline(structuredClone(saved)), []);
+  return { data, setData, dirty, revert, markSaved };
 }
 
 type ToastKind = "success" | "error" | "info";
@@ -116,6 +128,22 @@ export default function AdminPanel({
   const [ghConnecting, setGhConnecting] = useState(true);
   const [saving, setSaving] = useState<SectionId | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  // Показ/скрытие drawer'а ниже lg держится на inline transform, а не на условном
+  // наборе Tailwind-классов вида `${open ? "translate-x-0" : "-translate-x-full"}`:
+  // JIT-сборщик Tailwind не всегда надёжно вытаскивает такие классы, склеенные
+  // через шаблонную строку внутри react-компонента (в отличие от статичных .astro-
+  // файлов сайта, где именно так собран, например, тумблер мобильного меню) —
+  // проверено вживую: класс применялся к DOM, а итогового CSS-правила не было.
+  // isDesktop нужен, чтобы на lg+ inline-transform не перекрывал обычный поток.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const menu = useDraft("menu", initialMenu);
   const contacts = useDraft("contacts", initialContacts);
@@ -167,7 +195,7 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   }
 
-  async function saveSection(id: keyof typeof FILE_PATHS, data: unknown, label: string) {
+  async function saveSection(id: keyof typeof FILE_PATHS, draft: Draft<any>, label: string) {
     const token = getToken();
     if (!token) {
       showToast("info", `${label} сохранено локально (демо) — подключите GitHub в настройках для настоящей публикации`);
@@ -175,13 +203,35 @@ export default function AdminPanel({
     }
     setSaving(id);
     try {
-      const res = await saveJsonFile(token, FILE_PATHS[id], data, `Правка из админ-панели: ${label.toLowerCase()}`);
+      const res = await saveJsonFile(token, FILE_PATHS[id], draft.data, `Правка из админ-панели: ${label.toLowerCase()}`);
+      draft.markSaved(draft.data);
       showToast("success", `${label} опубликовано — сайт пересобирается`);
       window.open(res.commitUrl, "_blank", "noopener");
     } catch (err) {
       showToast("error", err instanceof Error ? err.message : "Не удалось сохранить в GitHub");
     } finally {
       setSaving(null);
+    }
+  }
+
+  /**
+   * Автосохранение JSON сразу после загрузки фото (Галерея/Залы/Афиша) — фото
+   * само по себе уже реальный коммит в репозиторий в момент выбора файла;
+   * без этого шага ссылка на него осталась бы только в localStorage-черновике
+   * до ручного клика «Сохранить», и файл висел бы в репозитории «осиротевшим»
+   * (загружен, но нигде на сайте не упомянут), если админ забудет сохранить
+   * или просто закроет вкладку. Принимает data явным параметром (не читает
+   * draft.data из замыкания) — вызывающий код только что синхронно посчитал
+   * next и передаёт его напрямую, минуя однотактовую задержку React-стейта.
+   */
+  async function autoSaveJson<T>(id: keyof typeof FILE_PATHS, data: T, markSaved: (d: T) => void, label: string) {
+    const token = getToken();
+    if (!token) return; // uploadFile() уже показал тост «нужно подключить GitHub» до этого вызова
+    try {
+      await saveJsonFile(token, FILE_PATHS[id], data, `Правка из админ-панели: ${label.toLowerCase()} (фото)`);
+      markSaved(data);
+    } catch (err) {
+      showToast("error", `Фото загружено, но не удалось обновить «${label}»: ${err instanceof Error ? err.message : "ошибка"}. Нажмите «Сохранить» вручную.`);
     }
   }
 
@@ -290,12 +340,25 @@ export default function AdminPanel({
 
   return (
     <div className="flex min-h-screen bg-[#f3f4f6] text-[#14171c]">
-      <aside className="flex w-60 shrink-0 flex-col bg-[#1a1e26] text-white">
-        <div className="border-b border-white/10 px-5 py-5">
-          <p className="font-semibold">Лесная Заимка</p>
-          <p className="text-xs text-white/40">Панель администратора</p>
+      {/* Ниже lg панель занимала бы >60% узкого экрана телефона (240px из 375px) —
+          формы становились фактически нерабочими (поля ~70px шириной). На lg+
+          статичная колонка как раньше; ниже — выезжающий поверх контента drawer
+          с тёмной подложкой, как мобильное меню на самом сайте. */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setMobileNavOpen(false)} aria-hidden="true" />
+      )}
+      <aside
+        className="fixed inset-y-0 left-0 z-40 flex w-72 shrink-0 flex-col bg-[#1a1e26] text-white transition-transform duration-200 ease-out lg:static lg:z-auto lg:w-60"
+        style={{ transform: isDesktop ? "none" : mobileNavOpen ? "translateX(0)" : "translateX(-100%)" }}
+      >
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
+          <div>
+            <p className="font-semibold">Лесная Заимка</p>
+            <p className="text-xs text-white/40">Панель администратора</p>
+          </div>
+          <button type="button" onClick={() => setMobileNavOpen(false)} aria-label="Закрыть меню" className="text-white/50 hover:text-white lg:hidden">✕</button>
         </div>
-        <nav className="flex-1 space-y-0.5 p-3">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
           {SECTIONS.map((s) => {
             // "documents" — только загрузка файлов, без JSON-черновика и индикатора несохранённого.
             const dirty = s.id === "documents" ? false : { menu, contacts, halls, history, reviews, events, gallery, theme }[s.id].dirty;
@@ -303,7 +366,7 @@ export default function AdminPanel({
               <button
                 key={s.id}
                 type="button"
-                onClick={() => setSection(s.id)}
+                onClick={() => { setSection(s.id); setMobileNavOpen(false); }}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                   section === s.id ? "bg-[#d9a15b]/15 text-[#e8b876]" : "text-white/65 hover:bg-white/5 hover:text-white"
                 }`}
@@ -316,6 +379,14 @@ export default function AdminPanel({
           })}
         </nav>
         <div className="border-t border-white/10 p-3">
+          <a
+            href={withBase("/")}
+            target="_blank"
+            rel="noopener"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-white/50 hover:bg-white/5 hover:text-white"
+          >
+            <span className="w-4 text-center">↗</span> Открыть сайт
+          </a>
           <button
             type="button"
             onClick={() => setShowSettings(true)}
@@ -333,32 +404,74 @@ export default function AdminPanel({
         </div>
       </aside>
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="sticky top-0 z-10 border-b border-[#dadfe6] bg-[#f8f9fb]/95 px-8 py-3.5 backdrop-blur-sm">
-          <div className="mx-auto flex max-w-4xl items-center justify-between">
+      <div className="min-w-0 flex-1 overflow-y-auto">
+        <div className="sticky top-0 z-10 border-b border-[#dadfe6] bg-[#f8f9fb]/95 px-4 py-3.5 backdrop-blur-sm md:px-8">
+          <div className="mx-auto flex max-w-4xl items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Открыть меню разделов"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#dadfe6] text-[#4b5262] lg:hidden"
+            >
+              ☰
+            </button>
+            <div className="flex min-w-0 flex-1 items-center justify-between">
             {ghConnecting ? (
               <span className="text-xs text-[#838b9b]">Проверка подключения…</span>
             ) : ghUser ? (
-              <button type="button" onClick={() => setShowSettings(true)} className="flex items-center gap-2 text-xs font-medium text-[#1a7f37] hover:underline">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#1a7f37]" /> Подключено к GitHub как {ghUser.login} — «Сохранить» публикует на сайт
+              <button type="button" onClick={() => setShowSettings(true)} className="flex min-w-0 items-center gap-2 text-xs font-medium text-[#1a7f37] hover:underline">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#1a7f37]" />
+                <span className="truncate">Подключено к GitHub как {ghUser.login} — «Сохранить» публикует на сайт</span>
               </button>
             ) : (
-              <button type="button" onClick={() => setShowSettings(true)} className="flex items-center gap-2 text-xs font-medium text-[#b5651d] hover:underline">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#b5651d]" /> GitHub не подключён — «Сохранить» держит правки только в этом браузере
+              <button type="button" onClick={() => setShowSettings(true)} className="flex min-w-0 items-center gap-2 text-xs font-medium text-[#b5651d] hover:underline">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#b5651d]" />
+                <span className="truncate">GitHub не подключён — «Сохранить» держит правки только в этом браузере</span>
               </button>
             )}
+            </div>
           </div>
         </div>
 
-        <div className="mx-auto max-w-4xl px-8 py-8">
-          {section === "menu" && <MenuSection draft={menu} onSave={() => saveSection("menu", menu.data, "Меню")} onDownload={() => download("menu.json", menu.data)} saving={saving === "menu"} />}
-          {section === "contacts" && <ContactsSection draft={contacts} onSave={() => saveSection("contacts", contacts.data, "Контакты")} onDownload={() => download("contacts.json", contacts.data)} saving={saving === "contacts"} />}
-          {section === "halls" && <HallsSection draft={halls} onSave={() => saveSection("halls", halls.data, "Залы")} onDownload={() => download("halls.json", halls.data)} saving={saving === "halls"} uploadFile={uploadFile} uploading={uploading} />}
-          {section === "history" && <HistorySection draft={history} onSave={() => saveSection("history", history.data, "История")} onDownload={() => download("history.json", history.data)} saving={saving === "history"} />}
-          {section === "reviews" && <ReviewsSection draft={reviews} onSave={() => saveSection("reviews", reviews.data, "Отзывы")} onDownload={() => download("reviews.json", reviews.data)} saving={saving === "reviews"} />}
-          {section === "events" && <EventsSection draft={events} onSave={() => saveSection("events", events.data, "Афиша")} onDownload={() => download("events-board.json", events.data)} saving={saving === "events"} uploadFile={uploadFile} uploading={uploading} />}
-          {section === "gallery" && <GallerySection draft={gallery} onSave={() => saveSection("gallery", gallery.data, "Галерея")} onDownload={() => download("gallery.json", gallery.data)} saving={saving === "gallery"} uploadFile={uploadFile} uploading={uploading} />}
-          {section === "theme" && <ThemeSection draft={theme} onSave={() => saveSection("theme", theme.data, "Оформление")} onDownload={() => download("theme.json", theme.data)} saving={saving === "theme"} />}
+        <div className="mx-auto max-w-4xl px-4 py-8 md:px-8">
+          {section === "menu" && <MenuSection draft={menu} onSave={() => saveSection("menu", menu, "Меню")} onDownload={() => download("menu.json", menu.data)} saving={saving === "menu"} />}
+          {section === "contacts" && <ContactsSection draft={contacts} onSave={() => saveSection("contacts", contacts, "Контакты")} onDownload={() => download("contacts.json", contacts.data)} saving={saving === "contacts"} />}
+          {section === "halls" && (
+            <HallsSection
+              draft={halls}
+              onSave={() => saveSection("halls", halls, "Залы")}
+              onDownload={() => download("halls.json", halls.data)}
+              saving={saving === "halls"}
+              uploadFile={uploadFile}
+              uploading={uploading}
+              autoSaveJson={(data) => autoSaveJson("halls", data, halls.markSaved, "Залы")}
+            />
+          )}
+          {section === "history" && <HistorySection draft={history} onSave={() => saveSection("history", history, "История")} onDownload={() => download("history.json", history.data)} saving={saving === "history"} />}
+          {section === "reviews" && <ReviewsSection draft={reviews} onSave={() => saveSection("reviews", reviews, "Отзывы")} onDownload={() => download("reviews.json", reviews.data)} saving={saving === "reviews"} />}
+          {section === "events" && (
+            <EventsSection
+              draft={events}
+              onSave={() => saveSection("events", events, "Афиша")}
+              onDownload={() => download("events-board.json", events.data)}
+              saving={saving === "events"}
+              uploadFile={uploadFile}
+              uploading={uploading}
+              autoSaveJson={(data) => autoSaveJson("events", data, events.markSaved, "Афиша")}
+            />
+          )}
+          {section === "gallery" && (
+            <GallerySection
+              draft={gallery}
+              onSave={() => saveSection("gallery", gallery, "Галерея")}
+              onDownload={() => download("gallery.json", gallery.data)}
+              saving={saving === "gallery"}
+              uploadFile={uploadFile}
+              uploading={uploading}
+              autoSaveJson={(data) => autoSaveJson("gallery", data, gallery.markSaved, "Галерея")}
+            />
+          )}
+          {section === "theme" && <ThemeSection draft={theme} onSave={() => saveSection("theme", theme, "Оформление")} onDownload={() => download("theme.json", theme.data)} saving={saving === "theme"} />}
           {section === "documents" && <DocumentsSection uploadFile={uploadFile} uploadRawFile={uploadRawFile} uploading={uploading} />}
         </div>
       </div>
@@ -419,7 +532,9 @@ function SectionHeader({
       <div className="flex shrink-0 items-center gap-2">
         {dirty && <button type="button" onClick={onRevert} className="text-xs text-[#838b9b] hover:text-[#b5651d] hover:underline">отменить правки</button>}
         <Button type="button" variant="outline" onClick={onDownload}>Скачать JSON</Button>
-        <Button type="button" onClick={onSave} disabled={saving}>{saving ? "Сохранение…" : "Сохранить"}</Button>
+        <Button type="button" onClick={onSave} disabled={saving || !dirty} title={!dirty && !saving ? "Нет несохранённых изменений" : undefined}>
+          {saving ? "Сохранение…" : dirty ? "Сохранить" : "Сохранено"}
+        </Button>
       </div>
     </div>
   );
@@ -469,7 +584,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-type Draft<T> = { data: T; setData: (d: T) => void; dirty: boolean; revert: () => void };
+type Draft<T> = { data: T; setData: (d: T) => void; dirty: boolean; revert: () => void; markSaved: (saved: T) => void };
 type SectionProps<T> = { draft: Draft<T>; onSave: () => void; onDownload: () => void; saving: boolean };
 
 /* ============== Меню ============== */
@@ -620,8 +735,12 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
 
 /* ============== Залы ============== */
 function HallsSection({
-  draft, onSave, onDownload, saving, uploadFile, uploading,
-}: SectionProps<HallsData> & { uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>; uploading: boolean }) {
+  draft, onSave, onDownload, saving, uploadFile, uploading, autoSaveJson,
+}: SectionProps<HallsData> & {
+  uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>;
+  uploading: boolean;
+  autoSaveJson: (data: HallsData) => Promise<void>;
+}) {
   const { data, setData, dirty, revert } = draft;
   function updateHall(i: number, patch: Partial<Hall>) {
     const next = structuredClone(data);
@@ -654,7 +773,18 @@ function HallsSection({
     if (!okThumb) return;
     const okFull = await uploadFile(file, `public/img/halls/${h.slug}/full/${nextIndex}.webp`, 1600, `Фото зала «${h.name}»: добавлено полное фото ${nextIndex}`);
     if (!okFull) return;
-    updateHall(i, { photoCount: nextIndex });
+    const next = structuredClone(data);
+    next.halls[i] = { ...next.halls[i], photoCount: nextIndex };
+    setData(next);
+    await autoSaveJson(next);
+  }
+  // Фото зала пронумерованы подряд 1..photoCount (см. hallPhotos() в halls.ts) —
+  // в отличие от Галереи, где у каждого фото свой явный путь, тут нельзя просто
+  // выкинуть произвольное фото из середины без переименования всех следующих
+  // файлов. Безопасный без-переименования вариант — снять последнее по номеру:
+  // тот самый файл, что видно превью справа.
+  function removeLastHallPhoto(i: number) {
+    updateHall(i, { photoCount: Math.max(0, data.halls[i].photoCount - 1) });
   }
   return (
     <div>
@@ -685,10 +815,17 @@ function HallsSection({
                 <Field label="Вместимость"><Input value={h.capacity} onChange={(e) => updateHall(i, { capacity: e.target.value })} /></Field>
                 <Field label="Площадь"><Input value={h.area} onChange={(e) => updateHall(i, { area: e.target.value })} placeholder="например, 400 м²" /></Field>
                 <Field label="Фото в галерее">
-                  <div className="flex h-11 items-center gap-2">
-                    <span className="text-sm text-[#838b9b]">{h.photoCount} шт.</span>
-                    <label className="cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
-                      {uploading ? "Загрузка…" : "+ Добавить фото"}
+                  <div className="flex items-center gap-2">
+                    {h.photoCount > 0 && (
+                      <img
+                        src={rawContentUrl(`public/img/halls/${h.slug}/thumb/${h.photoCount}.webp`)}
+                        alt={`Последнее фото зала «${h.name}»`}
+                        className="h-11 w-11 shrink-0 rounded-md border border-[#dadfe6] object-cover"
+                      />
+                    )}
+                    <span className="shrink-0 text-sm text-[#838b9b]">{h.photoCount} шт.</span>
+                    <label className="shrink-0 cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
+                      {uploading ? "Загрузка…" : "+ Добавить"}
                       <input
                         type="file"
                         accept="image/*"
@@ -697,6 +834,15 @@ function HallsSection({
                         onChange={(e) => { const f = e.target.files?.[0]; if (f) addHallPhoto(i, f); e.target.value = ""; }}
                       />
                     </label>
+                    {h.photoCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => { if (window.confirm(`Убрать последнее фото зала «${h.name}» (№${h.photoCount})? Само изображение останется в репозитории, просто перестанет показываться на сайте.`)) removeLastHallPhoto(i); }}
+                        className="shrink-0 text-xs text-[#838b9b] hover:text-red-600 hover:underline"
+                      >
+                        Убрать последнее
+                      </button>
+                    )}
                   </div>
                 </Field>
                 <div className="sm:col-span-2">
@@ -851,8 +997,12 @@ function ReviewsSection({ draft, onSave, onDownload, saving }: SectionProps<Revi
 
 /* ============== Афиша ============== */
 function EventsSection({
-  draft, onSave, onDownload, saving, uploadFile, uploading,
-}: SectionProps<EventsBoardData> & { uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>; uploading: boolean }) {
+  draft, onSave, onDownload, saving, uploadFile, uploading, autoSaveJson,
+}: SectionProps<EventsBoardData> & {
+  uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>;
+  uploading: boolean;
+  autoSaveJson: (data: EventsBoardData) => Promise<void>;
+}) {
   const { data, setData, dirty, revert } = draft;
   function update(i: number, patch: Partial<BoardEvent>) {
     const next = structuredClone(data);
@@ -863,7 +1013,10 @@ function EventsSection({
     const path = `public/img/events/${Date.now()}.webp`;
     const ok = await uploadFile(file, path, 900, `Афиша «${data.events[i].title}»: фото`);
     if (!ok) return;
-    update(i, { image: `/img/events/${path.split("/").pop()}` });
+    const next = structuredClone(data);
+    next.events[i] = { ...next.events[i], image: `/img/events/${path.split("/").pop()}` };
+    setData(next);
+    await autoSaveJson(next);
   }
   function remove(i: number) {
     const next = structuredClone(data);
@@ -926,8 +1079,12 @@ function EventsSection({
 
 /* ============== Галерея ============== */
 function GallerySection({
-  draft, onSave, onDownload, saving, uploadFile, uploading,
-}: SectionProps<GalleryData> & { uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>; uploading: boolean }) {
+  draft, onSave, onDownload, saving, uploadFile, uploading, autoSaveJson,
+}: SectionProps<GalleryData> & {
+  uploadFile: (file: File, path: string, maxDimension: number, commitMessage: string) => Promise<boolean>;
+  uploading: boolean;
+  autoSaveJson: (data: GalleryData) => Promise<void>;
+}) {
   const { data, setData, dirty, revert } = draft;
   const totalImages = data.sections.reduce((s, sec) => s + sec.images.length, 0);
 
@@ -972,13 +1129,14 @@ function GallerySection({
     const next = structuredClone(data);
     next.sections[si].images.push({ thumb: `/img/gallery/uploads/${ts}-thumb.webp`, full: `/img/gallery/uploads/${ts}-full.webp`, source: "admin upload" });
     setData(next);
+    await autoSaveJson(next);
   }
 
   return (
     <div>
       <SectionHeader title="Галерея" hint={`${data.sections.length} разделов, ${totalImages} фото`} onSave={onSave} onDownload={onDownload} dirty={dirty} onRevert={revert} saving={saving} />
       <p className="mb-4 text-sm text-[#838b9b]">
-        Загруженные фото сразу становятся реальным коммитом в репозиторий — превью ниже может на минуту-две отставать от факта, пока GitHub Pages пересобирает сайт. Не забудьте нажать «Сохранить» после добавления/удаления фото, чтобы список в галерее на сайте обновился.
+        Загруженные фото сразу становятся реальным коммитом в репозиторий, список публикуется автоматически. Превью ниже может на минуту-две отставать от факта, пока GitHub Pages пересобирает сайт. Удаление и перестановку фото/разделов нужно подтвердить кнопкой «Сохранить».
       </p>
       <div className="flex flex-col gap-4">
         {data.sections.map((sec, si) => (
@@ -1097,6 +1255,10 @@ function DocumentsSection({ uploadFile, uploadRawFile, uploading }: DocumentsSec
   // Логотип и PDF публикуются сразу по выбору файла (как фото в Галерее/Залах) —
   // здесь нет отдельного JSON-черновика, поэтому нет и кнопки «Сохранить»: сам
   // факт загрузки уже коммит в репозиторий.
+  // version — счётчик для сброса кеша превью после успешной загрузки: без
+  // query-параметра браузер (и raw.githubusercontent.com) может ещё немного
+  // отдавать старую картинку/файл под тем же URL.
+  const [version, setVersion] = useState(0);
   return (
     <div>
       <div className="mb-6">
@@ -1105,24 +1267,35 @@ function DocumentsSection({ uploadFile, uploadRawFile, uploading }: DocumentsSec
       </div>
 
       <Card>
-        <p className="text-sm font-medium">Логотип</p>
-        <p className="mt-1 text-xs text-[#838b9b]">
-          Файл на сайте: <code>img/brand/logo.png</code>. Загружается без пересжатия в WebP (сохраняем PNG без потерь — иначе размывается тонкая штриховка герба).
-        </p>
-        <label className="mt-3 inline-block cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
-          {uploading ? "Загрузка…" : "+ Заменить логотип"}
-          <input
-            type="file"
-            accept="image/*"
-            disabled={uploading}
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) uploadFile(f, "public/img/brand/logo.png", 900, "Логотип: замена из админ-панели", "image/png");
-              e.target.value = "";
-            }}
+        <div className="flex items-start gap-4">
+          <img
+            src={`${rawContentUrl("public/img/brand/logo.png")}?v=${version}`}
+            alt="Текущий логотип"
+            className="h-16 w-auto shrink-0 rounded-md border border-[#dadfe6] bg-[#f3f4f6] object-contain p-2"
           />
-        </label>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium">Логотип</p>
+            <p className="mt-1 text-xs text-[#838b9b]">
+              Файл на сайте: <code>img/brand/logo.png</code>. Загружается без пересжатия в WebP (сохраняем PNG без потерь — иначе размывается тонкая штриховка герба).
+            </p>
+            <label className="mt-3 inline-block cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
+              {uploading ? "Загрузка…" : "+ Заменить логотип"}
+              <input
+                type="file"
+                accept="image/*"
+                disabled={uploading}
+                className="hidden"
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!f) return;
+                  const ok = await uploadFile(f, "public/img/brand/logo.png", 900, "Логотип: замена из админ-панели", "image/png");
+                  if (ok) setVersion((v) => v + 1);
+                }}
+              />
+            </label>
+          </div>
+        </div>
       </Card>
 
       <div className="mt-4 flex flex-col gap-3">
@@ -1132,6 +1305,14 @@ function DocumentsSection({ uploadFile, uploadRawFile, uploading }: DocumentsSec
               <div>
                 <p className="text-sm font-medium">{pdf.label}</p>
                 <p className="mt-1 text-xs text-[#838b9b]">{pdf.path.replace("public/", "")}</p>
+                <a
+                  href={`${rawContentUrl(pdf.path)}?v=${version}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-1 inline-block text-xs text-[#4b5262] underline underline-offset-2 hover:text-[#b5651d]"
+                >
+                  Открыть текущий файл
+                </a>
               </div>
               <label className="shrink-0 cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
                 {uploading ? "Загрузка…" : "+ Заменить PDF"}
@@ -1140,9 +1321,12 @@ function DocumentsSection({ uploadFile, uploadRawFile, uploading }: DocumentsSec
                   accept="application/pdf"
                   disabled={uploading}
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const f = e.target.files?.[0];
-                    if (f) uploadRawFile(f, pdf.path, `${pdf.label}: замена PDF из админ-панели`);
+                    if (f) {
+                      const ok = await uploadRawFile(f, pdf.path, `${pdf.label}: замена PDF из админ-панели`);
+                      if (ok) setVersion((v) => v + 1);
+                    }
                     e.target.value = "";
                   }}
                 />
