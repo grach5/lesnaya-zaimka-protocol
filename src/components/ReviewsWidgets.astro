@@ -14,7 +14,7 @@
 // актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
 import { getContent, type Locale } from "@/lib/i18n";
 import { CONTACTS } from "@/data/contacts";
-import { staticMapUrl } from "@/lib/map";
+import { staticMapUrl, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 
 interface Props {
@@ -32,6 +32,8 @@ const t = getContent(locale);
 // Картинка (см. src/lib/map.ts), а не интерактивный iframe-виджет — тот же
 // урок с «карта не открылась у клиента», см. contacts.astro.
 const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
+const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
+const logoUrl = withBase("/img/brand/logo.png");
 ---
 
 <section class="border-t border-line bg-paper-sunk/40 py-16 md:py-24">
@@ -67,20 +69,32 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
           <span class="mt-6 inline-flex items-center gap-2 font-mono text-[13px] text-ink">{t.pages.index.reviewsDgisOpen}</span>
         </a>
 
-        <a
-          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
-          target="_blank"
-          rel="noopener"
-          class="relative block min-h-[280px] flex-1 overflow-hidden border border-line"
-          aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
+        <div
+          class="relative min-h-[280px] flex-1 overflow-hidden border border-line"
           data-reveal
+          data-yandex-map
+          data-lat={CONTACTS.lat}
+          data-lon={CONTACTS.lon}
+          data-zoom="16"
+          data-api-key={CONTACTS.yandexMapsApiKey}
+          data-logo={logoUrl}
+          data-route={routeUrl}
         >
-          <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
-          <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
-            <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
-            <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
-          </span>
-        </a>
+          <a
+            href={routeUrl}
+            target="_blank"
+            rel="noopener"
+            class="absolute inset-0 block"
+            aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
+            data-map-fallback
+          >
+            <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
+            <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
+              <img src={logoUrl} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
+              <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
+            </span>
+          </a>
+        </div>
       </div>
     </div>
   </div>

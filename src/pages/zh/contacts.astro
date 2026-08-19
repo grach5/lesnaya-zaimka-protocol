@@ -3,13 +3,15 @@ import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { getContent } from "@/lib/i18n";
-import { staticMapUrl } from "@/lib/map";
+import { staticMapUrl, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 
 const locale = "zh" as const;
 const t = getContent(locale);
 
 const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
+const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
+const logoUrl = withBase("/img/brand/logo.png");
 ---
 
 <Layout
@@ -74,21 +76,33 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
     </div>
 
     <div class="mt-16" data-reveal>
-      <a
-        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
-        target="_blank"
-        rel="noopener"
-        class="relative block h-[340px] w-full overflow-hidden border border-line md:h-[440px]"
-        aria-label="在Яндекс地图中查看「莱斯纳亚·扎伊姆卡」的位置"
+      <div
+        class="relative h-[340px] w-full overflow-hidden border border-line md:h-[440px]"
+        data-yandex-map
+        data-lat={CONTACTS.lat}
+        data-lon={CONTACTS.lon}
+        data-zoom="16"
+        data-api-key={CONTACTS.yandexMapsApiKey}
+        data-logo={logoUrl}
+        data-route={routeUrl}
       >
-        <img src={mapImgSrc} alt="地图 — 莱斯纳亚·扎伊姆卡，马科夫斯基街290号" class="h-full w-full object-cover" />
-        <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
-          <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
-          <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
-        </span>
-      </a>
+        <a
+          href={routeUrl}
+          target="_blank"
+          rel="noopener"
+          class="absolute inset-0 block"
+          aria-label="在Яндекс地图中查看「莱斯纳亚·扎伊姆卡」的位置"
+          data-map-fallback
+        >
+          <img src={mapImgSrc} alt="地图 — 莱斯纳亚·扎伊姆卡，马科夫斯基街290号" class="h-full w-full object-cover" />
+          <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
+            <img src={logoUrl} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
+            <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
+          </span>
+        </a>
+      </div>
       <a
-        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+        href={routeUrl}
         target="_blank"
         rel="noopener"
         class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
@@ -100,6 +114,8 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 
   <script>
     import { initReveal } from "@/lib/motion";
+    import { initInteractiveMaps } from "@/lib/yandexMap";
     initReveal();
+    initInteractiveMaps();
   </script>
 </Layout>

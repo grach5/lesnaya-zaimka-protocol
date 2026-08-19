@@ -109,7 +109,9 @@ const t = getContent(locale);
 
   <script>
     import { initReveal, motionEnabled } from "@/lib/motion";
+    import { initInteractiveMaps } from "@/lib/yandexMap";
     initReveal();
+    initInteractiveMaps();
 
     const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
     if (heroVideo && motionEnabled()) {

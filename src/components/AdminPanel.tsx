@@ -38,7 +38,7 @@ type MenuData = { categories: MenuCategory[] };
 type Contacts = {
   name: string; address: string; phoneTable: string; phoneEvents: string;
   hours: string; hotelName: string; hotelUrl: string; telegram: string;
-  yandexOrgId: string; dgisUrl: string; lat: number; lon: number;
+  yandexOrgId: string; dgisUrl: string; yandexMapsApiKey: string; lat: number; lon: number;
 };
 type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photoCount: number };
 type HallsData = { halls: Hall[]; eventFormats: string[] };
@@ -733,6 +733,20 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Широта (lat)"><Input type="number" step="0.000001" value={data.lat} onChange={(e) => set("lat", Number(e.target.value))} /></Field>
           <Field label="Долгота (lon)"><Input type="number" step="0.000001" value={data.lon} onChange={(e) => set("lon", Number(e.target.value))} /></Field>
+        </div>
+        <div className="mt-4">
+          <Field label="Ключ JS API Яндекс.Карт (необязательно)">
+            <Input value={data.yandexMapsApiKey} onChange={(e) => set("yandexMapsApiKey", e.target.value)} placeholder="без ключа карта останется статичной картинкой" />
+          </Field>
+          <p className="mt-2 text-xs text-[#838b9b]">
+            Без ключа на сайте показывается надёжная статичная картинка карты. Чтобы карта стала интерактивной (зум,
+            перетаскивание) — получите бесплатный ключ на{" "}
+            <a href="https://developer.tech.yandex.ru/services/3" target="_blank" rel="noopener" className="text-[#b5651d] underline">
+              developer.tech.yandex.ru
+            </a>{" "}
+            («JavaScript API и HTTP Геокодер») и вставьте сюда. Это публичный идентификатор, не пароль — безопасность
+            обеспечивает сам Яндекс через привязку к домену сайта.
+          </p>
         </div>
       </Card>
     </div>

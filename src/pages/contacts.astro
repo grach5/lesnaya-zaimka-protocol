@@ -2,10 +2,12 @@
 import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
-import { staticMapUrl } from "@/lib/map";
+import { staticMapUrl, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 
 const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
+const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
+const logoUrl = withBase("/img/brand/logo.png");
 ---
 
 <Layout
@@ -72,29 +74,45 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
        раньше она стояла в левой колонке и растягивала её намного выше правой
        (форма брони короче), оставляя пустоту рядом с картой при скролле. */}
     <div class="mt-16" data-reveal>
-      <a
-        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
-        target="_blank"
-        rel="noopener"
-        class="relative block h-[340px] w-full overflow-hidden border border-line md:h-[440px]"
-        aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
+      {/* data-yandex-map: если в админке задан ключ JS API — сюда поднимется
+         интерактивная карта (см. lib/yandexMap.ts), а статичная картинка ниже
+         скроется. Без ключа (или если скрипт не загрузился) остаётся она —
+         тот же надёжный фолбэк, что был и раньше. */}
+      <div
+        class="relative h-[340px] w-full overflow-hidden border border-line md:h-[440px]"
+        data-yandex-map
+        data-lat={CONTACTS.lat}
+        data-lon={CONTACTS.lon}
+        data-zoom="16"
+        data-api-key={CONTACTS.yandexMapsApiKey}
+        data-logo={logoUrl}
+        data-route={routeUrl}
       >
-        {/* Без loading="lazy": картинка внутри [data-reveal] (родитель скрыт через
-           visibility:hidden до скролла) — нативный lazy-load иногда не срабатывает
-           для контента внутри изначально невидимого предка и виснет навсегда. */}
-        <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
-        {/* Свой маркер вместо стандартной красной метки Яндекса — ll и есть нужная
-           точка, а object-cover всегда центрирует картинку, поэтому центр
-           контейнера = нужная точка независимо от его пропорций. Якорь —
-           translate-y-full поднимает блок так, что нижний край (носик
-           указателя) упирается ровно в эту точку, как у обычного пина. */}
-        <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
-          <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
-          <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
-        </span>
-      </a>
+        <a
+          href={routeUrl}
+          target="_blank"
+          rel="noopener"
+          class="absolute inset-0 block"
+          aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
+          data-map-fallback
+        >
+          {/* Без loading="lazy": картинка внутри [data-reveal] (родитель скрыт через
+             visibility:hidden до скролла) — нативный lazy-load иногда не срабатывает
+             для контента внутри изначально невидимого предка и виснет навсегда. */}
+          <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
+          {/* Свой маркер вместо стандартной красной метки Яндекса — ll и есть нужная
+             точка, а object-cover всегда центрирует картинку, поэтому центр
+             контейнера = нужная точка независимо от его пропорций. Якорь —
+             translate-y-full поднимает блок так, что нижний край (носик
+             указателя) упирается ровно в эту точку, как у обычного пина. */}
+          <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
+            <img src={logoUrl} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
+            <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
+          </span>
+        </a>
+      </div>
       <a
-        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+        href={routeUrl}
         target="_blank"
         rel="noopener"
         class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
@@ -106,6 +124,8 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 
   <script>
     import { initReveal } from "@/lib/motion";
+    import { initInteractiveMaps } from "@/lib/yandexMap";
     initReveal();
+    initInteractiveMaps();
   </script>
 </Layout>
