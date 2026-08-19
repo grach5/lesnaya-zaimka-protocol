@@ -21,7 +21,11 @@ export default defineConfig({
       // распознаются как спец-страница ошибки, в отличие от корневого
       // 404.astro, который @astrojs/sitemap и так не индексирует) —
       // исключаем вручную, чтобы не индексировать страницу "не найдено".
-      filter: (page) => !page.endsWith('/404/'),
+      // /admin/ — демо-панель администратора (своя noindex-разметка, см.
+      // src/pages/admin/index.astro), но @astrojs/sitemap не читает meta
+      // robots из HTML, так что без явного фильтра она молча попадала
+      // в открытый sitemap.xml — нашли аудитом, закрываем тут и в robots.txt.
+      filter: (page) => !page.endsWith('/404/') && !page.endsWith('/admin/'),
     }),
   ],
   vite: {

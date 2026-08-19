@@ -33,10 +33,16 @@ const photos = hallPhotos(hall);
           data-full={withBase(photo.full)}
           aria-label={t.pages.events.hallPhotoAria.replace("{hall}", name).replace("{i}", String(i + 1)).replace("{n}", String(photos.length))}
         >
+          {/* i===0 — первое фото ВНУТРИ этой карусели, не позиция карусели на
+             странице; на /events/ карусель зала повторяется 6 раз в сетке, и
+             каждая грузила своё первое фото eager, включая карусели ниже
+             экрана. index===0 — это уже позиция самой карусели (передаётся
+             из events.astro), поэтому eager оставляем только самому первому
+             фото самой первой карусели — единственному реальному LCP-кандидату. */}
           <img
             src={withBase(photo.thumb)}
             alt={`${name} — ${i + 1}/${photos.length}`}
-            loading={i === 0 ? "eager" : "lazy"}
+            loading={index === 0 && i === 0 ? "eager" : "lazy"}
             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <span class="pointer-events-none absolute inset-0 bg-ink/0 transition-colors group-hover:bg-ink/10" aria-hidden="true"></span>

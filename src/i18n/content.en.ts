@@ -94,7 +94,7 @@ export const content: SiteContent = {
   pages: {
     index: {
       title: "Lesnaya Zaimka — The House That Hosted Two Nations. Vladivostok",
-      description: "«Lesnaya Zaimka» restaurant complex in Vladivostok — a 1974 log terem that once hosted Ford, Brezhnev, and Kim Jong-il. Russian, game, Far Eastern, and Caucasian cuisine, 6 halls for up to 500 guests.",
+      description: "«Lesnaya Zaimka» restaurant complex in Vladivostok — a 1974 log terem that once hosted Ford, Brezhnev, and Kim Jong-il.",
       kicker: "Vladivostok · 290 Makovskogo St. · since 1974",
       h1: "The house that hosted two nations",
       lead: "A 1974 log terem at the entrance to Vladivostok. It once hosted US President Gerald Ford and Leonid Brezhnev — and in 2002, North Korean leader Kim Jong-il had breakfast here too. The cuisine and traditions of hospitality remain the same as they were then.",
@@ -129,7 +129,7 @@ export const content: SiteContent = {
     },
     history: {
       title: "History — Lesnaya Zaimka, a Home Since 1974",
-      description: "The full timeline of «Lesnaya Zaimka» restaurant complex in Vladivostok: hosting Ford and Brezhnev in 1974, Kim Jong-il's breakfast in 2002, the 2012–2015 reconstruction, and the second opening.",
+      description: "The full timeline of «Lesnaya Zaimka» restaurant complex in Vladivostok: hosting Ford and Brezhnev in 1974, Kim Jong-il's breakfast in 2002.",
       eyebrow: "Timeline of the House",
       h1: "Half a century of history under one roof",
       lead: "The house was built in 1974 for the arrival of two heads of state — and it has never stopped welcoming guests people still talk about decades later. Every entry below is a confirmed fact, not a legend.",
@@ -143,7 +143,7 @@ export const content: SiteContent = {
     },
     events: {
       title: "Banquet Complex — Lesnaya Zaimka, Vladivostok",
-      description: "6 halls for 30 to 500 guests: weddings, banquets, corporate events, buffet receptions, catering and off-site chef service at «Lesnaya Zaimka» restaurant complex. Leave a request with your date and guest count.",
+      description: "6 halls for 30 to 500 guests: weddings, banquets, corporate events, buffet receptions, catering, and off-site chef service at «Lesnaya Zaimka».",
       eyebrow: "Banquet Complex",
       h1: "Six halls — from an intimate dinner to a reception for 500 guests",
       lead: "Weddings, banquets, corporate receptions, catering and off-site chef service, dish delivery.",

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://grach5.github.io/lesnaya-zaimka-protocol/sitemap-index.xml

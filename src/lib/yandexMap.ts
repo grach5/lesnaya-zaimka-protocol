@@ -62,7 +62,7 @@ function mountMap(container: HTMLElement): void {
   // это HTML-слой самого ymaps, а не CSS-оверлей поверх картинки.
   const MarkerLayout = ymaps.templateLayoutFactory.createClass(
     `<div style="position:absolute;left:0;top:0;width:130px;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;cursor:pointer;">
-       <img src="${logoUrl}" style="width:100%;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55));" />
+       <img src="${logoUrl}" alt="" style="width:100%;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55));" />
        <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:11px solid var(--color-burgundy);filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));"></div>
      </div>`,
   );
