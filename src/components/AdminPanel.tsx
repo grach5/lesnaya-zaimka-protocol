@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { startLogin, completeLoginIfRedirected, getToken, clearToken, getClientId, setClientId } from "@/lib/githubAuth";
+import { getToken, setToken, clearToken } from "@/lib/githubAuth";
 import { saveJsonFile, uploadBinaryFile, rawContentUrl, fetchViewer } from "@/lib/githubContent";
 import { resizeToWebpBase64, fileToBase64 } from "@/lib/imageUpload";
 import { withBase } from "@/lib/url";
@@ -11,14 +11,14 @@ import { withBase } from "@/lib/url";
 // Панель администратора. Два независимых уровня доступа:
 // 1. Пароль (DEMO_PASSWORD) — просто открывает интерфейс панели в этом
 //    браузере, проверяется в браузере, не является настоящей защитой.
-// 2. Подключение GitHub (Настройки → Client ID → «Войти через GitHub») —
-//    вот это уже НАСТОЯЩАЯ авторизация: PKCE-вход в GitHub App
-//    (см. src/lib/githubAuth.ts), после которого «Сохранить» реально
-//    пишет коммит в репозиторий сайта через Contents API
-//    (src/lib/githubContent.ts) — сайт пересобирается тем же пайплайном,
-//    что и при обычном git push. Без подключения «Сохранить» держит
-//    правки только в localStorage этого браузера (переживает обновление
-//    страницы, но не является реальной публикацией).
+// 2. Подключение GitHub (Настройки → Personal Access Token) — вот это уже
+//    НАСТОЯЩАЯ авторизация: администратор вставляет свой GitHub-токен
+//    (см. src/lib/githubAuth.ts, объяснение почему не OAuth-вход), после
+//    чего «Сохранить» реально пишет коммит в репозиторий сайта через
+//    Contents API (src/lib/githubContent.ts) — сайт пересобирается тем же
+//    пайплайном, что и при обычном git push. Без подключения «Сохранить»
+//    держит правки только в localStorage этого браузера (переживает
+//    обновление страницы, но не является реальной публикацией).
 const DEMO_PASSWORD = "zaimka2026";
 
 const FILE_PATHS = {
@@ -123,7 +123,8 @@ export default function AdminPanel({
   const [section, setSection] = useState<SectionId>("menu");
   const [toast, setToast] = useState<{ kind: ToastKind; text: string } | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [clientIdInput, setClientIdInput] = useState("");
+  const [tokenInput, setTokenInput] = useState("");
+  const [tokenChecking, setTokenChecking] = useState(false);
   const [ghUser, setGhUser] = useState<{ login: string; avatarUrl: string } | null>(null);
   const [ghConnecting, setGhConnecting] = useState(true);
   const [saving, setSaving] = useState<SectionId | null>(null);
@@ -161,18 +162,11 @@ export default function AdminPanel({
 
   // При загрузке: если пароль уже вводился в этой сессии (authed держим в
   // sessionStorage отдельно от самого пароля) — не просить его заново на
-  // каждый reload; и обработать возврат из GitHub OAuth (?code=...).
+  // каждый reload; и проверить, что уже сохранённый GitHub-токен ещё рабочий.
   useEffect(() => {
     if (sessionStorage.getItem("zaimka-admin-authed") === "1") setAuthed(true);
-    setClientIdInput(getClientId());
 
     (async () => {
-      try {
-        const redirected = await completeLoginIfRedirected();
-        if (redirected) showToast("success", "GitHub подключён");
-      } catch (err) {
-        showToast("error", err instanceof Error ? err.message : "Не удалось завершить вход в GitHub");
-      }
       const token = getToken();
       if (token) {
         try {
@@ -293,16 +287,20 @@ export default function AdminPanel({
     }
   }
 
-  function saveClientId() {
-    setClientId(clientIdInput);
-    showToast("success", "Client ID сохранён в этом браузере");
-  }
-
   async function connectGithub() {
+    const token = tokenInput.trim();
+    if (!token) return;
+    setTokenChecking(true);
     try {
-      await startLogin();
+      const viewer = await fetchViewer(token);
+      setToken(token);
+      setGhUser(viewer);
+      setTokenInput("");
+      showToast("success", `Подключено к GitHub как ${viewer.login}`);
     } catch (err) {
-      showToast("error", err instanceof Error ? err.message : "Не удалось начать вход");
+      showToast("error", err instanceof Error ? err.message : "Токен недействителен");
+    } finally {
+      setTokenChecking(false);
     }
   }
 
@@ -480,25 +478,33 @@ export default function AdminPanel({
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowSettings(false)}>
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold">Подключение к GitHub</h3>
-            <p className="mt-1 text-sm text-[#4b5262]">Реальное сохранение правок на сайт требует входа через GitHub App. Один раз укажите Client ID созданного приложения.</p>
-
-            <div className="mt-4">
-              <Field label="GitHub App Client ID">
-                <Input value={clientIdInput} onChange={(e) => setClientIdInput(e.target.value)} placeholder="Iv1...." />
-              </Field>
-              <Button type="button" variant="outline" onClick={saveClientId} className="mt-2">Сохранить Client ID</Button>
-            </div>
-
-            <div className="mt-5 border-t border-[#eef0f3] pt-4">
-              {ghUser ? (
-                <div className="flex items-center justify-between">
+            {ghUser ? (
+              <>
+                <p className="mt-1 text-sm text-[#4b5262]">«Сохранить» публикует правки прямо на сайт.</p>
+                <div className="mt-4 flex items-center justify-between rounded-lg bg-[#f8f9fb] px-3 py-2.5">
                   <span className="flex items-center gap-2 text-sm"><span className="h-1.5 w-1.5 rounded-full bg-[#1a7f37]" /> Вошли как <strong>{ghUser.login}</strong></span>
                   <Button type="button" variant="outline" onClick={disconnectGithub}>Отключить</Button>
                 </div>
-              ) : (
-                <Button type="button" onClick={connectGithub} className="w-full">Войти через GitHub →</Button>
-              )}
-            </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-sm text-[#4b5262]">
+                  Реальное сохранение правок на сайт требует personal access token GitHub. Создайте его на{" "}
+                  <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" className="underline">
+                    github.com/settings/personal-access-tokens/new
+                  </a>
+                  : выберите репозиторий «lesnaya-zaimka-protocol», в Repository permissions → Contents поставьте Read and write, и вставьте выданный токен сюда.
+                </p>
+                <div className="mt-4">
+                  <Field label="GitHub Personal Access Token">
+                    <Input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="github_pat_..." />
+                  </Field>
+                  <Button type="button" onClick={connectGithub} disabled={tokenChecking || !tokenInput.trim()} className="mt-2 w-full">
+                    {tokenChecking ? "Проверка…" : "Подключить"}
+                  </Button>
+                </div>
+              </>
+            )}
             <Button type="button" variant="ghost" onClick={() => setShowSettings(false)} className="mt-4 w-full">Закрыть</Button>
           </div>
         </div>
