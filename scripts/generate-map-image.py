@@ -1,0 +1,89 @@
+"""Собирает public/img/map-location.webp — статичную картинку карты для
+contacts.astro / ReviewsWidgets.astro, без API-ключа Яндекса.
+
+Зачем свой скрипт, а не просто грузить одну картинку с static-maps.yandex.ru:
+бесплатный (без ключа) Static Maps API отдаёт максимум 650x450px — при показе
+на всю ширину секции (~1150px+) это растягивается почти в 2 раза и выглядит
+размыто. Здесь запрашивается несколько соседних тайлов на зум глубже и они
+сшиваются в одну большую чёткую картинку через Web Mercator-математику (та же
+проекция, что использует сам Яндекс, поэтому дороги и подписи на стыках тайлов
+совпадают день в день). Специально сдвигаем часть тайлов при запросе, чтобы
+после обрезки нижней плашки-водяного знака Яндекса («© Яндекс Яндекс Карты»,
+всегда рисуется внизу каждого тайла) не осталось шва — только один настоящий
+водяной знак остаётся в правом нижнем углу итоговой картинки.
+
+Запускать: uv run --with pillow --with requests python scripts/generate-map-image.py
+Перезапускать при смене адреса/координат ресторана (см. src/data/contacts.json).
+"""
+
+import io
+import math
+
+import requests
+from PIL import Image
+
+LAT, LON = 43.265668, 132.072916  # см. src/data/contacts.json -> lat/lon
+ZOOM = 17
+TILE_W, TILE_H = 650, 450
+WATERMARK_H = 35  # высота плашки "© Яндекс..." внизу каждого тайла, замерено вручную
+COLS, ROWS = 4, 2
+OUT_PATH = "public/img/map-location.webp"
+
+
+def world_px(z: int) -> float:
+    return 256 * (2**z)
+
+
+def lonlat_to_px(lon: float, lat: float, z: int) -> tuple[float, float]:
+    w = world_px(z)
+    x = (lon + 180.0) / 360.0 * w
+    siny = min(max(math.sin(math.radians(lat)), -0.9999), 0.9999)
+    y = (0.5 - math.log((1 + siny) / (1 - siny)) / (4 * math.pi)) * w
+    return x, y
+
+
+def px_to_lonlat(x: float, y: float, z: int) -> tuple[float, float]:
+    w = world_px(z)
+    lon = x / w * 360.0 - 180.0
+    n = math.pi - 2 * math.pi * y / w
+    lat = math.degrees(math.atan(math.sinh(n)))
+    return lon, lat
+
+
+def fetch_tile(lon: float, lat: float) -> Image.Image:
+    url = f"https://static-maps.yandex.ru/1.x/?ll={lon},{lat}&z={ZOOM}&l=map&size={TILE_W},{TILE_H}"
+    r = requests.get(url, timeout=20)
+    r.raise_for_status()
+    return Image.open(io.BytesIO(r.content)).convert("RGB")
+
+
+def main() -> None:
+    cx, cy = lonlat_to_px(LON, LAT, ZOOM)
+    row_h = TILE_H - WATERMARK_H
+    canvas = Image.new("RGB", (COLS * TILE_W, ROWS * row_h))
+
+    for ri in range(ROWS):
+        # Сдвигаем точку запроса вниз на высоту плашки — после обрезки её
+        # снизу оставшийся кусок карты стыкуется с соседней строкой без шва.
+        py = cy + (ri - (ROWS - 1) / 2.0) * TILE_H + WATERMARK_H
+        for ci in range(COLS):
+            px = cx + (ci - (COLS - 1) / 2.0) * TILE_W
+            lon, lat = px_to_lonlat(px, py, ZOOM)
+            tile = fetch_tile(lon, lat)
+            canvas.paste(tile.crop((0, 0, TILE_W, row_h)), (ci * TILE_W, ri * row_h))
+
+    # Один настоящий водяной знак Яндекса — переносим из отдельного запроса
+    # без сдвига (та самая нижняя плашка) в правый нижний угол итоговой картинки.
+    py_last = cy + (ROWS - 1 - (ROWS - 1) / 2.0) * TILE_H
+    px_last = cx + (COLS - 1 - (COLS - 1) / 2.0) * TILE_W
+    lon, lat = px_to_lonlat(px_last, py_last, ZOOM)
+    br_tile = fetch_tile(lon, lat)
+    watermark = br_tile.crop((0, TILE_H - WATERMARK_H, TILE_W, TILE_H))
+    canvas.paste(watermark, ((COLS - 1) * TILE_W, canvas.height - WATERMARK_H))
+
+    canvas.save(OUT_PATH, "WEBP", quality=84, method=6)
+    print(f"saved {OUT_PATH}: {canvas.size[0]}x{canvas.size[1]}")
+
+
+if __name__ == "__main__":
+    main()

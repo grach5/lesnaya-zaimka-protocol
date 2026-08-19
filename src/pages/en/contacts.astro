@@ -3,13 +3,13 @@ import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { getContent } from "@/lib/i18n";
-import { staticMapUrl, mapRouteUrl } from "@/lib/map";
+import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 
 const locale = "en" as const;
 const t = getContent(locale);
 
-const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
+const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
 const logoUrl = withBase("/img/brand/logo.png");
 ---

@@ -14,7 +14,7 @@
 // актуальная, просто с переходом на 2gis.ru, а не встроенная на странице).
 import { getContent, type Locale } from "@/lib/i18n";
 import { CONTACTS } from "@/data/contacts";
-import { staticMapUrl, mapRouteUrl } from "@/lib/map";
+import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 
 interface Props {
@@ -31,7 +31,7 @@ const t = getContent(locale);
 // отзывов (560px), а справа — только текстовая карточка.
 // Картинка (см. src/lib/map.ts), а не интерактивный iframe-виджет — тот же
 // урок с «карта не открылась у клиента», см. contacts.astro.
-const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
+const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
 const logoUrl = withBase("/img/brand/logo.png");
 ---
