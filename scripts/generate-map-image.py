@@ -2,7 +2,8 @@
 contacts.astro / ReviewsWidgets.astro, без API-ключа Яндекса.
 
 Один прямой снимок Yandex Static Maps API (без ключа, бесплатно, максимум
-650x450px) на зум {ZOOM}, сохранённый в WebP почти без потерь (quality=95) —
+650x450px) на зум {ZOOM}, сохранённый в WebP БЕЗ потерь (lossless) — выше
+уже некуда, дальше упирается в максимум самого источника (650x450px) —
 никаких искусственных преобразований поверх того, что реально вернул Яндекс.
 
 Раньше здесь была склейка из нескольких тайлов ради более чёткой картинки на
@@ -39,7 +40,7 @@ def main() -> None:
     r = requests.get(url, timeout=20)
     r.raise_for_status()
     im = Image.open(io.BytesIO(r.content)).convert("RGB")
-    im.save(OUT_PATH, "WEBP", quality=95, method=6)
+    im.save(OUT_PATH, "WEBP", lossless=True, method=6)
     print(f"saved {OUT_PATH}: {im.size[0]}x{im.size[1]}")
 
 
