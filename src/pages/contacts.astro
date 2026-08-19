@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { staticMapUrl } from "@/lib/map";
+import { withBase } from "@/lib/url";
 
 const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
 ---
@@ -61,13 +62,19 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
           href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
           target="_blank"
           rel="noopener"
-          class="mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
+          class="relative mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
           aria-label="Открыть карту с расположением «Лесная Заимка» в Яндекс.Картах"
         >
           {/* Без loading="lazy": картинка внутри [data-reveal] (родитель скрыт через
              visibility:hidden до скролла) — нативный lazy-load иногда не срабатывает
              для контента внутри изначально невидимого предка и виснет навсегда. */}
           <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
+          {/* Свой бейдж вместо стандартной красной метки Яндекса — ll и есть нужная
+             точка, а object-cover всегда центрирует картинку, поэтому центр
+             контейнера = нужная точка независимо от его пропорций. */}
+          <span class="pointer-events-none absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-[var(--color-burgundy)] bg-paper-raised p-2 shadow-lg">
+            <img src={withBase("/img/brand/logo-mark.png")} alt="" class="h-full w-full" />
+          </span>
         </a>
         <a
           href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}

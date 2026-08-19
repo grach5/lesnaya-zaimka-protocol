@@ -4,6 +4,7 @@ import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { getContent } from "@/lib/i18n";
 import { staticMapUrl } from "@/lib/map";
+import { withBase } from "@/lib/url";
 
 const locale = "ko" as const;
 const t = getContent(locale);
@@ -66,10 +67,13 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
           href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
           target="_blank"
           rel="noopener"
-          class="mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
+          class="relative mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
           aria-label="야ン덱스 지도에서 «레스나야 자임카» 위치 열기"
         >
           <img src={mapImgSrc} alt="지도 — 레스나야 자임카, 마콥스코고 거리 290" class="h-full w-full object-cover" />
+          <span class="pointer-events-none absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-[var(--color-burgundy)] bg-paper-raised p-2 shadow-lg">
+            <img src={withBase("/img/brand/logo-mark.png")} alt="" class="h-full w-full" />
+          </span>
         </a>
         <a
           href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}

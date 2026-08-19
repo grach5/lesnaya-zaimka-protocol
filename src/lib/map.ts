@@ -8,8 +8,12 @@
 // <img>, максимально надёжно, и вдобавок легче интерактивной карты.
 // Максимальный размер бесплатного API — 650x450, поэтому в разметке картинка
 // растягивается через object-fit: cover, а не запрашивается большего размера.
+// Без параметра pt (стандартная красная метка Яндекса) — вместо неё поверх
+// картинки накладывается свой круглый бейдж с медальоном логотипа (см. места
+// использования: contacts.astro, ReviewsWidgets.astro). ll — центр карты, он
+// же и есть нужная точка, поэтому бейдж просто центрируется в контейнере.
 export function staticMapUrl(lat: number, lon: number, zoom = 16): string {
-  return `https://static-maps.yandex.ru/1.x/?ll=${lon},${lat}&z=${zoom}&l=map&pt=${lon},${lat},pm2rdm&size=650,450`;
+  return `https://static-maps.yandex.ru/1.x/?ll=${lon},${lat}&z=${zoom}&l=map&size=650,450`;
 }
 
 export function mapRouteUrl(lat: number, lon: number): string {

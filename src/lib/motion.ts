@@ -67,15 +67,43 @@ export function initReveal(): void {
 
   window.addEventListener("load", () => ScrollTrigger.refresh());
 
-  setTimeout(() => {
-    revealEls.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const stillHidden = getComputedStyle(el).opacity === "0";
-      if (stillHidden && rect.top < window.innerHeight * 0.95) {
-        gsap.set(el, { autoAlpha: 1, y: 0 });
+  // Страховка: раньше проверялась только один раз через 600ms после загрузки,
+  // поэтому блоки ниже первого экрана, для которых ScrollTrigger почему-то не
+  // срабатывал при скролле (например форма брони на /contacts/ — Lenis-скролл
+  // приходит асинхронно, и в паре с гидратацией React-острова триггер иногда
+  // не пересчитывается), оставались invisible навсегда — до 600ms они ещё вне
+  // экрана, а после него уже никто не перепроверял. Теперь проверка идёт на
+  // каждом скролле/ресайзе, пока не закончатся ещё не показанные элементы.
+  const pending = new Set(revealEls);
+  const sweep = () => {
+    for (const el of pending) {
+      if (getComputedStyle(el).opacity !== "0") {
+        pending.delete(el);
+        continue;
       }
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+        gsap.set(el, { autoAlpha: 1, y: 0 });
+        pending.delete(el);
+      }
+    }
+    if (pending.size === 0) {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    }
+  };
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      sweep();
     });
-  }, 600);
+  };
+  setTimeout(sweep, 600);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
 }
 
 // Тумблер анимаций: сохраняется в localStorage, применяется до первой отрисовки
