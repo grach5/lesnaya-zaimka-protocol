@@ -7,9 +7,17 @@ import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "zh" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "「莱斯纳亚·扎伊姆卡」有几个宴会厅？能容纳多少人？",
+    answer: "共有6个宴会厅，可容纳30至500位宾客——从小型宴会到数百人的大型婚礼和企业活动均可举办。",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -69,6 +77,12 @@ const breadcrumbs = Astro.site
           area={t.data.halls[i]?.area}
         />
       ))}
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="常见问题" items={faqItems} />
     </div>
   </section>
 

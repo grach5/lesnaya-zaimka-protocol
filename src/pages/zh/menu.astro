@@ -4,9 +4,21 @@ import { ZAIMKA_MENU } from "@/data/menu";
 import { withBase } from "@/lib/url";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "zh" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "餐厅提供什么菜系？",
+    answer: "俄罗斯菜、猎人菜、远东菜和高加索菜——从野味和远东海鲜到高加索烤肉串和恰恰布里。",
+  },
+  {
+    question: "餐厅人均消费是多少？",
+    answer: "根据餐厅在Яндекс地图和2ГИС的官方页面，人均消费为3500至5000卢布。",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -124,6 +136,12 @@ const menuSchema = {
           </div>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="常见问题" items={faqItems} />
     </div>
   </section>
 

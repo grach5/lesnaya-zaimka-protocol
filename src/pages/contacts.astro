@@ -5,6 +5,34 @@ import ReserveForm from "@/components/ReserveForm";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
+
+const faqItems = [
+  {
+    question: "Где находится ресторан «Лесная Заимка» и как до него добраться?",
+    answer: "Ресторан находится по адресу г. Владивосток, ул. Маковского, 290, на въезде в город. Точный маршрут можно построить в Яндекс.Картах — кнопка есть на этой странице.",
+  },
+  {
+    question: "Часы работы ресторана «Лесная Заимка»?",
+    answer: "Ресторан работает без выходных, с 11:00 до 00:00.",
+  },
+  {
+    question: "Есть ли парковка у ресторана?",
+    answer: "Да, у ресторана есть собственная парковка.",
+  },
+  {
+    question: "Можно ли расплатиться картой?",
+    answer: "Да, ресторан принимает оплату картой.",
+  },
+  {
+    question: "Какой рейтинг у ресторана «Лесная Заимка»?",
+    answer: "4,7 из 5 на Яндекс.Картах (984 оценки) и 4,9 из 5 на 2ГИС (503 оценки).",
+  },
+  {
+    question: "Есть ли рядом с рестораном гостиница?",
+    answer: "Да, рядом находится гостиница и сауна Villa ArtE.",
+  },
+];
 
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
@@ -143,6 +171,12 @@ const breadcrumbs = Astro.site
           Открыть в 2ГИС →
         </a>
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="Частые вопросы" items={faqItems} />
     </div>
   </section>
 

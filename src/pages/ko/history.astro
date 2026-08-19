@@ -4,9 +4,21 @@ import HistoryCarousel from "@/components/HistoryCarousel.astro";
 import { HISTORY } from "@/data/history";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "ko" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "「레스나야 자임카」는 몇 년부터 운영되었나요?",
+    answer: "이 목조 저택은 1974년 귀빈 접대를 위한 공식 시설로 지어졌으며, 그때부터 지금까지 손님을 맞이하고 있습니다.",
+  },
+  {
+    question: "「레스나야 자임카」를 방문한 유명 인사는 누구인가요?",
+    answer: "1974년 미국 대통령 포드와 소련 지도자 브레즈네프가 이곳을 방문했으며, 2002년에는 북한 지도자 김정일이 이곳에서 아침 식사를 했습니다.",
+  },
+];
 
 // Переведённые записи хроники — тот же порядок/годы, что и HISTORY (канонический
 // источник), только title/body заменены на перевод по индексу.
@@ -69,6 +81,12 @@ const breadcrumbs = Astro.site
           </blockquote>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="자주 묻는 질문" items={faqItems} />
     </div>
   </section>
 

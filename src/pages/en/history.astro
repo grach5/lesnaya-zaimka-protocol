@@ -4,9 +4,21 @@ import HistoryCarousel from "@/components/HistoryCarousel.astro";
 import { HISTORY } from "@/data/history";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "en" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "Since what year has «Lesnaya Zaimka» been open?",
+    answer: "The house was built in 1974 as an official venue for hosting distinguished guests — it has been welcoming guests ever since.",
+  },
+  {
+    question: "Which notable figures have visited «Lesnaya Zaimka»?",
+    answer: "Over the years the house has hosted US President Gerald Ford and Leonid Brezhnev (1974), and in 2002 North Korean leader Kim Jong-il had breakfast here.",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -69,6 +81,12 @@ const entries = HISTORY.map((h, i) => ({
           </blockquote>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="Frequently Asked Questions" items={faqItems} />
     </div>
   </section>
 

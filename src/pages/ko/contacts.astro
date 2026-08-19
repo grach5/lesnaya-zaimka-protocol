@@ -6,9 +6,37 @@ import { getContent, localizedHref } from "@/lib/i18n";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "ko" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "「레스나야 자임카」레스토랑은 어디에 있으며 어떻게 가나요?",
+    answer: "레스토랑 주소는 블라디보스토크 마콥스코고 거리 290번지로, 시 진입로에 위치해 있습니다. 이 페이지의 버튼을 통해 Яндекс 지도에서 정확한 경로를 확인할 수 있습니다.",
+  },
+  {
+    question: "레스토랑 영업시간은 어떻게 되나요?",
+    answer: "레스토랑은 연중무휴로 11:00부터 자정 00:00까지 영업합니다.",
+  },
+  {
+    question: "레스토랑에 주차장이 있나요?",
+    answer: "네, 레스토랑에는 전용 주차장이 있습니다.",
+  },
+  {
+    question: "카드 결제가 가능한가요?",
+    answer: "네, 레스토랑에서는 카드 결제가 가능합니다.",
+  },
+  {
+    question: "「레스나야 자임카」의 평점은 어떻게 되나요?",
+    answer: "Яндекс 지도에서 5점 만점에 4.7점(평가 984건), 2ГИС에서는 4.9점(평가 503건)입니다.",
+  },
+  {
+    question: "레스토랑 근처에 호텔이 있나요?",
+    answer: "네, 바로 옆에 Villa ArtE 호텔 및 사우나가 있습니다.",
+  },
+];
 
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
@@ -128,6 +156,12 @@ const breadcrumbs = Astro.site
           {t.pages.contacts.route2gisBtn}
         </a>
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="자주 묻는 질문" items={faqItems} />
     </div>
   </section>
 

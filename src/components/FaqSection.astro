@@ -1,0 +1,28 @@
+---
+// Видимый блок вопрос-ответ + FAQPage JSON-LD рядом (lib/faq.ts). Нативные
+// <details>/<summary> — доступно и без JS, тот же паттерн уже используется
+// в мобильном меню Header.astro для раскрывающихся групп.
+import { faqSchema, type FaqItem } from "@/lib/faq";
+
+interface Props {
+  heading: string;
+  items: FaqItem[];
+}
+const { heading, items } = Astro.props;
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(items))} />
+<div data-reveal>
+  <h2 class="font-display text-xl font-semibold text-ink">{heading}</h2>
+  <div class="mt-6 divide-y divide-line border-t border-b border-line">
+    {items.map((item) => (
+      <details class="group py-4">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-ink [&::-webkit-details-marker]:hidden">
+          <span class="font-medium">{item.question}</span>
+          <span class="shrink-0 font-mono text-lg text-brass transition-transform duration-200 group-open:rotate-45">+</span>
+        </summary>
+        <p class="mt-3 max-w-[62ch] text-sm text-ink-soft">{item.answer}</p>
+      </details>
+    ))}
+  </div>
+</div>

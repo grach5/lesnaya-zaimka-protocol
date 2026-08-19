@@ -4,6 +4,18 @@ import HistoryCarousel from "@/components/HistoryCarousel.astro";
 import { HISTORY, OWNER_QUOTE, GUEST_QUOTES } from "@/data/history";
 import { withBase } from "@/lib/url";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
+
+const faqItems = [
+  {
+    question: "С какого года работает ресторан «Лесная Заимка»?",
+    answer: "Дом построен в 1974 году как протокольный объект для приёма высоких гостей — с тех пор здесь непрерывно принимают гостей.",
+  },
+  {
+    question: "Кто из известных людей останавливался в «Лесной Заимке»?",
+    answer: "В разные годы дом принимал президента США Джеральда Форда и Леонида Брежнева (1974), а в 2002 году здесь завтракал лидер КНДР Ким Чен Ир.",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -69,6 +81,12 @@ const breadcrumbs = Astro.site
           </blockquote>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="Частые вопросы" items={faqItems} />
     </div>
   </section>
 

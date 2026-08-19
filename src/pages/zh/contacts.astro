@@ -6,9 +6,37 @@ import { getContent, localizedHref } from "@/lib/i18n";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "zh" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "「莱斯纳亚·扎伊姆卡」餐厅在哪里？怎么去？",
+    answer: "餐厅地址为符拉迪沃斯托克马科夫斯基街290号，位于市区入口处。可通过本页面的按钮在Яндекс地图中查看精确路线。",
+  },
+  {
+    question: "餐厅营业时间是？",
+    answer: "餐厅全年无休，营业时间为11:00至次日00:00。",
+  },
+  {
+    question: "餐厅有停车场吗？",
+    answer: "有，餐厅设有自己的停车场。",
+  },
+  {
+    question: "可以刷卡支付吗？",
+    answer: "可以，餐厅接受银行卡支付。",
+  },
+  {
+    question: "「莱斯纳亚·扎伊姆卡」的评分是多少？",
+    answer: "在Яндекс地图上评分为4.7分（满分5分，984条评价），在2ГИС上评分为4.9分（503条评价）。",
+  },
+  {
+    question: "餐厅附近有酒店吗？",
+    answer: "有，餐厅旁边就是Villa ArtE酒店及桑拿中心。",
+  },
+];
 
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
@@ -128,6 +156,12 @@ const breadcrumbs = Astro.site
           {t.pages.contacts.route2gisBtn}
         </a>
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="常见问题" items={faqItems} />
     </div>
   </section>
 

@@ -7,9 +7,17 @@ import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "en" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "How many banquet halls does «Lesnaya Zaimka» have, and what's their capacity?",
+    answer: "Six halls with capacity from 30 to 500 guests — from intimate banquets to large weddings and corporate events for several hundred people.",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -69,6 +77,12 @@ const breadcrumbs = Astro.site
           area={t.data.halls[i]?.area}
         />
       ))}
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="Frequently Asked Questions" items={faqItems} />
     </div>
   </section>
 

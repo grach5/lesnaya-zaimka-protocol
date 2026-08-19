@@ -4,9 +4,21 @@ import { ZAIMKA_MENU } from "@/data/menu";
 import { withBase } from "@/lib/url";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "ko" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "레스토랑에서는 어떤 요리를 제공하나요?",
+    answer: "러시아 요리, 사냥육 요리, 극동 요리, 캅카스 요리를 제공합니다 — 사냥육 요리와 극동 해산물부터 캅카스식 샤슬릭과 하차푸리까지 다양합니다.",
+  },
+  {
+    question: "1인당 평균 지출 비용은 얼마인가요?",
+    answer: "Яндекс 지도와 2ГИС의 공식 페이지에 따르면 1인당 평균 지출은 3,500~5,000루블입니다.",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -124,6 +136,12 @@ const menuSchema = {
           </div>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="자주 묻는 질문" items={faqItems} />
     </div>
   </section>
 

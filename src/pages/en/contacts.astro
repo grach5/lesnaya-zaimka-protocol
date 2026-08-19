@@ -6,9 +6,37 @@ import { getContent, localizedHref } from "@/lib/i18n";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "en" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "Where is «Lesnaya Zaimka» restaurant and how do I get there?",
+    answer: "The restaurant is located at 290 Makovskogo St., Vladivostok, at the entrance to the city. You can get exact directions via Yandex Maps — the button is on this page.",
+  },
+  {
+    question: "What are the restaurant's opening hours?",
+    answer: "The restaurant is open every day, from 11:00 to 00:00.",
+  },
+  {
+    question: "Is there parking at the restaurant?",
+    answer: "Yes, the restaurant has its own parking.",
+  },
+  {
+    question: "Can I pay by card?",
+    answer: "Yes, the restaurant accepts card payment.",
+  },
+  {
+    question: "What is «Lesnaya Zaimka»'s rating?",
+    answer: "4.7 out of 5 on Yandex Maps (984 ratings) and 4.9 out of 5 on 2GIS (503 ratings).",
+  },
+  {
+    question: "Is there a hotel near the restaurant?",
+    answer: "Yes, the Villa ArtE hotel and sauna is right next door.",
+  },
+];
 
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
@@ -128,6 +156,12 @@ const breadcrumbs = Astro.site
           {t.pages.contacts.route2gisBtn}
         </a>
       </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-paper-sunk/40 py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="Frequently Asked Questions" items={faqItems} />
     </div>
   </section>
 

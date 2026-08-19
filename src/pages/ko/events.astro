@@ -7,9 +7,17 @@ import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
 import { getContent, localizedHref } from "@/lib/i18n";
 import { breadcrumbSchema } from "@/lib/breadcrumbs";
+import FaqSection from "@/components/FaqSection.astro";
 
 const locale = "ko" as const;
 const t = getContent(locale);
+
+const faqItems = [
+  {
+    question: "「레스나야 자임카」에는 연회장이 몇 개 있으며 수용 인원은 어떻게 되나요?",
+    answer: "총 6개의 연회장이 있으며 30명부터 500명까지 수용 가능합니다 — 소규모 연회부터 수백 명 규모의 대형 결혼식과 기업 행사까지 진행할 수 있습니다.",
+  },
+];
 
 const breadcrumbs = Astro.site
   ? breadcrumbSchema([
@@ -69,6 +77,12 @@ const breadcrumbs = Astro.site
           area={t.data.halls[i]?.area}
         />
       ))}
+    </div>
+  </section>
+
+  <section class="border-t border-line py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-5 md:px-8">
+      <FaqSection heading="자주 묻는 질문" items={faqItems} />
     </div>
   </section>
 
