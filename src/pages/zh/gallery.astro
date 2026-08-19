@@ -2,7 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
 import { withBase } from "@/lib/url";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "zh" as const;
 const t = getContent(locale);
@@ -10,6 +11,13 @@ const t = getContent(locale);
 const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.length, 0);
 // Переведённые названия разделов — по индексу, порядок идентичен ZAIMKA_GALLERY.
 const sectionNames = ZAIMKA_GALLERY.sections.map((s, i) => t.data.gallerySections[i] ?? s.name);
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.gallery.eyebrow, url: new URL(localizedHref("/gallery/", locale), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -19,6 +27,7 @@ const sectionNames = ZAIMKA_GALLERY.sections.map((s, i) => t.data.gallerySection
   locale={locale}
   path="/gallery/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.gallery.eyebrow}</p>

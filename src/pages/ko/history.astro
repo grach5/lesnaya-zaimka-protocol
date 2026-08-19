@@ -2,7 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import HistoryCarousel from "@/components/HistoryCarousel.astro";
 import { HISTORY } from "@/data/history";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "ko" as const;
 const t = getContent(locale);
@@ -14,9 +15,17 @@ const entries = HISTORY.map((h, i) => ({
   title: t.data.history[i]?.title ?? h.title,
   body: t.data.history[i]?.body ?? h.body,
 }));
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.history.eyebrow, url: new URL(localizedHref("/history/", locale), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout title={t.pages.history.title} description={t.pages.history.description} image="/img/gallery/interiors/full/1.webp" locale={locale} path="/history/">
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.history.eyebrow}</p>

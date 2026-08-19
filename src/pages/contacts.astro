@@ -4,10 +4,18 @@ import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
 const logoUrl = withBase("/img/brand/logo.png");
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: "Главная", url: new URL(withBase("/"), Astro.site).toString() },
+      { name: "Контакты", url: new URL(withBase("/contacts/"), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -16,6 +24,7 @@ const logoUrl = withBase("/img/brand/logo.png");
   image="/img/hero-video-poster.webp"
   path="/contacts/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Контакты</p>

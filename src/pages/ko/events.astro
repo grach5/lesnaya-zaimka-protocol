@@ -5,10 +5,18 @@ import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "ko" as const;
 const t = getContent(locale);
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.events.eyebrow, url: new URL(localizedHref("/events/", locale), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -18,6 +26,7 @@ const t = getContent(locale);
   locale={locale}
   path="/events/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.events.eyebrow}</p>

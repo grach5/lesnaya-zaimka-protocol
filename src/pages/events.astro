@@ -5,6 +5,14 @@ import { CONTACTS } from "@/data/contacts";
 import { withBase } from "@/lib/url";
 import BookingForm from "@/components/BookingForm";
 import HallCarousel from "@/components/HallCarousel.astro";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: "Главная", url: new URL(withBase("/"), Astro.site).toString() },
+      { name: "Банкетный комплекс", url: new URL(withBase("/events/"), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -13,6 +21,7 @@ import HallCarousel from "@/components/HallCarousel.astro";
   image="/img/halls/osnovnoy/full/1.webp"
   path="/events/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Банкетный комплекс</p>

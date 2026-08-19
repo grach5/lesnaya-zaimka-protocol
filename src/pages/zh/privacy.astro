@@ -1,13 +1,22 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "zh" as const;
 const t = getContent(locale);
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.privacy.docLabel, url: new URL(localizedHref("/privacy/", locale), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout title={t.pages.privacy.title} description={t.pages.privacy.description} locale={locale} path="/privacy/">
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.privacy.docLabel}</p>

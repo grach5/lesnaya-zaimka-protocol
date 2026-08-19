@@ -2,9 +2,10 @@
 import Layout from "@/layouts/Layout.astro";
 import { CONTACTS } from "@/data/contacts";
 import ReserveForm from "@/components/ReserveForm";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
 import { MAP_IMAGE_PATH, mapRouteUrl } from "@/lib/map";
 import { withBase } from "@/lib/url";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "en" as const;
 const t = getContent(locale);
@@ -12,6 +13,13 @@ const t = getContent(locale);
 const mapImgSrc = withBase(MAP_IMAGE_PATH);
 const routeUrl = mapRouteUrl(CONTACTS.lat, CONTACTS.lon);
 const logoUrl = withBase("/img/brand/logo.png");
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.contacts.eyebrow, url: new URL(localizedHref("/contacts/", locale), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -21,6 +29,7 @@ const logoUrl = withBase("/img/brand/logo.png");
   locale={locale}
   path="/contacts/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.contacts.eyebrow}</p>

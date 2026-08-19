@@ -2,10 +2,18 @@
 import Layout from "@/layouts/Layout.astro";
 import HistoryCarousel from "@/components/HistoryCarousel.astro";
 import { HISTORY } from "@/data/history";
-import { getContent } from "@/lib/i18n";
+import { getContent, localizedHref } from "@/lib/i18n";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const locale = "en" as const;
 const t = getContent(locale);
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: t.ui.nav.home, url: new URL(localizedHref("/", locale), Astro.site).toString() },
+      { name: t.pages.history.eyebrow, url: new URL(localizedHref("/history/", locale), Astro.site).toString() },
+    ])
+  : null;
 
 // Переведённые записи хроники — тот же порядок/годы, что и HISTORY (канонический
 // источник), только title/body заменены на перевод по индексу.
@@ -17,6 +25,7 @@ const entries = HISTORY.map((h, i) => ({
 ---
 
 <Layout title={t.pages.history.title} description={t.pages.history.description} image="/img/gallery/interiors/full/1.webp" locale={locale} path="/history/">
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>{t.pages.history.eyebrow}</p>

@@ -33,6 +33,15 @@ const { title, description, image = "/img/hero-index.webp", noindex = false, loc
 
 const OG_LOCALE: Record<Locale, string> = { ru: "ru_RU", en: "en_US", zh: "zh_CN", ko: "ko_KR" };
 
+// Те же переводы кухонь, что уже используются в текстах сайта (см.
+// i18n/content.*.ts, описание index/menu) — не придуманы заново для JSON-LD.
+const CUISINE: Record<Locale, string[]> = {
+  ru: ["Русская", "Охотничья", "Дальневосточная", "Кавказская"],
+  en: ["Russian", "Game", "Far Eastern", "Caucasian"],
+  zh: ["俄罗斯菜", "猎人菜", "远东菜", "高加索菜"],
+  ko: ["러시아 요리", "사냥육 요리", "극동 요리", "캅카스 요리"],
+};
+
 // Реальный диапазон цен из данных меню — для priceRange в JSON-LD, не выдумано.
 const allPrices = ZAIMKA_MENU.categories.flatMap((c) => c.items.map((i) => i.price));
 const minPrice = Math.min(...allPrices);
@@ -87,7 +96,7 @@ const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
       ...(Astro.site ? { image: new URL(withBase("/img/hero-index.webp"), Astro.site).toString() } : {}),
       ...(Astro.site ? { menu: new URL(withBase("/menu/"), Astro.site).toString() } : {}),
       priceRange: `${minPrice}–${maxPrice} ₽`,
-      servesCuisine: ["Русская", "Охотничья", "Дальневосточная", "Кавказская"],
+      servesCuisine: CUISINE[locale],
       address: {
         "@type": "PostalAddress",
         streetAddress: jsonLdStreetAddress,
@@ -97,6 +106,10 @@ const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
       geo: { "@type": "GeoCoordinates", latitude: CONTACTS.lat, longitude: CONTACTS.lon },
       telephone: jsonLdTelephone,
       openingHours: "Mo-Su 11:00-24:00",
+      // Реальный рейтинг с Яндекс.Карт (organization id 1081573454, снято
+      // вручную 19.08.2026) — не выдумано; при заметном изменении рейтинга
+      // на Яндекс.Картах нужно будет обновить эти два числа тоже.
+      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.7", ratingCount: "984", bestRating: "5" },
     })} />
 
     <!-- Тумблер анимаций применяется ДО первой отрисовки, чтобы не было мигания:

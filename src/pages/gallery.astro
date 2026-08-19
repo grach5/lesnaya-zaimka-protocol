@@ -2,8 +2,16 @@
 import Layout from "@/layouts/Layout.astro";
 import { ZAIMKA_GALLERY } from "@/data/gallery";
 import { withBase } from "@/lib/url";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 
 const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.length, 0);
+
+const breadcrumbs = Astro.site
+  ? breadcrumbSchema([
+      { name: "Главная", url: new URL(withBase("/"), Astro.site).toString() },
+      { name: "Фотографии дома", url: new URL(withBase("/gallery/"), Astro.site).toString() },
+    ])
+  : null;
 ---
 
 <Layout
@@ -12,6 +20,7 @@ const totalImages = ZAIMKA_GALLERY.sections.reduce((sum, s) => sum + s.images.le
   image={ZAIMKA_GALLERY.sections[0].images[0].full}
   path="/gallery/"
 >
+  {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
   <section class="border-b border-line bg-paper-sunk/40">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фотографии дома</p>
