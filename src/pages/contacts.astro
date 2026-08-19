@@ -69,11 +69,14 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
              visibility:hidden до скролла) — нативный lazy-load иногда не срабатывает
              для контента внутри изначально невидимого предка и виснет навсегда. */}
           <img src={mapImgSrc} alt="Карта — «Лесная Заимка», ул. Маковского, 290" class="h-full w-full object-cover" />
-          {/* Свой бейдж вместо стандартной красной метки Яндекса — ll и есть нужная
+          {/* Свой маркер вместо стандартной красной метки Яндекса — ll и есть нужная
              точка, а object-cover всегда центрирует картинку, поэтому центр
-             контейнера = нужная точка независимо от его пропорций. */}
-          <span class="pointer-events-none absolute left-1/2 top-1/2 w-36 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-[var(--color-burgundy)] bg-paper-raised px-3 py-2.5 shadow-lg">
-            <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full" />
+             контейнера = нужная точка независимо от его пропорций. Якорь —
+             translate-y-full поднимает блок так, что нижний край (носик
+             указателя) упирается ровно в эту точку, как у обычного пина. */}
+          <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
+            <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
+            <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
           </span>
         </a>
         <a
