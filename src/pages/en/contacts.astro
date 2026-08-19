@@ -62,28 +62,6 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
             </span>
           </div>
         </div>
-
-        <a
-          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
-          target="_blank"
-          rel="noopener"
-          class="relative mt-10 block h-[480px] overflow-hidden border border-line md:h-[600px]"
-          aria-label="Open the map to Lesnaya Zaimka on Yandex Maps"
-        >
-          <img src={mapImgSrc} alt="Map — Lesnaya Zaimka, 290 Makovskogo St." class="h-full w-full object-cover" />
-          <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
-            <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
-            <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
-          </span>
-        </a>
-        <a
-          href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
-          target="_blank"
-          rel="noopener"
-          class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
-        >
-          {t.pages.contacts.routeBtn}
-        </a>
       </div>
 
       <div data-reveal>
@@ -93,6 +71,30 @@ const mapImgSrc = staticMapUrl(CONTACTS.lat, CONTACTS.lon);
           <ReserveForm client:load locale={locale} />
         </div>
       </div>
+    </div>
+
+    <div class="mt-16" data-reveal>
+      <a
+        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+        target="_blank"
+        rel="noopener"
+        class="relative block h-[340px] w-full overflow-hidden border border-line md:h-[440px]"
+        aria-label="Open the map to Lesnaya Zaimka on Yandex Maps"
+      >
+        <img src={mapImgSrc} alt="Map — Lesnaya Zaimka, 290 Makovskogo St." class="h-full w-full object-cover" />
+        <span class="pointer-events-none absolute left-1/2 top-1/2 flex w-32 -translate-x-1/2 -translate-y-full flex-col items-center">
+          <img src={withBase("/img/brand/logo.png")} alt="" class="h-auto w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" />
+          <span class="h-0 w-0 border-x-[7px] border-x-transparent border-t-[11px] border-t-[var(--color-burgundy)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"></span>
+        </span>
+      </a>
+      <a
+        href={`https://yandex.ru/maps/?rtext=~${CONTACTS.lat}%2C${CONTACTS.lon}`}
+        target="_blank"
+        rel="noopener"
+        class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
+      >
+        {t.pages.contacts.routeBtn}
+      </a>
     </div>
   </section>
 
