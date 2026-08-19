@@ -73,7 +73,11 @@ const logoUrl = withBase("/img/brand/logo.png");
     {/* Карта — широким блоком на всю ширину секции, а не в узкой колонке:
        раньше она стояла в левой колонке и растягивала её намного выше правой
        (форма брони короче), оставляя пустоту рядом с картой при скролле. */}
-    <div class="mt-16" data-reveal>
+    {/* max-w-[720px]: карта — обычная картинка максимум 650px в ширину
+       (см. lib/map.ts) — растянутая на всю секцию (~1100px) она выглядела
+       размыто. С этим ограничением масштаб растяжения небольшой, картинка
+       остаётся резкой, но по-прежнему заметно шире старой узкой колонки. */}
+    <div class="mt-16 max-w-[720px]" data-reveal>
       {/* data-yandex-map: если в админке задан ключ JS API — сюда поднимется
          интерактивная карта (см. lib/yandexMap.ts), а статичная картинка ниже
          скроется. Без ключа (или если скрипт не загрузился) остаётся она —
@@ -83,7 +87,7 @@ const logoUrl = withBase("/img/brand/logo.png");
         data-yandex-map
         data-lat={CONTACTS.lat}
         data-lon={CONTACTS.lon}
-        data-zoom="16"
+        data-zoom="17"
         data-api-key={CONTACTS.yandexMapsApiKey}
         data-logo={logoUrl}
         data-route={routeUrl}
