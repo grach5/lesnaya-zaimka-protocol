@@ -101,14 +101,24 @@ const logoUrl = withBase("/img/brand/logo.png");
           </span>
         </a>
       </div>
-      <a
-        href={routeUrl}
-        target="_blank"
-        rel="noopener"
-        class="plaque mt-4 inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
-      >
-        {t.pages.contacts.routeBtn}
-      </a>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a
+          href={routeUrl}
+          target="_blank"
+          rel="noopener"
+          class="plaque inline-flex items-center gap-2 bg-[var(--color-burgundy)] px-5 py-3 font-mono text-[13px] tracking-wide text-paper-raised transition-colors hover:bg-[var(--color-gold)] hover:text-ink"
+        >
+          {t.pages.contacts.routeBtn}
+        </a>
+        <a
+          href={CONTACTS.dgisUrl}
+          target="_blank"
+          rel="noopener"
+          class="plaque inline-flex items-center gap-2 border border-line bg-paper-raised px-5 py-3 font-mono text-[13px] tracking-wide text-ink transition-colors hover:bg-[var(--color-burgundy-soft)]"
+        >
+          {t.pages.contacts.route2gisBtn}
+        </a>
+      </div>
     </div>
   </section>
 

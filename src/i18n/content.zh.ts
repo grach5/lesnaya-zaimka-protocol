@@ -186,6 +186,7 @@ export const content: SiteContent = {
       nearbyLabel: "周边",
       hotelAndSauna: "酒店与桑拿",
       routeBtn: "在Yandex地图中查看路线 →",
+      route2gisBtn: "在2GIS中打开 →",
       bookTitle: "预订餐桌",
       bookLead: "请留下姓名和电话 — 我们将致电确认预订。",
     },

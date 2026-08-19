@@ -183,6 +183,7 @@ export const content: SiteContent = {
       nearbyLabel: "Nearby",
       hotelAndSauna: "Hotel & Sauna",
       routeBtn: "Get Directions on Yandex Maps →",
+      route2gisBtn: "Open in 2GIS →",
       bookTitle: "Table Booking",
       bookLead: "Leave your name and phone number — we'll call back to confirm your table.",
     },

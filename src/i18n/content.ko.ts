@@ -186,6 +186,7 @@ export const content: SiteContent = {
       nearbyLabel: "주변 시설",
       hotelAndSauna: "호텔 및 사우나",
       routeBtn: "얀덱스 지도에서 경로 안내 받기 →",
+      route2gisBtn: "2GIS에서 열기 →",
       bookTitle: "테이블 예약",
       bookLead: "성함과 전화번호를 남겨주시면 다시 연락드려 예약을 확정해 드립니다.",
     },

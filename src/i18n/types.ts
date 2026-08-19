@@ -129,7 +129,7 @@ export type SiteContent = {
     contacts: {
       title: string; description: string; eyebrow: string; h1: string; lead: string;
       addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string; telegramLabel: string;
-      hoursLabel: string; nearbyLabel: string; hotelAndSauna: string; routeBtn: string;
+      hoursLabel: string; nearbyLabel: string; hotelAndSauna: string; routeBtn: string; route2gisBtn: string;
       bookTitle: string; bookLead: string;
     };
     reviews: { title: string; description: string; eyebrow: string; h1: string; lead: string; honoredEyebrow: string; shareLead: string };

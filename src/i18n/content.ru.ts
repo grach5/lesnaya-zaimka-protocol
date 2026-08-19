@@ -194,6 +194,7 @@ export const content: SiteContent = {
       nearbyLabel: "Рядом",
       hotelAndSauna: "Гостиница и сауна",
       routeBtn: "Проложить маршрут в Яндекс.Картах →",
+      route2gisBtn: "Открыть в 2ГИС →",
       bookTitle: "Бронь стола",
       bookLead: "Оставьте имя и телефон — перезвоним и подтвердим бронь.",
     },
