@@ -118,13 +118,13 @@ const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
           opens: "11:00",
           closes: "23:59",
         },
-        // Реальный рейтинг с Яндекс.Карт (organization id 1081573454, снято
-        // вручную 19.08.2026) — не выдумано; при заметном изменении рейтинга
-        // на Яндекс.Картах нужно будет обновить эти два числа тоже. sameAs —
-        // ссылка на источник рейтинга, без неё агрегированный рейтинг на
-        // собственном сайте формально попадает под ограничение Google на
+        // Реальный рейтинг с Яндекс.Карт (organization id 1081573454) — из
+        // contacts.json (редактируется в админке, Контакты → Рейтинг), а не
+        // захардкожен: рейтинг со временем меняется по мере новых отзывов.
+        // sameAs — ссылка на источник рейтинга, без неё агрегированный рейтинг
+        // на собственном сайте формально попадает под ограничение Google на
         // self-serving отзывы без атрибуции на независимый источник.
-        aggregateRating: { "@type": "AggregateRating", ratingValue: 4.7, ratingCount: 984, bestRating: 5 },
+        aggregateRating: { "@type": "AggregateRating", ratingValue: CONTACTS.yandexRating, ratingCount: CONTACTS.yandexRatingCount, bestRating: 5 },
         sameAs: [`https://yandex.ru/maps/org/${CONTACTS.yandexOrgId}/`, CONTACTS.dgisUrl],
       })} />
     )}

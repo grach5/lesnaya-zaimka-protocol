@@ -39,6 +39,7 @@ type Contacts = {
   name: string; address: string; phoneTable: string; phoneEvents: string;
   hours: string; hotelName: string; hotelUrl: string; telegram: string;
   yandexOrgId: string; dgisUrl: string; yandexMapsApiKey: string; lat: number; lon: number;
+  yandexRating: number; yandexRatingCount: number;
 };
 type HallPhoto = { thumb: string; full: string };
 type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photos: HallPhoto[] };
@@ -741,6 +742,22 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
         </div>
       </Card>
 
+      <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Рейтинг для поисковиков</p>
+      <Card>
+        <p className="mb-3 text-xs text-[#838b9b]">
+          Показывается звёздами прямо в результатах поиска Google/Яндекс (структурированные данные сайта) — не
+          обновляется само, нужно время от времени сверять с реальным рейтингом на Яндекс.Картах и поправлять здесь.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Рейтинг на Яндекс.Картах (из 5)">
+            <Input type="number" step="0.1" min="1" max="5" value={data.yandexRating} onChange={(e) => set("yandexRating", Number(e.target.value))} />
+          </Field>
+          <Field label="Количество оценок">
+            <Input type="number" step="1" min="0" value={data.yandexRatingCount} onChange={(e) => set("yandexRatingCount", Number(e.target.value))} />
+          </Field>
+        </div>
+      </Card>
+
       <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Точка на карте</p>
       <Card>
         <p className="mb-3 text-xs text-[#838b9b]">
@@ -810,6 +827,37 @@ function HallsSection({
   function moveHall(i: number, dir: -1 | 1) {
     setData({ ...data, halls: moveInArray(data.halls, i, dir) });
   }
+  // Транслитерация только для УДОБСТВА первого черновика slug — не обязана
+  // быть идеальной, админ может тут же поправить поле вручную. Существующие
+  // slug'и (osnovnoy, terrasa…) — не механическая транслитерация названия, а
+  // исторические имена папок с фото, поэтому не трогаем их.
+  function slugify(name: string): string {
+    const map: Record<string, string> = {
+      а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "y",
+      к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f",
+      х: "h", ц: "ts", ч: "ch", ш: "sh", щ: "sch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+    };
+    const base = name
+      .toLowerCase()
+      .split("")
+      .map((ch) => map[ch] ?? ch)
+      .join("")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "zal";
+    let slug = base;
+    let n = 2;
+    while (data.halls.some((h) => h.slug === slug)) slug = `${base}-${n++}`;
+    return slug;
+  }
+  function addHall() {
+    const name = "Новый зал";
+    setData({ ...data, halls: [...data.halls, { name, slug: slugify(name), description: "", capacity: "", area: "", photos: [] }] });
+  }
+  function removeHall(i: number) {
+    const next = structuredClone(data);
+    next.halls.splice(i, 1);
+    setData(next);
+  }
   function updateFormat(i: number, v: string) {
     const next = { ...data, eventFormats: [...data.eventFormats] };
     next.eventFormats[i] = v;
@@ -873,6 +921,11 @@ function HallsSection({
       </Card>
 
       <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Залы</p>
+      <p className="mb-3 text-xs text-[#838b9b]">
+        Новый зал на английской/китайской/корейской версиях сайта появится сразу, но временно с русским текстом
+        (перевод названия/описания добавляется отдельно разработчиком) — фото и остальные поля работают на всех
+        языках сразу. Slug определяет папку с фото — менять его у зала, где уже есть загруженные фото, не нужно.
+      </p>
       <div className="flex flex-col gap-4">
         {data.halls.map((h, i) => {
           // Подстраховка на случай ещё не мигрировавшего черновика (см. useEffect
@@ -884,6 +937,7 @@ function HallsSection({
               <MoveButtons onUp={() => moveHall(i, -1)} onDown={() => moveHall(i, 1)} upDisabled={i === 0} downDisabled={i === data.halls.length - 1} />
               <div className="grid flex-1 gap-3 sm:grid-cols-2">
                 <Field label="Название"><Input value={h.name} onChange={(e) => updateHall(i, { name: e.target.value })} /></Field>
+                <Field label="Slug (папка с фото)"><Input value={h.slug} onChange={(e) => updateHall(i, { slug: e.target.value })} /></Field>
                 <Field label="Вместимость"><Input value={h.capacity} onChange={(e) => updateHall(i, { capacity: e.target.value })} /></Field>
                 <Field label="Площадь"><Input value={h.area} onChange={(e) => updateHall(i, { area: e.target.value })} placeholder="например, 400 м²" /></Field>
                 <div className="sm:col-span-2">
@@ -924,11 +978,13 @@ function HallsSection({
                   </div>
                 </div>
               </div>
+              <RemoveBtn onClick={() => removeHall(i)} confirmText={`Удалить зал «${h.name}» и все ${photos.length} фото в нём из списка? Сами файлы фото в репозитории останутся (просто перестанут быть на кого-то нигде не ссылаться) — их можно будет удалить отдельно.`} />
             </div>
           </Card>
           );
         })}
       </div>
+      <button type="button" onClick={addHall} className="mt-4 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить зал</button>
       {previewSrc && <Lightbox src={previewSrc} onClose={() => setPreviewSrc(null)} />}
     </div>
   );

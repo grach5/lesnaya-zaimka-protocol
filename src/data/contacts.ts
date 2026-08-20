@@ -23,6 +23,11 @@ export const CONTACTS = {
   hotel: { name: contactsData.hotelName, url: contactsData.hotelUrl },
   yandexOrgId: contactsData.yandexOrgId,
   dgisUrl: contactsData.dgisUrl,
+  // Рейтинг для aggregateRating в JSON-LD (см. Layout.astro) — раньше был
+  // захардкожен прямо в разметке (4.7 / 984), поэтому обновлялся только
+  // правкой кода. Меняется со временем по мере новых отзывов на Яндекс.Картах.
+  yandexRating: contactsData.yandexRating,
+  yandexRatingCount: contactsData.yandexRatingCount,
   // Ключ JS API Яндекс.Карт — публичный идентификатор (не секрет, задуман для
   // использования прямо в браузере, как Google Maps API key), домен-привязан
   // на стороне Яндекса. Пустая строка — интерактивная карта не подключается,
