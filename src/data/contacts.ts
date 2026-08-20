@@ -3,7 +3,9 @@
 // public/admin/config.yml); tel:/wa.me-ссылки здесь выводятся АВТОМАТИЧЕСКИ
 // из номеров телефона, а не хранятся отдельно — так редактор в CMS не может
 // поменять видимый номер, забыв поправить ссылку (было бы реальным риском
-// при ручном дублировании).
+// при ручном дублировании). WhatsApp хранится отдельным номером (whatsapp),
+// а не выводится из phoneTable — это реальный мобильный номер, отдельный от
+// городского номера брони стола.
 import contactsData from "./contacts.json";
 
 function digitsOnly(phone: string): string {
@@ -17,7 +19,7 @@ export const CONTACTS = {
   phoneTableHref: `tel:+${digitsOnly(contactsData.phoneTable)}`,
   phoneEvents: contactsData.phoneEvents,
   phoneEventsHref: `tel:+${digitsOnly(contactsData.phoneEvents)}`,
-  whatsapp: `https://wa.me/${digitsOnly(contactsData.phoneTable)}`,
+  whatsapp: `https://wa.me/${digitsOnly(contactsData.whatsapp)}`,
   telegram: contactsData.telegram,
   hours: contactsData.hours,
   hotel: { name: contactsData.hotelName, url: contactsData.hotelUrl },
