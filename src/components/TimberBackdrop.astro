@@ -10,8 +10,8 @@ import { withBase } from "@/lib/url";
 // кроп того же зала.
 // Статичное фото не зависит от motionEnabled() — виден всегда (в т.ч. при
 // prefers-reduced-motion), лёгкий параллакс/тилт добавляется поверх через GSAP.
-// По прямой правке клиента: без тёмной вуали и без блюра — чистое фото,
-// не затемнённое и не размытое. Контраст текста поверх держит только
+// По прямой правке клиента: только фото, без каких-либо слоёв поверх —
+// ни тёмной вуали, ни блюра, ни зерна. Контраст текста держит только
 // полупрозрачная подложка main (bg-paper/55, см. Layout.astro) — проверено
 // расчётом (WCAG) по всей фотографии: даже в самой тёмной точке фото под
 // текстом контраст --color-ink не ниже ~4.9:1 (мин. по стандарту — 4.5:1).
@@ -28,13 +28,6 @@ import { withBase } from "@/lib/url";
       class="absolute inset-0 h-[112%] w-full scale-[1.04] object-cover object-[85%_30%] md:object-[70%_25%]"
     />
   </picture>
-
-  <!-- Зерно — то же SVG feTurbulence решение, что и в прежней CSS-текстуре: едва
-       заметно, убирает «пластиковую» гладкость затемнения. -->
-  <div
-    class="absolute inset-0 opacity-[0.05] mix-blend-overlay"
-    style={`background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); background-size:180px 180px;`}
-  ></div>
 </div>
 
 <script>
