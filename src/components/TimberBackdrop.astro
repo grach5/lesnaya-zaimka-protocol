@@ -10,6 +10,11 @@ import { withBase } from "@/lib/url";
 // кроп того же зала.
 // Статичное фото не зависит от motionEnabled() — виден всегда (в т.ч. при
 // prefers-reduced-motion), лёгкий параллакс/тилт добавляется поверх через GSAP.
+// По прямой правке клиента: без тёмной вуали и без блюра — чистое фото,
+// не затемнённое и не размытое. Контраст текста поверх держит только
+// полупрозрачная подложка main (bg-paper/55, см. Layout.astro) — проверено
+// расчётом (WCAG) по всей фотографии: даже в самой тёмной точке фото под
+// текстом контраст --color-ink не ниже ~4.9:1 (мин. по стандарту — 4.5:1).
 ---
 
 <div id="timber-backdrop" aria-hidden="true" class="fixed inset-0 z-0 overflow-hidden">
@@ -20,18 +25,9 @@ import { withBase } from "@/lib/url";
       src={withBase("/img/bg/timber-wall.webp")}
       alt=""
       fetchpriority="high"
-      class="absolute inset-0 h-[112%] w-full scale-[1.04] object-cover object-[85%_30%] blur-[8px] md:object-[70%_25%]"
+      class="absolute inset-0 h-[112%] w-full scale-[1.04] object-cover object-[85%_30%] md:object-[70%_25%]"
     />
   </picture>
-
-  <!-- Тёплая тёмная вуаль: держит контраст текста поверх фактуры дерева и
-       одновременно даёт ту самую «музейную» затемнённость с референса. -->
-  <div
-    class="absolute inset-0"
-    style="background:
-      radial-gradient(120% 90% at 50% -10%, rgba(74,18,32,0.08) 0%, rgba(51,12,22,0.46) 55%, rgba(20,12,8,0.76) 100%),
-      linear-gradient(180deg, rgba(20,12,8,0.58) 0%, rgba(20,12,8,0.22) 16%, rgba(20,12,8,0.3) 60%, rgba(20,12,8,0.8) 100%);"
-  ></div>
 
   <!-- Зерно — то же SVG feTurbulence решение, что и в прежней CSS-текстуре: едва
        заметно, убирает «пластиковую» гладкость затемнения. -->
