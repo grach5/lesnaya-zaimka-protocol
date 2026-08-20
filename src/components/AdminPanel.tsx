@@ -40,7 +40,8 @@ type Contacts = {
   hours: string; hotelName: string; hotelUrl: string; telegram: string;
   yandexOrgId: string; dgisUrl: string; yandexMapsApiKey: string; lat: number; lon: number;
 };
-type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photoCount: number };
+type HallPhoto = { thumb: string; full: string };
+type Hall = { name: string; slug: string; description: string; capacity: string; area: string; photos: HallPhoto[] };
 type HallsData = { halls: Hall[]; eventFormats: string[] };
 type HistoryEntry = { year: string; title: string; body: string };
 type Quote = { text: string; author: string; role: string };
@@ -550,6 +551,21 @@ function Card({ children }: { children: ReactNode }) {
   return <div className="rounded-xl border border-[#dadfe6] bg-white p-5 shadow-sm">{children}</div>;
 }
 
+/** Полноэкранный просмотр одного фото по клику на превью — общий для Галереи и Залов. */
+function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6" onClick={onClose} role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+      <button type="button" onClick={onClose} aria-label="Закрыть" className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">✕</button>
+      <img src={src} alt="" className="max-h-full max-w-full object-contain" onClick={(e) => e.stopPropagation()} />
+    </div>
+  );
+}
+
 function RemoveBtn({ onClick, confirmText }: { onClick: () => void; confirmText?: string }) {
   return (
     <button
@@ -762,6 +778,30 @@ function HallsSection({
   autoSaveJson: (data: HallsData) => Promise<void>;
 }) {
   const { data, setData, dirty, revert } = draft;
+  // Черновик в localStorage могли сохранить ДО перехода на photos: HallPhoto[]
+  // (старая схема — photoCount: number). Без этой миграции у админа, который
+  // не закрывал вкладку панели, при открытии Залов будет падать рендер на
+  // h.photos.length. Мигрируем тем же способом, что и разовый скрипт для
+  // halls.json — сквозная нумерация 1..photoCount в explicit-массив.
+  useEffect(() => {
+    const stale = data.halls.some((h) => !Array.isArray((h as unknown as { photos?: unknown }).photos));
+    if (!stale) return;
+    const next = structuredClone(data);
+    next.halls = next.halls.map((h) => {
+      const legacy = h as unknown as { photoCount?: number; photos?: HallPhoto[] };
+      if (Array.isArray(legacy.photos)) return h;
+      const count = typeof legacy.photoCount === "number" ? legacy.photoCount : 0;
+      return {
+        ...h,
+        photos: Array.from({ length: count }, (_, i) => ({
+          thumb: `/img/halls/${h.slug}/thumb/${i + 1}.webp`,
+          full: `/img/halls/${h.slug}/full/${i + 1}.webp`,
+        })),
+      };
+    });
+    setData(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   function updateHall(i: number, patch: Partial<Hall>) {
     const next = structuredClone(data);
     next.halls[i] = { ...next.halls[i], ...patch };
@@ -784,28 +824,36 @@ function HallsSection({
   function moveFormat(i: number, dir: -1 | 1) {
     setData({ ...data, eventFormats: moveInArray(data.eventFormats, i, dir) });
   }
+  // Новые фото зала уходят под уникальным именем по времени загрузки (тот же
+  // приём, что уже используется в Галерее, см. GallerySection.addImage) —
+  // в отличие от старой схемы «сквозная нумерация 1..N», это позволяет
+  // удалять/переставлять отдельные фото без переименования соседних файлов.
   async function addHallPhoto(i: number, file: File) {
     const h = data.halls[i];
-    const nextIndex = h.photoCount + 1;
-    // Тот же паттерн thumb(700px)/full(1600px), что уже используют существующие
-    // фото залов (см. hallPhotos() в halls.ts) — грузим оба размера одним кликом.
-    const okThumb = await uploadFile(file, `public/img/halls/${h.slug}/thumb/${nextIndex}.webp`, 700, `Фото зала «${h.name}»: добавлено превью ${nextIndex}`);
+    const ts = Date.now();
+    const thumbPath = `public/img/halls/${h.slug}/thumb/upload-${ts}.webp`;
+    const fullPath = `public/img/halls/${h.slug}/full/upload-${ts}.webp`;
+    const okThumb = await uploadFile(file, thumbPath, 700, `Фото зала «${h.name}»: новое фото`);
     if (!okThumb) return;
-    const okFull = await uploadFile(file, `public/img/halls/${h.slug}/full/${nextIndex}.webp`, 1600, `Фото зала «${h.name}»: добавлено полное фото ${nextIndex}`);
+    const okFull = await uploadFile(file, fullPath, 1600, `Фото зала «${h.name}»: новое фото (полный размер)`);
     if (!okFull) return;
     const next = structuredClone(data);
-    next.halls[i] = { ...next.halls[i], photoCount: nextIndex };
+    if (!Array.isArray(next.halls[i].photos)) next.halls[i].photos = [];
+    next.halls[i].photos.push({ thumb: `/img/halls/${h.slug}/thumb/upload-${ts}.webp`, full: `/img/halls/${h.slug}/full/upload-${ts}.webp` });
     setData(next);
     await autoSaveJson(next);
   }
-  // Фото зала пронумерованы подряд 1..photoCount (см. hallPhotos() в halls.ts) —
-  // в отличие от Галереи, где у каждого фото свой явный путь, тут нельзя просто
-  // выкинуть произвольное фото из середины без переименования всех следующих
-  // файлов. Безопасный без-переименования вариант — снять последнее по номеру:
-  // тот самый файл, что видно превью справа.
-  function removeLastHallPhoto(i: number) {
-    updateHall(i, { photoCount: Math.max(0, data.halls[i].photoCount - 1) });
+  function removeHallPhoto(hi: number, pi: number) {
+    const next = structuredClone(data);
+    (next.halls[hi].photos ?? []).splice(pi, 1);
+    setData(next);
   }
+  function moveHallPhoto(hi: number, pi: number, dir: -1 | 1) {
+    const next = structuredClone(data);
+    next.halls[hi].photos = moveInArray(next.halls[hi].photos ?? [], pi, dir);
+    setData(next);
+  }
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   return (
     <div>
       <SectionHeader title="Банкетные залы" hint={`${data.halls.length} залов`} onSave={onSave} onDownload={onDownload} dirty={dirty} onRevert={revert} saving={saving} />
@@ -826,7 +874,11 @@ function HallsSection({
 
       <p className="mb-2 mt-8 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Залы</p>
       <div className="flex flex-col gap-4">
-        {data.halls.map((h, i) => (
+        {data.halls.map((h, i) => {
+          // Подстраховка на случай ещё не мигрировавшего черновика (см. useEffect
+          // выше) — сам рендер не должен падать даже на один кадр раньше миграции.
+          const photos = h.photos ?? [];
+          return (
           <Card key={h.slug}>
             <div className="flex items-start gap-3">
               <MoveButtons onUp={() => moveHall(i, -1)} onDown={() => moveHall(i, 1)} upDisabled={i === 0} downDisabled={i === data.halls.length - 1} />
@@ -834,18 +886,33 @@ function HallsSection({
                 <Field label="Название"><Input value={h.name} onChange={(e) => updateHall(i, { name: e.target.value })} /></Field>
                 <Field label="Вместимость"><Input value={h.capacity} onChange={(e) => updateHall(i, { capacity: e.target.value })} /></Field>
                 <Field label="Площадь"><Input value={h.area} onChange={(e) => updateHall(i, { area: e.target.value })} placeholder="например, 400 м²" /></Field>
-                <Field label="Фото в галерее">
-                  <div className="flex items-center gap-2">
-                    {h.photoCount > 0 && (
-                      <img
-                        src={rawContentUrl(`public/img/halls/${h.slug}/thumb/${h.photoCount}.webp`)}
-                        alt={`Последнее фото зала «${h.name}»`}
-                        className="h-11 w-11 shrink-0 rounded-md border border-[#dadfe6] object-cover"
-                      />
-                    )}
-                    <span className="shrink-0 text-sm text-[#838b9b]">{h.photoCount} шт.</span>
-                    <label className="shrink-0 cursor-pointer text-sm font-medium text-[#b5651d] hover:underline">
-                      {uploading ? "Загрузка…" : "+ Добавить"}
+                <div className="sm:col-span-2">
+                  <Field label="Описание"><Textarea value={h.description} onChange={(e) => updateHall(i, { description: e.target.value })} rows={2} /></Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-[#838b9b]">Фото зала ({photos.length})</p>
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
+                    {photos.map((photo, pi) => (
+                      <div key={photo.thumb} className="group relative overflow-hidden rounded-lg border border-[#dadfe6]">
+                        <img
+                          src={rawContentUrl(`public${photo.thumb}`)}
+                          alt={`Фото зала «${h.name}» ${pi + 1}`}
+                          className="aspect-square w-full cursor-zoom-in object-cover"
+                          loading="lazy"
+                          onClick={() => setPreviewSrc(rawContentUrl(`public${photo.full}`))}
+                        />
+                        <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-black/40 px-1 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                          <div className="flex">
+                            <button type="button" onClick={() => moveHallPhoto(i, pi, -1)} disabled={pi === 0} className="px-1 text-xs text-white disabled:opacity-30">◀</button>
+                            <button type="button" onClick={() => moveHallPhoto(i, pi, 1)} disabled={pi === photos.length - 1} className="px-1 text-xs text-white disabled:opacity-30">▶</button>
+                          </div>
+                          <button type="button" onClick={() => { if (window.confirm("Убрать это фото зала?")) removeHallPhoto(i, pi); }} className="px-1 text-xs text-white hover:text-red-300">✕</button>
+                        </div>
+                      </div>
+                    ))}
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-[#dadfe6] text-center text-xs text-[#838b9b] hover:border-[#d9a15b] hover:text-[#b5651d]">
+                      <span className="text-lg">{uploading ? "…" : "+"}</span>
+                      <span>{uploading ? "Загрузка" : "Добавить"}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -854,25 +921,15 @@ function HallsSection({
                         onChange={(e) => { const f = e.target.files?.[0]; if (f) addHallPhoto(i, f); e.target.value = ""; }}
                       />
                     </label>
-                    {h.photoCount > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => { if (window.confirm(`Убрать последнее фото зала «${h.name}» (№${h.photoCount})? Само изображение останется в репозитории, просто перестанет показываться на сайте.`)) removeLastHallPhoto(i); }}
-                        className="shrink-0 text-xs text-[#838b9b] hover:text-red-600 hover:underline"
-                      >
-                        Убрать последнее
-                      </button>
-                    )}
                   </div>
-                </Field>
-                <div className="sm:col-span-2">
-                  <Field label="Описание"><Textarea value={h.description} onChange={(e) => updateHall(i, { description: e.target.value })} rows={2} /></Field>
                 </div>
               </div>
             </div>
           </Card>
-        ))}
+          );
+        })}
       </div>
+      {previewSrc && <Lightbox src={previewSrc} onClose={() => setPreviewSrc(null)} />}
     </div>
   );
 }
@@ -1107,6 +1164,7 @@ function GallerySection({
 }) {
   const { data, setData, dirty, revert } = draft;
   const totalImages = data.sections.reduce((s, sec) => s + sec.images.length, 0);
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
   function moveSection(i: number, dir: -1 | 1) {
     setData({ ...data, sections: moveInArray(data.sections, i, dir) });
@@ -1181,7 +1239,13 @@ function GallerySection({
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
                 {sec.images.map((img, ii) => (
                   <div key={ii} className="group relative overflow-hidden rounded-lg border border-[#dadfe6]">
-                    <img src={rawContentUrl(`public${img.thumb}`)} alt="" className="aspect-square w-full object-cover" loading="lazy" />
+                    <img
+                      src={rawContentUrl(`public${img.thumb}`)}
+                      alt=""
+                      className="aspect-square w-full cursor-zoom-in object-cover"
+                      loading="lazy"
+                      onClick={() => setPreviewSrc(rawContentUrl(`public${img.full}`))}
+                    />
                     <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-black/40 px-1 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                       <div className="flex">
                         <button type="button" onClick={() => moveImage(si, ii, -1)} disabled={ii === 0} className="px-1 text-xs text-white disabled:opacity-30">◀</button>
@@ -1208,6 +1272,7 @@ function GallerySection({
         ))}
       </div>
       <button type="button" onClick={addSection} className="mt-4 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить раздел галереи</button>
+      {previewSrc && <Lightbox src={previewSrc} onClose={() => setPreviewSrc(null)} />}
     </div>
   );
 }
