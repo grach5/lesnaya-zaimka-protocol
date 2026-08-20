@@ -37,7 +37,7 @@ type MenuCategory = { name: string; items: MenuItem[] };
 type MenuData = { categories: MenuCategory[] };
 type Contacts = {
   name: string; address: string; phoneTable: string; phoneEvents: string; whatsapp: string;
-  hours: string; hotelName: string; hotelUrl: string; telegram: string;
+  hours: string; hotelName: string; hotelUrl: string; telegram: string; maxMessenger: string;
   yandexOrgId: string; dgisUrl: string; yandexMapsApiKey: string; lat: number; lon: number;
   yandexRating: number; yandexRatingCount: number;
 };
@@ -738,6 +738,7 @@ function ContactsSection({ draft, onSave, onDownload, saving }: SectionProps<Con
           <Field label="Гостиница-партнёр"><Input value={data.hotelName} onChange={(e) => set("hotelName", e.target.value)} /></Field>
           <Field label="Сайт отеля"><Input value={data.hotelUrl} onChange={(e) => set("hotelUrl", e.target.value)} /></Field>
           <Field label="Telegram-канал"><Input value={data.telegram} onChange={(e) => set("telegram", e.target.value)} /></Field>
+          <Field label="Ссылка на профиль MAX"><Input value={data.maxMessenger} onChange={(e) => set("maxMessenger", e.target.value)} /></Field>
           <Field label="ID организации на Яндекс.Картах"><Input value={data.yandexOrgId} onChange={(e) => set("yandexOrgId", e.target.value)} /></Field>
           <Field label="Ссылка на профиль 2ГИС"><Input value={data.dgisUrl} onChange={(e) => set("dgisUrl", e.target.value)} /></Field>
         </div>

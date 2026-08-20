@@ -42,6 +42,7 @@ export type SiteContent = {
       openPreorderAria: string;
       writeWhatsapp: string;
       writeTelegram: string;
+      writeMax: string;
       contactUsAria: string;
       sendToWhatsapp: string;
       openedWhatsapp: string;
@@ -128,7 +129,7 @@ export type SiteContent = {
     gallery: { title: string; description: string; eyebrow: string; h1: string; lead: string; allPhotos: string };
     contacts: {
       title: string; description: string; eyebrow: string; h1: string; lead: string;
-      addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string; telegramLabel: string;
+      addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string; telegramLabel: string; maxLabel: string;
       hoursLabel: string; nearbyLabel: string; hotelAndSauna: string; routeBtn: string; route2gisBtn: string;
       bookTitle: string; bookLead: string;
     };
