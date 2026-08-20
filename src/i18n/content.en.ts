@@ -162,10 +162,10 @@ export const content: SiteContent = {
     },
     gallery: {
       title: "Gallery — Lesnaya Zaimka, Vladivostok",
-      description: "«Lesnaya Zaimka» restaurant photo gallery: interiors, farm, kitchen, celebrations, kids' corner, corporate events, weddings. {n} real photos.",
+      description: "«Lesnaya Zaimka» restaurant photo gallery: {n} real photos, no stock inserts.",
       eyebrow: "Photos of the House",
       h1: "{n} frames from life at the Zaimka",
-      lead: "Interiors, farm, kitchen, celebrations, kids' corner, corporate events, and weddings — no stock inserts, only real photos of the restaurant.",
+      lead: "No stock inserts — only real photos of the restaurant.",
       allPhotos: "All Photos",
     },
     contacts: {

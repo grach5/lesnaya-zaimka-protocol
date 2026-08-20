@@ -16,7 +16,7 @@ const breadcrumbs = Astro.site
 
 <Layout
   title="Галерея — Лесная Заимка, Владивосток"
-  description={`Фотогалерея ресторана «Лесная Заимка»: интерьеры, ферма, кухня, праздники, детский уголок, корпоративы, свадьбы. ${totalImages} реальных фотографий.`}
+  description={`Фотогалерея ресторана «Лесная Заимка»: ${totalImages} реальных фотографий, без стоковых вставок.`}
   image={ZAIMKA_GALLERY.sections[0].images[0].full}
   path="/gallery/"
 >
@@ -26,8 +26,7 @@ const breadcrumbs = Astro.site
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фотографии дома</p>
       <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{totalImages} кадров из жизни Заимки</h1>
       <p class="mt-4 max-w-[62ch] text-ink-soft" data-reveal>
-        Интерьеры, ферма, кухня, праздники, детский уголок, корпоративы и свадьбы — без стоковых
-        вставок, только реальные фотографии ресторана.
+        Без стоковых вставок — только реальные фотографии ресторана.
       </p>
     </div>
   </section>
