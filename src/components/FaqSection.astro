@@ -12,7 +12,12 @@ const { heading, items } = Astro.props;
 ---
 
 <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(items))} />
-<div data-reveal>
+<!-- Своя непрозрачная подложка (bg-paper-raised), а не расчёт на секцию
+     вызывающей страницы: используется на contacts/history/events, и не
+     на всех эти секции сами дают непрозрачный фон — а text-ink-soft в
+     ответах проваливает контраст на просвечивающем фоне сруба (см.
+     TimberBackdrop.astro/Layout.astro про фон-фото). -->
+<div data-reveal class="border border-line bg-paper-raised p-6 md:p-8">
   <h2 class="font-display text-xl font-semibold text-ink">{heading}</h2>
   <div class="mt-6 divide-y divide-line border-t border-b border-line">
     {items.map((item) => (

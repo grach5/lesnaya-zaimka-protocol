@@ -59,7 +59,7 @@ const menuSchema = {
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(menuSchema)} />
   {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
-  <section class="border-b border-line bg-paper-sunk/40">
+  <section class="border-b border-line bg-paper-raised">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Меню ресторана</p>
       <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>Традиции щедрого стола</h1>
@@ -91,7 +91,7 @@ const menuSchema = {
   </section>
 
   <section class="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
-    <div class="grid gap-10 lg:grid-cols-[220px_1fr]">
+    <div class="grid gap-10 border border-line bg-paper-raised p-6 md:p-8 lg:grid-cols-[220px_1fr]">
       <nav class="top-24 flex flex-row flex-wrap gap-x-1 gap-y-1 self-start lg:sticky lg:flex-col lg:gap-0" aria-label="Категории меню">
         {categories.map((cat) => (
           <a

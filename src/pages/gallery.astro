@@ -21,7 +21,7 @@ const breadcrumbs = Astro.site
   path="/gallery/"
 >
   {breadcrumbs && <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbs)} />}
-  <section class="border-b border-line bg-paper-sunk/40">
+  <section class="border-b border-line bg-paper-raised">
     <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
       <p class="font-mono text-xs uppercase tracking-wide text-brass" data-reveal>Фотографии дома</p>
       <h1 class="mt-4 font-display text-3xl font-semibold text-ink md:text-4xl" data-reveal>{totalImages} кадров из жизни Заимки</h1>
@@ -37,7 +37,7 @@ const breadcrumbs = Astro.site
         Все фото
       </button>
       {ZAIMKA_GALLERY.sections.map((s) => (
-        <button type="button" class="gallery-tab border border-line px-3 py-1.5 font-mono text-xs text-ink-soft" data-section={s.name} aria-pressed="false">
+        <button type="button" class="gallery-tab border border-line bg-paper-raised px-3 py-1.5 font-mono text-xs text-ink-soft" data-section={s.name} aria-pressed="false">
           {s.name} ({s.images.length})
         </button>
       ))}
@@ -118,11 +118,11 @@ const breadcrumbs = Astro.site
       tabsEl.querySelectorAll(".gallery-tab").forEach((t) => {
         t.setAttribute("aria-pressed", "false");
         t.classList.remove("bg-ink", "text-paper-raised", "border-ink");
-        t.classList.add("border-line", "text-ink-soft");
+        t.classList.add("border-line", "bg-paper-raised", "text-ink-soft");
       });
       btn.setAttribute("aria-pressed", "true");
       btn.classList.add("bg-ink", "text-paper-raised", "border-ink");
-      btn.classList.remove("border-line", "text-ink-soft");
+      btn.classList.remove("border-line", "bg-paper-raised", "text-ink-soft");
       applyFilter(btn.dataset.section ?? "all");
     });
 
