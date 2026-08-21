@@ -18,10 +18,17 @@ const formatDate = (iso: string) =>
 
 <!-- Плашка «События/Афиша» — по прямому запросу клиента, тёмно-зелёным цветом.
      Данные — src/data/events-board.ts, добавляются клиентом/менеджером по мере
-     появления реальных афиш; пустой массив ⇒ честный empty-state, а не выдуманные события. -->
-<section class="bg-[var(--color-forest)] py-16 md:py-24">
+     появления реальных афиш; пустой массив ⇒ честный empty-state, а не выдуманные события.
+     bg/80, а не сплошная заливка — по правке клиента фон-фото сруба должен
+     просвечивать и здесь тоже. Расчётом (WCAG) проверено: --color-gold текст
+     на просвечивающем зелёном проваливает контраст уже при 80% (нужно ~92%+),
+     поэтому золотые элементы (eyebrow, ссылки в пустом состоянии) либо
+     перекрашены в paper-raised, либо получили свою непрозрачную подложку
+     (bg-forest-deep) — см. ниже. --color-paper-raised (белый) держит
+     контраст даже при 65%, так что сама секция остаётся заметно прозрачной. -->
+<section class="bg-[var(--color-forest)]/80 py-16 md:py-24">
   <div class="mx-auto max-w-6xl px-5 md:px-8">
-    <p class="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-gold)]" data-reveal>{t.pages.index.eventsBoardEyebrow}</p>
+    <p class="font-mono text-xs uppercase tracking-[0.16em] text-paper-raised" data-reveal>{t.pages.index.eventsBoardEyebrow}</p>
     <h2 class="mt-3 font-display text-2xl font-semibold text-paper-raised md:text-3xl" data-reveal>
       {t.pages.index.eventsBoardH2}
     </h2>
@@ -40,7 +47,7 @@ const formatDate = (iso: string) =>
         ))}
       </div>
     ) : (
-      <div class="frame-gold mt-10 max-w-xl bg-transparent p-8" data-reveal>
+      <div class="frame-gold mt-10 max-w-xl bg-[var(--color-forest-deep)] p-8" data-reveal>
         <p class="text-paper-raised">
           {t.pages.index.eventsEmptyText}
         </p>
