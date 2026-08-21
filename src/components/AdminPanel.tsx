@@ -1365,6 +1365,8 @@ const THEME_FIELDS: { key: keyof ThemeData; label: string; hint: string }[] = [
   { key: "velvet", label: "Тёмный фон (задний план)", hint: "Футер и тёмные акцентные секции" },
 ];
 
+const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/;
+
 function ThemeSection({ draft, onSave, onDownload, saving }: SectionProps<ThemeData>) {
   const { data, setData, dirty, revert } = draft;
   function set(key: keyof ThemeData, value: string) {
@@ -1378,11 +1380,16 @@ function ThemeSection({ draft, onSave, onDownload, saving }: SectionProps<ThemeD
       </p>
       <Card>
         <div className="grid gap-4 sm:grid-cols-2">
-          {THEME_FIELDS.map((f) => (
+          {THEME_FIELDS.map((f) => {
+            const valid = HEX_COLOR_RE.test(data[f.key]);
+            return (
             <div key={f.key} className="flex items-center gap-3">
               <input
                 type="color"
-                value={data[f.key]}
+                // Невалидное значение браузер тихо подменяет на #000000 в самом
+                // пикере — value ниже (не data[f.key] напрямую) не даёт этому
+                // чёрному цвету случайно попасть обратно в черновик через onChange.
+                value={valid ? data[f.key] : "#000000"}
                 onChange={(e) => set(f.key, e.target.value)}
                 className="h-11 w-11 shrink-0 cursor-pointer rounded-md border border-[#dadfe6] p-0.5"
               />
@@ -1390,9 +1397,20 @@ function ThemeSection({ draft, onSave, onDownload, saving }: SectionProps<ThemeD
                 <p className="text-sm font-medium">{f.label}</p>
                 <p className="truncate text-xs text-[#838b9b]">{f.hint}</p>
               </div>
-              <Input value={data[f.key]} onChange={(e) => set(f.key, e.target.value)} className="w-24 shrink-0 font-mono text-xs uppercase" />
+              <div className="shrink-0">
+                <Input
+                  value={data[f.key]}
+                  onChange={(e) => set(f.key, e.target.value)}
+                  className={`w-24 font-mono text-xs uppercase ${valid ? "" : "border-red-400 text-red-600"}`}
+                />
+                {/* Не блокирует ввод (админ может быть на середине правки) — только
+                    предупреждает: сайт всё равно не сломается, невалидный цвет
+                    при публикации откатится на прежний (см. sanitizeTheme в theme.ts). */}
+                {!valid && <p className="mt-1 text-[11px] text-red-500">Не похоже на цвет (#RRGGBB) — на сайте останется прежний</p>}
+              </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
     </div>
