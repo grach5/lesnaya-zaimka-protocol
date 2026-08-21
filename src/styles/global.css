@@ -15,44 +15,20 @@
    metadata.json: subsets = latin/latin-ext/vietnamese, без cyrillic) — все
    русские заголовки сайта тихо откатывались на fallback-шрифт.
 
-   Фаза «Рубленый Кедр» (по прямому отзыву клиента «мне не нравится шрифт» +
-   запрос на максимально премиальный/дорогой вид): Spectral/Inter/IBM Plex Mono
-   заменены на систему, привязанную к самому зданию — настоящему рубленому
-   срубу 1974 года, а не к абстрактной «элегантности». Прогнано через
-   многоагентную мастерскую (аудит текущей типографики → 4 независимых
-   премиальных направления → 3 независимых судьи), кириллица каждого шрифта
-   проверена по метаданным fontsource ПЕРЕД выбором — тот же урок, что и с
-   Fraunces, здесь не повторён.
-     display: Podkova Variable — рубленая/резная брусковая антиква, тяжёлые
-       начертания для --text-masthead/--text-chapter читаются как вырезанные
-       топором в кедровом брусе, а не абстрактно «элегантно».
-     body: PT Serif — кириллица спроектирована ParaType «изнутри» алфавита,
-       а не адаптирована с латиницы задним числом (уместно для дома, где
-       принимали иностранных гостей на русском).
-     mono → PT Sans Caption: у IBM Plex Mono не было ни одной таблично-цифровой
-       задачи, которая оправдывала бы моноширинный шрифт — 248 использований
-       по всему сайту (навигация, кнопки, бейджи, цены) были просто «техно»
-       по ощущению, а не по функции. --font-mono переопределён на гарнитуру
-       для подписей/лейблов (табличные цифры включены отдельным правилом
-       ниже) — имя переменной осталось прежним, чтобы не трогать все 47
-       файлов, где встречается класс font-mono.
-   ВАЖНО: variable-пакет Podkova регистрирует себя в @font-face как семейство
-   "Podkova Variable" (см. node_modules/@fontsource-variable/podkova/wght.css),
-   НЕ "Podkova" — ровно та же ловушка молчаливого fallback, что и с Fraunces,
-   только на уровне имени, а не кириллицы; проверено явно перед использованием. */
-@import "@fontsource-variable/podkova/wght.css";
-@import "@fontsource/pt-serif/400.css";
-@import "@fontsource/pt-serif/400-italic.css";
-@import "@fontsource/pt-serif/700.css";
-@import "@fontsource/pt-serif/700-italic.css";
-@import "@fontsource/pt-serif/cyrillic-400.css";
-@import "@fontsource/pt-serif/cyrillic-400-italic.css";
-@import "@fontsource/pt-serif/cyrillic-700.css";
-@import "@fontsource/pt-serif/cyrillic-700-italic.css";
-@import "@fontsource/pt-sans-caption/400.css";
-@import "@fontsource/pt-sans-caption/700.css";
-@import "@fontsource/pt-sans-caption/cyrillic-400.css";
-@import "@fontsource/pt-sans-caption/cyrillic-700.css";
+   Фаза «Огонёк» — вторая попытка по тому же отзыву клиента («не нравится
+   шрифт»): предыдущая замена (Podkova/PT Serif, «Рубленый Кедр», выбрана
+   через многоагентную мастерскую с 4 направлениями и 3 судьями) тоже не
+   попала во вкус. На этот раз клиент прислал прямой референс — сайт другого
+   владивостокского ресторана https://ogonekvl.ru/, шрифт которого ему
+   нравится: проверено в devtools этого сайта — везде одно семейство,
+   Google Fonts "Noto Sans" (wght@100..900, subset latin+cyrillic), без
+   засечек и декоративных начертаний. Здесь — то же решение: одна гарнитура
+   Noto Sans Variable на display/body/mono вместо трёх разных (как было
+   у «Рубленого Кедра»), различие держится только на font-weight по месту
+   использования (Tailwind font-semibold/font-bold и т.п.), в точности как
+   на референсе. Кириллица подтверждена по metadata.json ПЕРЕД подключением. */
+@import "@fontsource-variable/noto-sans/wght.css";
+@import "@fontsource-variable/noto-sans/wght-italic.css";
 
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -102,12 +78,14 @@
   --color-forest: #1F3A2E;
   --color-forest-deep: #142720;
 
-  --font-display: "Podkova Variable", Georgia, serif;
-  --font-body: "PT Serif", Georgia, serif;
-  /* Имя переменной сохранено как --font-mono (класс font-mono используется в
-     47 файлах по всему сайту), но гарнитура — не моноширинная, см. заметку
-     выше. Табличные цифры для цен/статистики держит правило .font-mono ниже. */
-  --font-mono: "PT Sans Caption", ui-sans-serif, sans-serif;
+  /* Одна гарнитура на всё (Noto Sans Variable) — см. заметку выше про
+     референс клиента ogonekvl.ru. Имена переменных (--font-display/-body/
+     -mono) сохранены как есть, чтобы не трогать все файлы, где встречаются
+     классы font-display/font-body/font-mono — разница между ролями теперь
+     только в font-weight по месту использования, не в семействе шрифта. */
+  --font-display: "Noto Sans Variable", ui-sans-serif, sans-serif;
+  --font-body: "Noto Sans Variable", ui-sans-serif, sans-serif;
+  --font-mono: "Noto Sans Variable", ui-sans-serif, sans-serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -185,8 +163,8 @@
     background-color: var(--color-paper);
   }
 
-  /* PT Sans Caption поддерживает табличные (равноширинные) цифры — включаем
-     их явно для всего, что раньше держалось на моноширинности IBM Plex Mono
+  /* Noto Sans поддерживает табличные (равноширинные) цифры — включаем их
+     явно для всего, что раньше держалось на моноширинности IBM Plex Mono
      ради выравнивания: цены в меню, цифры статистики на главной. Без этого
      правила цифры в пропорциональном начертании "плавали" бы по ширине. */
   .font-mono {
