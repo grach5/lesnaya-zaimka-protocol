@@ -124,6 +124,916 @@
           "source": "client photoshoot 2026"
         }
       ]
+    },
+    {
+      "name": "Основной зал",
+      "images": [
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/1.webp",
+          "full": "/img/halls/osnovnoy/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/2.webp",
+          "full": "/img/halls/osnovnoy/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/3.webp",
+          "full": "/img/halls/osnovnoy/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/4.webp",
+          "full": "/img/halls/osnovnoy/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/5.webp",
+          "full": "/img/halls/osnovnoy/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/6.webp",
+          "full": "/img/halls/osnovnoy/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/7.webp",
+          "full": "/img/halls/osnovnoy/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/8.webp",
+          "full": "/img/halls/osnovnoy/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/9.webp",
+          "full": "/img/halls/osnovnoy/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/10.webp",
+          "full": "/img/halls/osnovnoy/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/11.webp",
+          "full": "/img/halls/osnovnoy/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/12.webp",
+          "full": "/img/halls/osnovnoy/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/13.webp",
+          "full": "/img/halls/osnovnoy/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/14.webp",
+          "full": "/img/halls/osnovnoy/full/14.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/15.webp",
+          "full": "/img/halls/osnovnoy/full/15.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/16.webp",
+          "full": "/img/halls/osnovnoy/full/16.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/17.webp",
+          "full": "/img/halls/osnovnoy/full/17.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/18.webp",
+          "full": "/img/halls/osnovnoy/full/18.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/19.webp",
+          "full": "/img/halls/osnovnoy/full/19.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/20.webp",
+          "full": "/img/halls/osnovnoy/full/20.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/21.webp",
+          "full": "/img/halls/osnovnoy/full/21.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/22.webp",
+          "full": "/img/halls/osnovnoy/full/22.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/23.webp",
+          "full": "/img/halls/osnovnoy/full/23.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/24.webp",
+          "full": "/img/halls/osnovnoy/full/24.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/25.webp",
+          "full": "/img/halls/osnovnoy/full/25.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/26.webp",
+          "full": "/img/halls/osnovnoy/full/26.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/27.webp",
+          "full": "/img/halls/osnovnoy/full/27.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/28.webp",
+          "full": "/img/halls/osnovnoy/full/28.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/29.webp",
+          "full": "/img/halls/osnovnoy/full/29.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/30.webp",
+          "full": "/img/halls/osnovnoy/full/30.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/31.webp",
+          "full": "/img/halls/osnovnoy/full/31.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/32.webp",
+          "full": "/img/halls/osnovnoy/full/32.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/33.webp",
+          "full": "/img/halls/osnovnoy/full/33.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/34.webp",
+          "full": "/img/halls/osnovnoy/full/34.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/35.webp",
+          "full": "/img/halls/osnovnoy/full/35.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/36.webp",
+          "full": "/img/halls/osnovnoy/full/36.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/37.webp",
+          "full": "/img/halls/osnovnoy/full/37.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/38.webp",
+          "full": "/img/halls/osnovnoy/full/38.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/39.webp",
+          "full": "/img/halls/osnovnoy/full/39.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/40.webp",
+          "full": "/img/halls/osnovnoy/full/40.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/41.webp",
+          "full": "/img/halls/osnovnoy/full/41.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/42.webp",
+          "full": "/img/halls/osnovnoy/full/42.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/43.webp",
+          "full": "/img/halls/osnovnoy/full/43.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/44.webp",
+          "full": "/img/halls/osnovnoy/full/44.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/45.webp",
+          "full": "/img/halls/osnovnoy/full/45.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/46.webp",
+          "full": "/img/halls/osnovnoy/full/46.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/47.webp",
+          "full": "/img/halls/osnovnoy/full/47.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/48.webp",
+          "full": "/img/halls/osnovnoy/full/48.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/49.webp",
+          "full": "/img/halls/osnovnoy/full/49.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/50.webp",
+          "full": "/img/halls/osnovnoy/full/50.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/51.webp",
+          "full": "/img/halls/osnovnoy/full/51.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/52.webp",
+          "full": "/img/halls/osnovnoy/full/52.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/53.webp",
+          "full": "/img/halls/osnovnoy/full/53.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/54.webp",
+          "full": "/img/halls/osnovnoy/full/54.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/55.webp",
+          "full": "/img/halls/osnovnoy/full/55.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/56.webp",
+          "full": "/img/halls/osnovnoy/full/56.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/57.webp",
+          "full": "/img/halls/osnovnoy/full/57.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/58.webp",
+          "full": "/img/halls/osnovnoy/full/58.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/59.webp",
+          "full": "/img/halls/osnovnoy/full/59.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/60.webp",
+          "full": "/img/halls/osnovnoy/full/60.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/61.webp",
+          "full": "/img/halls/osnovnoy/full/61.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/62.webp",
+          "full": "/img/halls/osnovnoy/full/62.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/63.webp",
+          "full": "/img/halls/osnovnoy/full/63.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/64.webp",
+          "full": "/img/halls/osnovnoy/full/64.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/65.webp",
+          "full": "/img/halls/osnovnoy/full/65.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/66.webp",
+          "full": "/img/halls/osnovnoy/full/66.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/67.webp",
+          "full": "/img/halls/osnovnoy/full/67.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/68.webp",
+          "full": "/img/halls/osnovnoy/full/68.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/69.webp",
+          "full": "/img/halls/osnovnoy/full/69.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/70.webp",
+          "full": "/img/halls/osnovnoy/full/70.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/osnovnoy/thumb/71.webp",
+          "full": "/img/halls/osnovnoy/full/71.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
+    },
+    {
+      "name": "Терраса",
+      "images": [
+        {
+          "thumb": "/img/halls/terrasa/thumb/1.webp",
+          "full": "/img/halls/terrasa/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/2.webp",
+          "full": "/img/halls/terrasa/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/3.webp",
+          "full": "/img/halls/terrasa/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/4.webp",
+          "full": "/img/halls/terrasa/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/5.webp",
+          "full": "/img/halls/terrasa/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/6.webp",
+          "full": "/img/halls/terrasa/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/7.webp",
+          "full": "/img/halls/terrasa/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/8.webp",
+          "full": "/img/halls/terrasa/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/9.webp",
+          "full": "/img/halls/terrasa/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/10.webp",
+          "full": "/img/halls/terrasa/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/11.webp",
+          "full": "/img/halls/terrasa/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/12.webp",
+          "full": "/img/halls/terrasa/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/13.webp",
+          "full": "/img/halls/terrasa/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/14.webp",
+          "full": "/img/halls/terrasa/full/14.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/15.webp",
+          "full": "/img/halls/terrasa/full/15.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/16.webp",
+          "full": "/img/halls/terrasa/full/16.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/17.webp",
+          "full": "/img/halls/terrasa/full/17.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/18.webp",
+          "full": "/img/halls/terrasa/full/18.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/19.webp",
+          "full": "/img/halls/terrasa/full/19.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/20.webp",
+          "full": "/img/halls/terrasa/full/20.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/21.webp",
+          "full": "/img/halls/terrasa/full/21.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/22.webp",
+          "full": "/img/halls/terrasa/full/22.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/23.webp",
+          "full": "/img/halls/terrasa/full/23.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/24.webp",
+          "full": "/img/halls/terrasa/full/24.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/25.webp",
+          "full": "/img/halls/terrasa/full/25.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/terrasa/thumb/26.webp",
+          "full": "/img/halls/terrasa/full/26.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
+    },
+    {
+      "name": "Фиолетовый зал",
+      "images": [
+        {
+          "thumb": "/img/halls/fioletovy/thumb/1.webp",
+          "full": "/img/halls/fioletovy/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/2.webp",
+          "full": "/img/halls/fioletovy/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/3.webp",
+          "full": "/img/halls/fioletovy/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/4.webp",
+          "full": "/img/halls/fioletovy/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/5.webp",
+          "full": "/img/halls/fioletovy/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/6.webp",
+          "full": "/img/halls/fioletovy/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/7.webp",
+          "full": "/img/halls/fioletovy/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/8.webp",
+          "full": "/img/halls/fioletovy/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/9.webp",
+          "full": "/img/halls/fioletovy/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/10.webp",
+          "full": "/img/halls/fioletovy/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/11.webp",
+          "full": "/img/halls/fioletovy/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/12.webp",
+          "full": "/img/halls/fioletovy/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/13.webp",
+          "full": "/img/halls/fioletovy/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/14.webp",
+          "full": "/img/halls/fioletovy/full/14.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/15.webp",
+          "full": "/img/halls/fioletovy/full/15.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/16.webp",
+          "full": "/img/halls/fioletovy/full/16.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/17.webp",
+          "full": "/img/halls/fioletovy/full/17.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/18.webp",
+          "full": "/img/halls/fioletovy/full/18.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/19.webp",
+          "full": "/img/halls/fioletovy/full/19.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/20.webp",
+          "full": "/img/halls/fioletovy/full/20.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/21.webp",
+          "full": "/img/halls/fioletovy/full/21.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/22.webp",
+          "full": "/img/halls/fioletovy/full/22.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/23.webp",
+          "full": "/img/halls/fioletovy/full/23.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/24.webp",
+          "full": "/img/halls/fioletovy/full/24.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/25.webp",
+          "full": "/img/halls/fioletovy/full/25.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/fioletovy/thumb/26.webp",
+          "full": "/img/halls/fioletovy/full/26.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
+    },
+    {
+      "name": "Бордовый зал",
+      "images": [
+        {
+          "thumb": "/img/halls/bordovy/thumb/1.webp",
+          "full": "/img/halls/bordovy/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/2.webp",
+          "full": "/img/halls/bordovy/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/3.webp",
+          "full": "/img/halls/bordovy/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/4.webp",
+          "full": "/img/halls/bordovy/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/5.webp",
+          "full": "/img/halls/bordovy/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/6.webp",
+          "full": "/img/halls/bordovy/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/7.webp",
+          "full": "/img/halls/bordovy/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/8.webp",
+          "full": "/img/halls/bordovy/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/9.webp",
+          "full": "/img/halls/bordovy/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/10.webp",
+          "full": "/img/halls/bordovy/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/11.webp",
+          "full": "/img/halls/bordovy/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/12.webp",
+          "full": "/img/halls/bordovy/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/13.webp",
+          "full": "/img/halls/bordovy/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/14.webp",
+          "full": "/img/halls/bordovy/full/14.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/15.webp",
+          "full": "/img/halls/bordovy/full/15.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/16.webp",
+          "full": "/img/halls/bordovy/full/16.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/17.webp",
+          "full": "/img/halls/bordovy/full/17.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/18.webp",
+          "full": "/img/halls/bordovy/full/18.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/19.webp",
+          "full": "/img/halls/bordovy/full/19.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/20.webp",
+          "full": "/img/halls/bordovy/full/20.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/bordovy/thumb/21.webp",
+          "full": "/img/halls/bordovy/full/21.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
+    },
+    {
+      "name": "Изумрудный зал",
+      "images": [
+        {
+          "thumb": "/img/halls/izumrudny/thumb/1.webp",
+          "full": "/img/halls/izumrudny/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/2.webp",
+          "full": "/img/halls/izumrudny/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/3.webp",
+          "full": "/img/halls/izumrudny/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/4.webp",
+          "full": "/img/halls/izumrudny/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/5.webp",
+          "full": "/img/halls/izumrudny/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/6.webp",
+          "full": "/img/halls/izumrudny/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/7.webp",
+          "full": "/img/halls/izumrudny/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/8.webp",
+          "full": "/img/halls/izumrudny/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/9.webp",
+          "full": "/img/halls/izumrudny/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/10.webp",
+          "full": "/img/halls/izumrudny/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/11.webp",
+          "full": "/img/halls/izumrudny/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/12.webp",
+          "full": "/img/halls/izumrudny/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/13.webp",
+          "full": "/img/halls/izumrudny/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/izumrudny/thumb/14.webp",
+          "full": "/img/halls/izumrudny/full/14.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
+    },
+    {
+      "name": "Банкетный зал",
+      "images": [
+        {
+          "thumb": "/img/halls/banketny/thumb/1.webp",
+          "full": "/img/halls/banketny/full/1.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/2.webp",
+          "full": "/img/halls/banketny/full/2.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/3.webp",
+          "full": "/img/halls/banketny/full/3.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/4.webp",
+          "full": "/img/halls/banketny/full/4.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/5.webp",
+          "full": "/img/halls/banketny/full/5.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/6.webp",
+          "full": "/img/halls/banketny/full/6.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/7.webp",
+          "full": "/img/halls/banketny/full/7.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/8.webp",
+          "full": "/img/halls/banketny/full/8.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/9.webp",
+          "full": "/img/halls/banketny/full/9.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/10.webp",
+          "full": "/img/halls/banketny/full/10.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/11.webp",
+          "full": "/img/halls/banketny/full/11.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/12.webp",
+          "full": "/img/halls/banketny/full/12.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/13.webp",
+          "full": "/img/halls/banketny/full/13.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/14.webp",
+          "full": "/img/halls/banketny/full/14.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/15.webp",
+          "full": "/img/halls/banketny/full/15.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/16.webp",
+          "full": "/img/halls/banketny/full/16.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/17.webp",
+          "full": "/img/halls/banketny/full/17.webp",
+          "source": "client photoshoot 2026"
+        },
+        {
+          "thumb": "/img/halls/banketny/thumb/18.webp",
+          "full": "/img/halls/banketny/full/18.webp",
+          "source": "client photoshoot 2026"
+        }
+      ]
     }
   ]
 }
