@@ -168,6 +168,7 @@ export const content: SiteContent = {
       h1: "{n} frames from life at the Zaimka",
       lead: "No stock inserts — only real photos of the restaurant.",
       allPhotos: "All Photos",
+      photoAria: "Open photo: {hall}, {i} of {n}",
     },
     contacts: {
       title: "Contacts & Table Booking — Lesnaya Zaimka, Vladivostok",
@@ -284,6 +285,14 @@ export const content: SiteContent = {
       { author: "Evgeny", text: "Respectful treatment from the staff is rare — I want to specifically thank management for that." },
       { author: "Guest", text: "Fast and timely service — thank you to our waitress Anna Nikulina!" },
     ],
-    gallerySections: ["Interiors", "Farm", "Kitchen", "Celebrations", "Kids' Corner", "Corporate Events", "Weddings"],
+    // Порядок обязан совпадать с реальными разделами src/data/gallery.json
+    // (сейчас: Детская комната + 6 залов) — сопоставляется по ИНДЕКСУ в
+    // src/pages/en/gallery.astro (sectionNames), без запасного варианта
+    // с содержательным текстом. Раньше здесь были названия от старой
+    // версии галереи (Interiors/Farm/Kitchen/...), из-за чего на англ/кит/кор
+    // версиях вкладки показывали фото не под теми подписями (обнаружено
+    // аудитом сайта) — если состав разделов галереи снова поменяется, эту
+    // строку нужно поправить вручную.
+    gallerySections: ["Kids' Room", "Main Hall", "Terrace", "Violet Hall", "Burgundy Hall", "Emerald Hall", "Banquet Hall"],
   },
 };

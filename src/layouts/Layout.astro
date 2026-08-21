@@ -75,7 +75,13 @@ const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
     {path && <link rel="alternate" hreflang="x-default" href={new URL(localizedHref(path, DEFAULT_LOCALE), Astro.site)} />}
     <!-- Шрифты самохостятся через fontsource в global.css — сторонний Google Fonts
          запрос больше не нужен (см. комментарий в global.css). -->
-    <meta property="og:type" content="restaurant.restaurant" />
+    <!-- og:type="restaurant.restaurant" (прежнее значение) — расширение Open
+         Graph, которое Facebook перестал поддерживать без сопутствующих
+         restaurant:contact_data/restaurant:menu (их здесь и не было) —
+         парсеры превью либо игнорируют тип, либо рендерят карточку неверно.
+         "website" — универсальный тип, который точно понимают все парсеры
+         (найдено аудитом сайта). -->
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content={OG_LOCALE[locale]} />
@@ -84,6 +90,8 @@ const jsonLdTelephone = CONTACTS.phoneTableHref.replace(/^tel:/, "");
     {ogImageURL && <meta property="og:image" content={ogImageURL} />}
     {ogImageURL && <meta name="twitter:card" content="summary_large_image" />}
     {ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
     {!noindex && (

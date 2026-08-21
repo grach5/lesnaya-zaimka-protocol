@@ -126,7 +126,7 @@ export type SiteContent = {
       formEyebrow: string; formH2: string; formLead: string; deptLabel: string; formNote: string;
       capacityLabel: string; areaLabel: string; hallPhotoAria: string;
     };
-    gallery: { title: string; description: string; eyebrow: string; h1: string; lead: string; allPhotos: string };
+    gallery: { title: string; description: string; eyebrow: string; h1: string; lead: string; allPhotos: string; photoAria: string };
     contacts: {
       title: string; description: string; eyebrow: string; h1: string; lead: string;
       addressLabel: string; tableBookingLabel: string; eventsLabel: string; whatsappLabel: string; telegramLabel: string; maxLabel: string;

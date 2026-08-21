@@ -80,29 +80,30 @@ export default function ReserveForm({ locale = "ru" }: Props) {
     <form onSubmit={handleSubmit} className="grid gap-5 border border-line bg-paper-raised p-6 sm:grid-cols-2 md:p-8" noValidate>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="r-name">{t.ui.common.yourName}</Label>
-        <Input id="r-name" name="name" autoComplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? "r-name-error" : undefined} />
-        {errors.name && <p id="r-name-error" className="text-xs text-destructive">{errors.name}</p>}
+        <Input id="r-name" name="name" autoComplete="name" aria-required="true" aria-invalid={!!errors.name} aria-describedby={errors.name ? "r-name-error" : undefined} />
+        {errors.name && <p id="r-name-error" role="alert" className="text-xs text-destructive">{errors.name}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="r-phone">{t.ui.common.phone}</Label>
-        <Input id="r-phone" name="phone" type="tel" autoComplete="tel" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "r-phone-error" : undefined} />
-        {errors.phone && <p id="r-phone-error" className="text-xs text-destructive">{errors.phone}</p>}
+        <Input id="r-phone" name="phone" type="tel" autoComplete="tel" aria-required="true" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "r-phone-error" : undefined} />
+        {errors.phone && <p id="r-phone-error" role="alert" className="text-xs text-destructive">{errors.phone}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="r-date">{t.ui.common.date}</Label>
         <Input id="r-date" name="date" type="date" aria-invalid={!!errors.date} aria-describedby={errors.date ? "r-date-error" : undefined} />
-        {errors.date && <p id="r-date-error" className="text-xs text-destructive">{errors.date}</p>}
+        {errors.date && <p id="r-date-error" role="alert" className="text-xs text-destructive">{errors.date}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="r-guests">{t.ui.common.guests}</Label>
         <Input id="r-guests" name="guests" type="number" min={1} aria-invalid={!!errors.guests} aria-describedby={errors.guests ? "r-guests-error" : undefined} />
-        {errors.guests && <p id="r-guests-error" className="text-xs text-destructive">{errors.guests}</p>}
+        {errors.guests && <p id="r-guests-error" role="alert" className="text-xs text-destructive">{errors.guests}</p>}
       </div>
       <div className="flex items-start gap-2.5 sm:col-span-2">
         <input
           id="r-consent"
           name="consent"
           type="checkbox"
+          aria-required="true"
           aria-invalid={!!errors.consent}
           aria-describedby={errors.consent ? "r-consent-error" : undefined}
           className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-burgundy)]"
@@ -114,7 +115,7 @@ export default function ReserveForm({ locale = "ru" }: Props) {
           </a>
         </label>
       </div>
-      {errors.consent && <p id="r-consent-error" className="sm:col-span-2 -mt-3 text-xs text-destructive">{errors.consent}</p>}
+      {errors.consent && <p id="r-consent-error" role="alert" className="sm:col-span-2 -mt-3 text-xs text-destructive">{errors.consent}</p>}
 
       <div className="sm:col-span-2">
         <Button type="submit" className="plaque h-11 w-full sm:w-auto">{t.ui.common.sendToWhatsapp}</Button>

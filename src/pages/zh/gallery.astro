@@ -63,7 +63,7 @@ const breadcrumbs = Astro.site
                 class="gallery-thumb block aspect-square overflow-hidden bg-paper-sunk"
                 data-section={s.name}
                 data-full={withBase(img.full)}
-                aria-label={t.pages.events.hallPhotoAria.replace("{hall}", sectionNames[si]).replace("{i}", String(i + 1)).replace("{n}", String(s.images.length))}
+                aria-label={t.pages.gallery.photoAria.replace("{hall}", sectionNames[si]).replace("{i}", String(i + 1)).replace("{n}", String(s.images.length))}
               >
                 <img
                   src={withBase(img.thumb)}

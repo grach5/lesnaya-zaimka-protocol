@@ -26,9 +26,21 @@
    Noto Sans Variable на display/body/mono вместо трёх разных (как было
    у «Рубленого Кедра»), различие держится только на font-weight по месту
    использования (Tailwind font-semibold/font-bold и т.п.), в точности как
-   на референсе. Кириллица подтверждена по metadata.json ПЕРЕД подключением. */
+   на референсе. Кириллица подтверждена по metadata.json ПЕРЕД подключением.
+
+   Найдено аудитом сайта: у Noto Sans (обычной, латиница/кириллица) нет
+   иероглифов/хангыля — subsets в metadata.json: latin/latin-ext/cyrillic/
+   cyrillic-ext/greek/greek-ext/vietnamese/devanagari, БЕЗ chinese-simplified
+   и БЕЗ korean. На /zh/ и /ko/ страницах текст молча откатывался на
+   системный шрифт браузера — та же ловушка «тихого fallback», что и с
+   Fraunces выше, только для двух локалей, а не всего сайта. Добавлены
+   Noto Sans SC / Noto Sans KR (та же гарнитура Google, версии под нужный
+   скрипт) — CSS сам подбирает нужный шрифт посимвольно по стеку в
+   font-family ниже, ничего локале-специфичного в разметке не нужно. */
 @import "@fontsource-variable/noto-sans/wght.css";
 @import "@fontsource-variable/noto-sans/wght-italic.css";
+@import "@fontsource-variable/noto-sans-sc/wght.css";
+@import "@fontsource-variable/noto-sans-kr/wght.css";
 
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -83,9 +95,9 @@
      -mono) сохранены как есть, чтобы не трогать все файлы, где встречаются
      классы font-display/font-body/font-mono — разница между ролями теперь
      только в font-weight по месту использования, не в семействе шрифта. */
-  --font-display: "Noto Sans Variable", ui-sans-serif, sans-serif;
-  --font-body: "Noto Sans Variable", ui-sans-serif, sans-serif;
-  --font-mono: "Noto Sans Variable", ui-sans-serif, sans-serif;
+  --font-display: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
+  --font-body: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
+  --font-mono: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
