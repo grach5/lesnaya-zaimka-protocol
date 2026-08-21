@@ -194,6 +194,12 @@ export default function AdminPanel({
   async function saveSection(id: keyof typeof FILE_PATHS, draft: Draft<any>, label: string) {
     const token = getToken();
     if (!token) {
+      // Данные и так уже в localStorage (useDraft пишет туда при каждом изменении) —
+      // здесь только двигаем baseline вперёд, чтобы индикатор «есть несохранённые
+      // изменения» и кнопка «Сохранить»/«Сохранено» не оставались «грязными» вечно
+      // после клика: раньше в demo-режиме это выглядело так, будто сохранение не
+      // сработало, хотя черновик уже был на месте.
+      draft.markSaved(draft.data);
       showToast("info", `${label} сохранено локально (демо) — подключите GitHub в настройках для настоящей публикации`);
       return;
     }
@@ -630,12 +636,24 @@ function MenuSection({ draft, onSave, onDownload, saving }: SectionProps<MenuDat
     next.categories[ci].items.push({ name: "Новое блюдо", price: 0 });
     setData(next);
   }
-  function moveItem(ci: number, ii: number, dir: -1 | 1) {
+  /**
+   * Переставляет блюдо с соседним ВИДИМЫМ (отфильтрованным по поиску) блюдом,
+   * а не соседним по индексу в полном списке категории. Раньше при активном
+   * поиске клик по ▲/▼ мог менять местами текущее блюдо с блюдом, скрытым
+   * фильтром, — данные в черновике реально менялись, но в отфильтрованном
+   * списке ничего визуально не происходило (админ решал, что кнопка не
+   * работает). visibleIdx — реальные индексы в cat.items тех блюд, что сейчас
+   * показаны (см. filteredIdx при рендере); без активного поиска это просто
+   * 0..N-1 по порядку, и поведение не отличается от прежнего.
+   */
+  function moveItem(ci: number, posInVisible: number, visibleIdx: number[], dir: -1 | 1) {
+    const targetPos = posInVisible + dir;
+    if (targetPos < 0 || targetPos >= visibleIdx.length) return;
     const next = structuredClone(data);
     const items = next.categories[ci].items;
-    const target = ii + dir;
-    if (target < 0 || target >= items.length) return;
-    [items[ii], items[target]] = [items[target], items[ii]];
+    const a = visibleIdx[posInVisible];
+    const b = visibleIdx[targetPos];
+    [items[a], items[b]] = [items[b], items[a]];
     setData(next);
   }
   function renameCategory(ci: number, name: string) {
@@ -687,11 +705,11 @@ function MenuSection({ draft, onSave, onDownload, saving }: SectionProps<MenuDat
               </summary>
               <div className="border-t border-[#eef0f3] p-4">
                 <div className="flex flex-col gap-2">
-                  {filteredIdx.map(({ item, ii }) => (
+                  {(() => { const visibleIdx = filteredIdx.map(({ ii }) => ii); return filteredIdx.map(({ item, ii }, pos) => (
                     <div key={ii} className="flex items-center gap-2">
                       <div className="flex shrink-0 flex-col">
-                        <button type="button" onClick={() => moveItem(ci, ii, -1)} disabled={ii === 0} className="text-xs text-[#838b9b] hover:text-[#b5651d] disabled:opacity-20">▲</button>
-                        <button type="button" onClick={() => moveItem(ci, ii, 1)} disabled={ii === cat.items.length - 1} className="text-xs text-[#838b9b] hover:text-[#b5651d] disabled:opacity-20">▼</button>
+                        <button type="button" onClick={() => moveItem(ci, pos, visibleIdx, -1)} disabled={pos === 0} className="text-xs text-[#838b9b] hover:text-[#b5651d] disabled:opacity-20">▲</button>
+                        <button type="button" onClick={() => moveItem(ci, pos, visibleIdx, 1)} disabled={pos === visibleIdx.length - 1} className="text-xs text-[#838b9b] hover:text-[#b5651d] disabled:opacity-20">▼</button>
                       </div>
                       <input
                         value={item.name}
@@ -707,7 +725,7 @@ function MenuSection({ draft, onSave, onDownload, saving }: SectionProps<MenuDat
                       <span className="shrink-0 text-xs text-[#838b9b]">₽</span>
                       <RemoveBtn onClick={() => removeItem(ci, ii)} />
                     </div>
-                  ))}
+                  )); })()}
                 </div>
                 <button type="button" onClick={() => addItem(ci)} className="mt-3 text-sm font-medium text-[#b5651d] hover:underline">+ Добавить блюдо</button>
               </div>
