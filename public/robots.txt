@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /choose-font/
 
 Sitemap: https://grach5.github.io/lesnaya-zaimka-protocol/sitemap-index.xml

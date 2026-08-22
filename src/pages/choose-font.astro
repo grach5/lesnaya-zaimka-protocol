@@ -1,0 +1,305 @@
+---
+// Временная страница-каталог шрифтов — показать клиенту варианты и снять решение.
+// Не в навигации, не в sitemap (см. astro.config.mjs), noindex — убрать после того,
+// как клиент выберет вариант (см. переписку в чате с администратором сайта).
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Каталог шрифтов Заимки</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Merriweather&family=Lora&family=Noto+Serif&family=PT+Serif&family=Cormorant+Garamond&family=EB+Garamond&family=Bitter&family=Source+Serif+4&family=IBM+Plex+Serif&family=Spectral&family=Cormorant&family=Roboto+Serif&family=Vollkorn&family=Literata&family=Prata&family=Playfair&family=Tinos&family=Alegreya&family=Old+Standard+TT&family=STIX+Two+Text&family=Playfair+Display+SC&family=Forum&family=Yeseva+One&family=Cormorant+Infant&family=Noto+Serif+Display&family=Alice&family=Oranienbaum&family=Charis+SIL&family=Bona+Nova+SC&family=PT+Serif+Caption&family=Podkova&family=Gabriela&family=Cormorant+SC&family=Brygada+1918&family=Libertinus+Serif&family=Alegreya+SC&family=Cormorant+Unicase&family=Kurale&family=Spectral+SC&family=Piazzolla&family=Vollkorn+SC&family=Orelega+One&family=Viaoda+Libre&family=Ledger&family=Bona+Nova&family=Gentium+Book+Plus&family=Cactus+Classical+Serif&family=Gentium+Plus&family=Oi&family=Noto+Serif+JP&family=Noto+Serif+KR&family=Noto+Serif+TC&family=Noto+Serif+SC&family=Zen+Old+Mincho&family=Kaisei+Decol&family=Kiwi+Maru&family=Yuji+Mai&family=Hina+Mincho&family=BIZ+UDPMincho&family=Zen+Antique&family=Yuji+Syuku&family=Kaisei+Opti&family=Zen+Antique+Soft&family=Kaisei+Tokumin&family=Noto+Serif+HK&family=BIZ+UDMincho&family=Yuji+Boku&family=Kaisei+HarunoUmi&family=Chiron+Sung+HK&family=UoqMunThenKhung&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --paper: #F6F1E4;
+        --paper-raised: #FFFDF8;
+        --paper-sunk: #EAE0C8;
+        --ink: #1E140F;
+        --ink-soft: #4A3B30;
+        --ink-faint: #6B5C4E;
+        --gold: #B8902E;
+        --gold-bright: #D4AF37;
+        --burgundy: #812824;
+        --line: rgba(30,20,15,0.14);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .shell { max-width: 1040px; margin: 0 auto; padding: 44px 20px 90px; }
+    
+      header.intro { margin-bottom: 8px; }
+      header.intro p.eyebrow {
+        margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--burgundy);
+      }
+      header.intro h1 {
+        margin: 0 0 14px; font-size: clamp(24px, 4vw, 32px); line-height: 1.15;
+        letter-spacing: -0.01em; text-wrap: balance;
+      }
+      header.intro p.sub {
+        margin: 0 0 10px; max-width: 68ch; font-size: 15px; line-height: 1.6; color: var(--ink-soft);
+      }
+      header.intro details.honesty {
+        margin: 18px 0 28px; border: 1px solid var(--line); background: var(--paper-raised); padding: 14px 16px;
+      }
+      header.intro details.honesty summary {
+        cursor: pointer; font-size: 13px; font-weight: 600; color: var(--burgundy);
+      }
+      header.intro details.honesty p {
+        margin: 10px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); max-width: 68ch;
+      }
+    
+      .toolbar {
+        position: sticky; top: 0; z-index: 5; background: var(--paper);
+        padding: 14px 0; margin-bottom: 8px; border-bottom: 1px solid var(--line);
+        display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+      }
+      .toolbar input[type="search"] {
+        flex: 1 1 240px; min-width: 0; height: 40px; padding: 0 14px; font-size: 14px;
+        border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink);
+        font-family: inherit;
+      }
+      .toolbar input[type="search"]:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 1px; }
+      .toolbar .picked {
+        font-size: 13px; color: var(--ink-soft); white-space: nowrap;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .toolbar .picked strong { color: var(--burgundy); font-variant-numeric: tabular-nums; }
+      .toolbar button.clear {
+        font: inherit; font-size: 12px; color: var(--ink-faint); background: none; border: 1px solid var(--line);
+        padding: 6px 10px; cursor: pointer;
+      }
+      .toolbar button.clear:hover { color: var(--burgundy); border-color: var(--burgundy); }
+    
+      .group { margin-top: 30px; }
+      .group-head {
+        display: flex; align-items: baseline; gap: 8px; background: none; border: none; padding: 0;
+        cursor: pointer; font: inherit; color: inherit; text-align: left;
+      }
+      .group-head .chev { font-size: 11px; color: var(--ink-faint); width: 12px; }
+      .group-head h2 { margin: 0 0 4px; font-size: 17px; font-weight: 700; }
+      .group-head h2 .count {
+        font-size: 12px; font-weight: 400; color: var(--ink-faint); font-variant-numeric: tabular-nums;
+      }
+      .group-note { margin: 0 0 14px 20px; font-size: 13px; color: var(--ink-faint); max-width: 64ch; }
+      .group.is-collapsed .grid, .group.is-collapsed .group-note { display: none; }
+    
+      .grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px;
+      }
+      .card {
+        position: relative; text-align: left; cursor: pointer;
+        background: var(--paper-raised); border: 1px solid var(--line);
+        padding: 14px 14px 16px; font: inherit; color: inherit;
+        display: flex; flex-direction: column; gap: 8px;
+        transition: border-color .12s ease, box-shadow .12s ease;
+      }
+      .card:hover { border-color: var(--gold); }
+      .card:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+      .card[aria-pressed="true"] {
+        border-color: var(--gold-bright); box-shadow: 0 0 0 1px var(--gold-bright) inset;
+        background: #FFFCF3;
+      }
+      .card .star {
+        position: absolute; top: 10px; right: 10px; font-size: 14px; color: var(--line); line-height: 1;
+      }
+      .card[aria-pressed="true"] .star { color: var(--gold-bright); }
+      .card .fname {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.02em; color: var(--ink-faint);
+        padding-right: 20px;
+      }
+      .card .sample {
+        font-size: 21px; line-height: 1.22; color: var(--ink); text-wrap: balance;
+      }
+      .card.is-hidden { display: none; }
+    
+      .empty-note { display: none; padding: 30px 4px; color: var(--ink-faint); font-size: 14px; }
+      .empty-note.show { display: block; }
+    
+      footer.note {
+        margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+        font-size: 12.5px; line-height: 1.6; color: var(--ink-faint); max-width: 68ch;
+      }
+    </style>
+    
+  </head>
+  <body>
+    <div class="shell">
+      <header class="intro">
+        <p class="eyebrow">Лесная Заимка — каталог шрифтов</p>
+        <h1>50 гарнитур с засечками — весь пригодный набор, а не подборка на глаз</h1>
+        <p class="sub">Каждая карточка — реальный заголовок с сайта («Традиции щедрого стола»), набранный этим шрифтом. Кликните карточку, чтобы отметить понравившийся вариант звёздочкой — пригодится, когда будете показывать это клиенту. Наберите буквы в поиске, чтобы отфильтровать по названию.</p>
+        <details class="honesty">
+          <summary>Почему не 100+, и что это за список вообще</summary>
+          <p>Я не гадаю по памяти, какой шрифт «наверное» поддерживает кириллицу — именно так этот проект уже дважды получал молчаливый откат на системный шрифт после деплоя. Вместо этого я выгрузил официальные метаданные Google Fonts (fonts.google.com/metadata/fonts) и отфильтровал: категория «с засечками» + подтверждённая поддержка кириллицы. Таких во всём каталоге Google Fonts — ровно 71, это весь существующий набор, не часть его. Из них 21 нарисованы для японского/корейского/китайского письма (кириллица там на вторых ролях и обычно выглядит нескладно) — вынесены в отдельную, свёрнутую по умолчанию группу внизу. Получить «более 100» без нарушения условия «кириллица гарантированно работает» физически нельзя.</p>
+        </details>
+      </header>
+    
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Поиск по названию шрифта…" aria-label="Поиск по названию шрифта">
+        <span class="picked">Отмечено: <strong id="picked-count">0</strong></span>
+        <button type="button" class="clear" id="clear-btn">Сбросить отметки</button>
+      </div>
+    
+      <p class="empty-note" id="empty-note">Ничего не найдено по этому запросу.</p>
+    
+    <section class="group" id="g-readable"><button type="button" class="group-head" data-target="g-readable"><span class="chev" aria-hidden="true">&#9662;</span><h2>Текстовые — для абзацев и меню <span class="count">22</span></h2></button><p class="group-note">спокойные, читаемые на длинных абзацах — тело текста, описания блюд</p><div class="grid"><button type="button" class="card" data-name="Merriweather" data-slug="merriweather" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Merriweather</span><span class="sample" style="font-family:&quot;Merriweather&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Lora" data-slug="lora" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Lora</span><span class="sample" style="font-family:&quot;Lora&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="PT Serif" data-slug="pt-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">PT Serif</span><span class="sample" style="font-family:&quot;PT Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif" data-slug="noto-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif</span><span class="sample" style="font-family:&quot;Noto Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="EB Garamond" data-slug="eb-garamond" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">EB Garamond</span><span class="sample" style="font-family:&quot;EB Garamond&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Bitter" data-slug="bitter" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Bitter</span><span class="sample" style="font-family:&quot;Bitter&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Source Serif 4" data-slug="source-serif-4" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Source Serif 4</span><span class="sample" style="font-family:&quot;Source Serif 4&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="IBM Plex Serif" data-slug="ibm-plex-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">IBM Plex Serif</span><span class="sample" style="font-family:&quot;IBM Plex Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Spectral" data-slug="spectral" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Spectral</span><span class="sample" style="font-family:&quot;Spectral&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Vollkorn" data-slug="vollkorn" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Vollkorn</span><span class="sample" style="font-family:&quot;Vollkorn&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Literata" data-slug="literata" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Literata</span><span class="sample" style="font-family:&quot;Literata&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Alegreya" data-slug="alegreya" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Alegreya</span><span class="sample" style="font-family:&quot;Alegreya&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Old Standard TT" data-slug="old-standard-tt" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Old Standard TT</span><span class="sample" style="font-family:&quot;Old Standard TT&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Charis SIL" data-slug="charis-sil" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Charis SIL</span><span class="sample" style="font-family:&quot;Charis SIL&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Gentium Book Plus" data-slug="gentium-book-plus" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Gentium Book Plus</span><span class="sample" style="font-family:&quot;Gentium Book Plus&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Gentium Plus" data-slug="gentium-plus" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Gentium Plus</span><span class="sample" style="font-family:&quot;Gentium Plus&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Tinos" data-slug="tinos" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Tinos</span><span class="sample" style="font-family:&quot;Tinos&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Brygada 1918" data-slug="brygada-1918" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Brygada 1918</span><span class="sample" style="font-family:&quot;Brygada 1918&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Piazzolla" data-slug="piazzolla" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Piazzolla</span><span class="sample" style="font-family:&quot;Piazzolla&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="STIX Two Text" data-slug="stix-two-text" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">STIX Two Text</span><span class="sample" style="font-family:&quot;STIX Two Text&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Ledger" data-slug="ledger" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Ledger</span><span class="sample" style="font-family:&quot;Ledger&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="PT Serif Caption" data-slug="pt-serif-caption" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">PT Serif Caption</span><span class="sample" style="font-family:&quot;PT Serif Caption&quot;, Georgia, serif;">Традиции щедрого стола</span></button></div></section>
+    <section class="group" id="g-elegant"><button type="button" class="group-head" data-target="g-elegant"><span class="chev" aria-hidden="true">&#9662;</span><h2>Элегантные — для заголовков <span class="count">15</span></h2></button><p class="group-note">контрастные штрихи, эффектные крупные буквы — h1, вывеска, обложка</p><div class="grid"><button type="button" class="card" data-name="Playfair Display" data-slug="playfair-display" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Playfair Display</span><span class="sample" style="font-family:&quot;Playfair Display&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Playfair Display SC" data-slug="playfair-display-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Playfair Display SC</span><span class="sample" style="font-family:&quot;Playfair Display SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Playfair" data-slug="playfair" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Playfair</span><span class="sample" style="font-family:&quot;Playfair&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cormorant Garamond" data-slug="cormorant-garamond" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cormorant Garamond</span><span class="sample" style="font-family:&quot;Cormorant Garamond&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cormorant" data-slug="cormorant" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cormorant</span><span class="sample" style="font-family:&quot;Cormorant&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cormorant Infant" data-slug="cormorant-infant" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cormorant Infant</span><span class="sample" style="font-family:&quot;Cormorant Infant&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cormorant SC" data-slug="cormorant-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cormorant SC</span><span class="sample" style="font-family:&quot;Cormorant SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cormorant Unicase" data-slug="cormorant-unicase" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cormorant Unicase</span><span class="sample" style="font-family:&quot;Cormorant Unicase&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Prata" data-slug="prata" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Prata</span><span class="sample" style="font-family:&quot;Prata&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Alegreya SC" data-slug="alegreya-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Alegreya SC</span><span class="sample" style="font-family:&quot;Alegreya SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Spectral SC" data-slug="spectral-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Spectral SC</span><span class="sample" style="font-family:&quot;Spectral SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Vollkorn SC" data-slug="vollkorn-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Vollkorn SC</span><span class="sample" style="font-family:&quot;Vollkorn SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Bona Nova" data-slug="bona-nova" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Bona Nova</span><span class="sample" style="font-family:&quot;Bona Nova&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Bona Nova SC" data-slug="bona-nova-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Bona Nova SC</span><span class="sample" style="font-family:&quot;Bona Nova SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Roboto Serif" data-slug="roboto-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Roboto Serif</span><span class="sample" style="font-family:&quot;Roboto Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button></div></section>
+    <section class="group" id="g-decorative"><button type="button" class="group-head" data-target="g-decorative"><span class="chev" aria-hidden="true">&#9662;</span><h2>Декоративные — для акцентов <span class="count">13</span></h2></button><p class="group-note">характерные, с индивидуальностью — логотип, эпиграф, лендинг, приглашение</p><div class="grid"><button type="button" class="card" data-name="Forum" data-slug="forum" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Forum</span><span class="sample" style="font-family:&quot;Forum&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Yeseva One" data-slug="yeseva-one" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Yeseva One</span><span class="sample" style="font-family:&quot;Yeseva One&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif Display" data-slug="noto-serif-display" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif Display</span><span class="sample" style="font-family:&quot;Noto Serif Display&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Alice" data-slug="alice" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Alice</span><span class="sample" style="font-family:&quot;Alice&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Podkova" data-slug="podkova" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Podkova</span><span class="sample" style="font-family:&quot;Podkova&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Gabriela" data-slug="gabriela" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Gabriela</span><span class="sample" style="font-family:&quot;Gabriela&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Libertinus Serif" data-slug="libertinus-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Libertinus Serif</span><span class="sample" style="font-family:&quot;Libertinus Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kurale" data-slug="kurale" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kurale</span><span class="sample" style="font-family:&quot;Kurale&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Orelega One" data-slug="orelega-one" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Orelega One</span><span class="sample" style="font-family:&quot;Orelega One&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Viaoda Libre" data-slug="viaoda-libre" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Viaoda Libre</span><span class="sample" style="font-family:&quot;Viaoda Libre&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Cactus Classical Serif" data-slug="cactus-classical-serif" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Cactus Classical Serif</span><span class="sample" style="font-family:&quot;Cactus Classical Serif&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Oi" data-slug="oi" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Oi</span><span class="sample" style="font-family:&quot;Oi&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Oranienbaum" data-slug="oranienbaum" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Oranienbaum</span><span class="sample" style="font-family:&quot;Oranienbaum&quot;, Georgia, serif;">Традиции щедрого стола</span></button></div></section>
+    <section class="group is-collapsed" id="g-cjk"><button type="button" class="group-head" data-target="g-cjk"><span class="chev" aria-hidden="true">&#9656;</span><h2>Не для этого проекта <span class="count">21</span></h2></button><p class="group-note">формально поддерживают кириллицу, но нарисованы для японского/корейского/китайского — кириллица в них вторична и обычно выглядит нескладно рядом с их родными иероглифами</p><div class="grid"><button type="button" class="card" data-name="Noto Serif JP" data-slug="noto-serif-jp" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif JP</span><span class="sample" style="font-family:&quot;Noto Serif JP&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif KR" data-slug="noto-serif-kr" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif KR</span><span class="sample" style="font-family:&quot;Noto Serif KR&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif TC" data-slug="noto-serif-tc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif TC</span><span class="sample" style="font-family:&quot;Noto Serif TC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif SC" data-slug="noto-serif-sc" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif SC</span><span class="sample" style="font-family:&quot;Noto Serif SC&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Noto Serif HK" data-slug="noto-serif-hk" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Noto Serif HK</span><span class="sample" style="font-family:&quot;Noto Serif HK&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Zen Old Mincho" data-slug="zen-old-mincho" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Zen Old Mincho</span><span class="sample" style="font-family:&quot;Zen Old Mincho&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Zen Antique" data-slug="zen-antique" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Zen Antique</span><span class="sample" style="font-family:&quot;Zen Antique&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Zen Antique Soft" data-slug="zen-antique-soft" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Zen Antique Soft</span><span class="sample" style="font-family:&quot;Zen Antique Soft&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kaisei Decol" data-slug="kaisei-decol" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kaisei Decol</span><span class="sample" style="font-family:&quot;Kaisei Decol&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kaisei Opti" data-slug="kaisei-opti" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kaisei Opti</span><span class="sample" style="font-family:&quot;Kaisei Opti&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kaisei Tokumin" data-slug="kaisei-tokumin" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kaisei Tokumin</span><span class="sample" style="font-family:&quot;Kaisei Tokumin&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kaisei HarunoUmi" data-slug="kaisei-harunoumi" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kaisei HarunoUmi</span><span class="sample" style="font-family:&quot;Kaisei HarunoUmi&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Kiwi Maru" data-slug="kiwi-maru" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Kiwi Maru</span><span class="sample" style="font-family:&quot;Kiwi Maru&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Yuji Mai" data-slug="yuji-mai" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Yuji Mai</span><span class="sample" style="font-family:&quot;Yuji Mai&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Yuji Syuku" data-slug="yuji-syuku" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Yuji Syuku</span><span class="sample" style="font-family:&quot;Yuji Syuku&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Yuji Boku" data-slug="yuji-boku" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Yuji Boku</span><span class="sample" style="font-family:&quot;Yuji Boku&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Hina Mincho" data-slug="hina-mincho" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Hina Mincho</span><span class="sample" style="font-family:&quot;Hina Mincho&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="BIZ UDPMincho" data-slug="biz-udpmincho" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">BIZ UDPMincho</span><span class="sample" style="font-family:&quot;BIZ UDPMincho&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="BIZ UDMincho" data-slug="biz-udmincho" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">BIZ UDMincho</span><span class="sample" style="font-family:&quot;BIZ UDMincho&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="Chiron Sung HK" data-slug="chiron-sung-hk" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">Chiron Sung HK</span><span class="sample" style="font-family:&quot;Chiron Sung HK&quot;, Georgia, serif;">Традиции щедрого стола</span></button>
+    <button type="button" class="card" data-name="UoqMunThenKhung" data-slug="uoqmunthenkhung" aria-pressed="false"><span class="star" aria-hidden="true">&#9733;</span><span class="fname">UoqMunThenKhung</span><span class="sample" style="font-family:&quot;UoqMunThenKhung&quot;, Georgia, serif;">Традиции щедрого стола</span></button></div></section>
+    
+      <footer class="note">
+        Отметки сохраняются в этой вкладке (localStorage) — переживут обновление страницы, но не путешествуют между устройствами. Шрифты подключены напрямую с Google Fonts (единственный внешний хост, разрешённый для артефактов) — реальные файлы, не подделка. Скажите, какие номера/названия приглянулись клиенту — включу выбранную пару на весь сайт и, как обычно, проверю вживую до и после деплоя.
+      </footer>
+    </div>
+    <script>
+    (function() {
+      const STORAGE_KEY = 'zaimka-font-picks';
+      let picks: Record<string, boolean> = {};
+      try { picks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+
+      const cards = Array.from(document.querySelectorAll<HTMLButtonElement>('.card'));
+      const countEl = document.getElementById('picked-count');
+
+      function updateCount() {
+        if (countEl) countEl.textContent = String(Object.keys(picks).filter((k) => picks[k]).length);
+      }
+      function applyPicks() {
+        cards.forEach((c) => {
+          const on = !!picks[c.dataset.slug ?? ''];
+          c.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        updateCount();
+      }
+      function persist() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(picks)); } catch (e) {}
+      }
+
+      cards.forEach((c) => {
+        c.addEventListener('click', () => {
+          const key = c.dataset.slug ?? '';
+          picks[key] = !picks[key];
+          if (!picks[key]) delete picks[key];
+          c.setAttribute('aria-pressed', picks[key] ? 'true' : 'false');
+          updateCount();
+          persist();
+        });
+      });
+
+      document.getElementById('clear-btn')?.addEventListener('click', () => {
+        picks = {};
+        persist();
+        applyPicks();
+      });
+
+      const searchInput = document.getElementById('search') as HTMLInputElement | null;
+      const emptyNote = document.getElementById('empty-note');
+      searchInput?.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        let anyVisible = false;
+        document.querySelectorAll<HTMLElement>('.group').forEach((group) => {
+          let groupHasMatch = false;
+          group.querySelectorAll<HTMLButtonElement>('.card').forEach((c) => {
+            const match = !q || (c.dataset.name ?? '').toLowerCase().indexOf(q) > -1;
+            c.classList.toggle('is-hidden', !match);
+            if (match) { groupHasMatch = true; anyVisible = true; }
+          });
+          group.style.display = (q && !groupHasMatch) ? 'none' : '';
+          if (q && groupHasMatch) group.classList.remove('is-collapsed');
+        });
+        emptyNote?.classList.toggle('show', q.length > 0 && !anyVisible);
+      });
+
+      document.querySelectorAll<HTMLButtonElement>('.group-head').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const group = document.getElementById(btn.dataset.target ?? '');
+          const collapsed = group?.classList.toggle('is-collapsed');
+          const chev = btn.querySelector('.chev');
+          if (chev) chev.innerHTML = collapsed ? '&#9656;' : '&#9662;';
+        });
+      });
+
+      applyPicks();
+    })();
+    </script>
+    
+  </body>
+</html>
