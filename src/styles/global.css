@@ -38,10 +38,23 @@
    (subsets: cyrillic, cyrillic-ext) ПЕРЕД подключением — та же проверка,
    что и всегда в этом файле. У Alice тоже нет иероглифов/хангыля (subsets:
    menu/cyrillic/cyrillic-ext/latin/latin-ext) — та же самая ловушка, что и
-   с Noto Sans выше, поэтому здесь снова резервная гарнитура для /zh/ и
-   /ko/ — на этот раз с засечками (Noto Serif SC/KR), а не гротеск, чтобы
-   не ломать стиль по script'у в рамках одного сайта. */
-@import "@fontsource/alice/cyrillic-400.css";
+   с Noto Sans выше, поэтому здесь резервная гарнитура для /zh/ и /ko/ —
+   с засечками (Noto Serif SC/KR), а не гротеск, чтобы не ломать стиль по
+   script'у в рамках одного сайта.
+
+   Фаза «Forum» — клиент передумал после Alice, из того же каталога
+   /choose-font/ окончательно выбрал Forum (тоже с засечками; в Google
+   Fonts числится category: "Display", но stroke: "Serif" — по сути
+   декоративная антиква, а не гротеск-«дисплей»). Кириллица подтверждена
+   по metadata.json ПЕРЕД подключением (subsets: cyrillic, cyrillic-ext).
+   У Forum, как и у Alice, только одно реальное начертание — fontsource
+   metadata.json: fonts = {"400": ...}, без "700"/"400i" — жирный и курсив
+   снова браузерный синтез, ожидаемо. Иероглифов/хангыля тоже нет (subsets:
+   menu/cyrillic/cyrillic-ext/latin/latin-ext) — та же ловушка в третий
+   раз подряд для гарнитур с этого каталога; резервная пара Noto Serif
+   SC/KR не менялась (уже стояла для Alice, покрывает и Forum один в один,
+   переустанавливать не пришлось). */
+@import "@fontsource/forum/cyrillic-400.css";
 @import "@fontsource-variable/noto-serif-sc/wght.css";
 @import "@fontsource-variable/noto-serif-kr/wght.css";
 
@@ -93,15 +106,15 @@
   --color-forest: #1F3A2E;
   --color-forest-deep: #142720;
 
-  /* Одна гарнитура на всё (Alice) — выбор клиента из каталога /choose-font/,
+  /* Одна гарнитура на всё (Forum) — выбор клиента из каталога /choose-font/,
      см. заметку выше. Имена переменных (--font-display/-body/-mono)
      сохранены как есть, чтобы не трогать все файлы, где встречаются классы
      font-display/font-body/font-mono — разница между ролями держится
-     только на font-weight/font-style по месту использования (у Alice
+     только на font-weight/font-style по месту использования (у Forum
      всего одно реальное начертание, остальное — браузерный синтез). */
-  --font-display: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
-  --font-body: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
-  --font-mono: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
+  --font-display: "Forum", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
+  --font-body: "Forum", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
+  --font-mono: "Forum", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -183,7 +196,7 @@
      моноширинности IBM Plex Mono ради выравнивания: цены в меню, цифры
      статистики на главной. Без этого правила цифры в пропорциональном
      начертании "плавали" бы по ширине. Прогрессивное улучшение: если у
-     текущей гарнитуры нет OpenType-функции tnum (у Alice, скорее всего,
+     текущей гарнитуры нет OpenType-функции tnum (у Forum, скорее всего,
      нет — не проверено намеренно, это не ломает layout, просто не даёт
      эффекта), правило тихо не применяется, цифры остаются как есть. */
   .font-mono {

@@ -60,11 +60,12 @@ const breadcrumbs = Astro.site
 
   <section class="mx-auto max-w-4xl px-5 pb-16 md:px-8 md:pb-24">
     <blockquote class="frame-gold max-w-2xl bg-paper-raised p-8" data-reveal>
-      {/* font-body/font-display — одна и та же гарнитура (Alice, см.
-         global.css). У Alice нет собственного курсивного начертания
-         (только 400 normal) — здесь курсив синтетический (браузерный
-         наклон), не «настоящие» курсивные литеры; для этого шрифта
-         это неизбежно, альтернативы курсивом Google Fonts не даёт. */}
+      {/* font-body/font-display — одна и та же гарнитура (Forum, см.
+         global.css). У Forum, как и у Alice до него, нет собственного
+         курсивного начертания (только 400 normal) — здесь курсив
+         синтетический (браузерный наклон), не «настоящие» курсивные
+         литеры; для этого шрифта это неизбежно, альтернативы курсивом
+         Google Fonts не даёт. */}
       <p class="font-body text-xl italic leading-relaxed text-ink">«{OWNER_QUOTE.text}»</p>
       <footer class="mt-4 font-mono text-xs text-ink-faint">
         <span class="block font-body text-sm not-italic text-ink">{OWNER_QUOTE.author}</span>
