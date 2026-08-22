@@ -18,29 +18,32 @@
    Фаза «Огонёк» — вторая попытка по тому же отзыву клиента («не нравится
    шрифт»): предыдущая замена (Podkova/PT Serif, «Рубленый Кедр», выбрана
    через многоагентную мастерскую с 4 направлениями и 3 судьями) тоже не
-   попала во вкус. На этот раз клиент прислал прямой референс — сайт другого
+   попала во вкус. Клиент прислал прямой референс — сайт другого
    владивостокского ресторана https://ogonekvl.ru/, шрифт которого ему
-   нравится: проверено в devtools этого сайта — везде одно семейство,
-   Google Fonts "Noto Sans" (wght@100..900, subset latin+cyrillic), без
-   засечек и декоративных начертаний. Здесь — то же решение: одна гарнитура
-   Noto Sans Variable на display/body/mono вместо трёх разных (как было
-   у «Рубленого Кедра»), различие держится только на font-weight по месту
-   использования (Tailwind font-semibold/font-bold и т.п.), в точности как
-   на референсе. Кириллица подтверждена по metadata.json ПЕРЕД подключением.
+   нравится: Google Fonts "Noto Sans", без засечек. Временно стоял на сайте.
 
    Найдено аудитом сайта: у Noto Sans (обычной, латиница/кириллица) нет
    иероглифов/хангыля — subsets в metadata.json: latin/latin-ext/cyrillic/
    cyrillic-ext/greek/greek-ext/vietnamese/devanagari, БЕЗ chinese-simplified
-   и БЕЗ korean. На /zh/ и /ko/ страницах текст молча откатывался на
-   системный шрифт браузера — та же ловушка «тихого fallback», что и с
-   Fraunces выше, только для двух локалей, а не всего сайта. Добавлены
-   Noto Sans SC / Noto Sans KR (та же гарнитура Google, версии под нужный
-   скрипт) — CSS сам подбирает нужный шрифт посимвольно по стеку в
-   font-family ниже, ничего локале-специфичного в разметке не нужно. */
-@import "@fontsource-variable/noto-sans/wght.css";
-@import "@fontsource-variable/noto-sans/wght-italic.css";
-@import "@fontsource-variable/noto-sans-sc/wght.css";
-@import "@fontsource-variable/noto-sans-kr/wght.css";
+   и БЕЗ korean — на /zh/ и /ko/ страницах текст молча откатывался на
+   системный шрифт браузера, та же ловушка «тихого fallback», что и с
+   Fraunces выше, только для двух локалей, а не всего сайта.
+
+   Фаза «Alice» — клиенту показали каталог из 144 гарнитур (50 с засечками,
+   94 гротеска, реальные кириллические Google Fonts, /choose-font/) —
+   выбрал Alice, засечки. У Alice только одно начертание (400, без bold/
+   italic в самом шрифте — fontsource metadata.json: fonts = {"400": ...}
+   без "700"/"400i") — жирный текст и курсив браузер синтезирует сам
+   (стандартное поведение, не баг). Кириллица подтверждена по metadata.json
+   (subsets: cyrillic, cyrillic-ext) ПЕРЕД подключением — та же проверка,
+   что и всегда в этом файле. У Alice тоже нет иероглифов/хангыля (subsets:
+   menu/cyrillic/cyrillic-ext/latin/latin-ext) — та же самая ловушка, что и
+   с Noto Sans выше, поэтому здесь снова резервная гарнитура для /zh/ и
+   /ko/ — на этот раз с засечками (Noto Serif SC/KR), а не гротеск, чтобы
+   не ломать стиль по script'у в рамках одного сайта. */
+@import "@fontsource/alice/cyrillic-400.css";
+@import "@fontsource-variable/noto-serif-sc/wght.css";
+@import "@fontsource-variable/noto-serif-kr/wght.css";
 
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -90,14 +93,15 @@
   --color-forest: #1F3A2E;
   --color-forest-deep: #142720;
 
-  /* Одна гарнитура на всё (Noto Sans Variable) — см. заметку выше про
-     референс клиента ogonekvl.ru. Имена переменных (--font-display/-body/
-     -mono) сохранены как есть, чтобы не трогать все файлы, где встречаются
-     классы font-display/font-body/font-mono — разница между ролями теперь
-     только в font-weight по месту использования, не в семействе шрифта. */
-  --font-display: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
-  --font-body: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
-  --font-mono: "Noto Sans Variable", "Noto Sans SC Variable", "Noto Sans KR Variable", ui-sans-serif, sans-serif;
+  /* Одна гарнитура на всё (Alice) — выбор клиента из каталога /choose-font/,
+     см. заметку выше. Имена переменных (--font-display/-body/-mono)
+     сохранены как есть, чтобы не трогать все файлы, где встречаются классы
+     font-display/font-body/font-mono — разница между ролями держится
+     только на font-weight/font-style по месту использования (у Alice
+     всего одно реальное начертание, остальное — браузерный синтез). */
+  --font-display: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
+  --font-body: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
+  --font-mono: "Alice", "Noto Serif SC Variable", "Noto Serif KR Variable", Georgia, serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -175,10 +179,13 @@
     background-color: var(--color-paper);
   }
 
-  /* Noto Sans поддерживает табличные (равноширинные) цифры — включаем их
-     явно для всего, что раньше держалось на моноширинности IBM Plex Mono
-     ради выравнивания: цены в меню, цифры статистики на главной. Без этого
-     правила цифры в пропорциональном начертании "плавали" бы по ширине. */
+  /* Табличные (равноширинные) цифры — для всего, что раньше держалось на
+     моноширинности IBM Plex Mono ради выравнивания: цены в меню, цифры
+     статистики на главной. Без этого правила цифры в пропорциональном
+     начертании "плавали" бы по ширине. Прогрессивное улучшение: если у
+     текущей гарнитуры нет OpenType-функции tnum (у Alice, скорее всего,
+     нет — не проверено намеренно, это не ломает layout, просто не даёт
+     эффекта), правило тихо не применяется, цифры остаются как есть. */
   .font-mono {
     font-variant-numeric: tabular-nums;
   }
